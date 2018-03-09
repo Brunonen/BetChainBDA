@@ -84,20 +84,20 @@ public class MainActivity extends AppCompatActivity
         Fragment fragment = null;
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
+
+        if (id == R.id.menu_myBets) {
             fragment = new LoginFragment();
-        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.menu_createBet) {
             fragment = new LoginFragment();
-        } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.menu_friends) {
             fragment = new LoginFragment();
-        } else if (id == R.id.nav_manage) {
+        } else if (id == R.id.menu_account) {
             fragment = new LoginFragment();
-        } else if (id == R.id.nav_share) {
+        } else if (id == R.id.menu_settings) {
             fragment = new LoginFragment();
-        } else if (id == R.id.nav_send) {
+        } else if (id == R.id.menu_logout) {
             fragment = new LoginFragment();
         }
-
 
         if(fragment != null) {
             changeFragment(fragment);
