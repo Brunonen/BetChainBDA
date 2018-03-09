@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.menu_myBets) {
             fragment = new LoginFragment();
         } else if (id == R.id.menu_createBet) {
-            fragment = new LoginFragment();
+            fragment = new CreateBetStep1Fragment();
         } else if (id == R.id.menu_friends) {
             fragment = new FriendsFragment();
         } else if (id == R.id.menu_account) {
