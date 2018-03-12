@@ -34,6 +34,7 @@ public class CreateBetStep3Fragment extends Fragment {
     private List<Participant> betSupporters = new ArrayList<Participant>();
     private List<Participant> betOpposers = new ArrayList<Participant>();
     private List<Participant> notars = new ArrayList<Participant>();
+    private List<Friend> userFriends = new ArrayList<Friend>();
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -45,8 +46,13 @@ public class CreateBetStep3Fragment extends Fragment {
 
         MainActivity activity = (MainActivity) getActivity();
 
-        betParticipants = activity.getBetCreationParticipants();
+        betSupporters = new ArrayList<Participant>();
+        betOpposers = new ArrayList<Participant>();
+        notars = new ArrayList<Participant>();
+        userFriends = new ArrayList<Friend>();
 
+        betParticipants = activity.getBetCreationParticipants();
+        userFriends = FriendFunctions.getUserFriendList();
 
         if(betParticipants.size() > 0){
             for(Participant p : betParticipants){
@@ -66,10 +72,10 @@ public class CreateBetStep3Fragment extends Fragment {
 
 
 
-/*
+
         Participant kay = new Participant("Kay Hartmann", "0x627306090abaB3A6e1400e9345bC60c78a8BEf57", true, false, BetRole.OWNER);
         kay.setProfilePicture(R.drawable.kay);
-
+/*
         Participant bruno = new Participant("Bruno Fischlin", "0xf17f52151EbEF6C7334FAD080c5704D77216b732", false, false, BetRole.OPPOSER);
         bruno.setProfilePicture(R.drawable.bruno);
 
@@ -92,6 +98,10 @@ public class CreateBetStep3Fragment extends Fragment {
         notars.add(suki);
 
 */
+        if(betParticipants.size() == 0) {
+            betSupporters.add(kay);
+        }
+
         final ListView betSupporterList = (ListView) rootView.findViewById(R.id.betSupporterList);
         CustomAdapterParticipantInfo adapter = new CustomAdapterParticipantInfo (activity, betSupporters);
         betSupporterList.setAdapter(adapter);
@@ -144,13 +154,14 @@ public class CreateBetStep3Fragment extends Fragment {
         });
 
         final Button addBetSupporter = (Button) rootView.findViewById(R.id.buttonAddBetSupporter);
-        goToStep4.setOnClickListener(new View.OnClickListener() {
+        addBetSupporter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
                 MainActivity activity = (MainActivity) getActivity();
 
-                final List<Friend> userFriends = FriendFunctions.getUserFriendList();
-                CharSequence friends[] = new CharSequence[userFriends.size()];
+
+                final List<Friend> userFriendsToChooseFrom = removeParticipatingFriendsFromList(userFriends);
+                CharSequence friends[] = new CharSequence[userFriendsToChooseFrom.size()];
                 for(int i = 0; i < userFriends.size(); i++){
                     friends[i] = userFriends.get(i).getUsername();
                 }
@@ -160,12 +171,72 @@ public class CreateBetStep3Fragment extends Fragment {
                 builder.setItems(friends, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Friend userToAdd = userFriends.get(which);
+                        Friend userToAdd = userFriendsToChooseFrom.get(which);
                         //String username, String address, boolean betAccepted, boolean voted, BetRole betRole) {
                         Participant participantToAdd = new Participant(userToAdd.getUsername(), userToAdd.getAddress(), false, false, BetRole.SUPPORTER);
                         participantToAdd.setProfilePicture(userToAdd.getProfilePicture());
 
                         betSupporters.add(participantToAdd);
+                        updateParticipantLists();
+                    }
+                });
+                builder.show();
+            }
+        });
+
+        final Button addBetOpposer = (Button) rootView.findViewById(R.id.buttonAddBetOpposer);
+        addBetOpposer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                MainActivity activity = (MainActivity) getActivity();
+
+                final List<Friend> userFriendsToChooseFrom = removeParticipatingFriendsFromList(userFriends);
+                CharSequence friends[] = new CharSequence[userFriendsToChooseFrom.size()];
+                for(int i = 0; i < userFriends.size(); i++){
+                    friends[i] = userFriends.get(i).getUsername();
+                }
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                builder.setTitle("Choose Participant");
+                builder.setItems(friends, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Friend userToAdd = userFriendsToChooseFrom.get(which);
+                        //String username, String address, boolean betAccepted, boolean voted, BetRole betRole) {
+                        Participant participantToAdd = new Participant(userToAdd.getUsername(), userToAdd.getAddress(), false, false, BetRole.OPPOSER);
+                        participantToAdd.setProfilePicture(userToAdd.getProfilePicture());
+
+                        betOpposers.add(participantToAdd);
+                        updateParticipantLists();
+                    }
+                });
+                builder.show();
+            }
+        });
+
+        final Button addBetNotar = (Button) rootView.findViewById(R.id.buttonAddBetNotar);
+        addBetNotar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                MainActivity activity = (MainActivity) getActivity();
+
+                final List<Friend> userFriendsToChooseFrom = removeParticipatingFriendsFromList(userFriends);
+                CharSequence friends[] = new CharSequence[userFriendsToChooseFrom.size()];
+                for(int i = 0; i < userFriends.size(); i++){
+                    friends[i] = userFriends.get(i).getUsername();
+                }
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                builder.setTitle("Choose Participant");
+                builder.setItems(friends, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Friend userToAdd = userFriendsToChooseFrom.get(which);
+                        //String username, String address, boolean betAccepted, boolean voted, BetRole betRole) {
+                        Participant participantToAdd = new Participant(userToAdd.getUsername(), userToAdd.getAddress(), false, false, BetRole.NOTAR);
+                        participantToAdd.setProfilePicture(userToAdd.getProfilePicture());
+
+                        notars.add(participantToAdd);
                         updateParticipantLists();
                     }
                 });
@@ -206,6 +277,42 @@ public class CreateBetStep3Fragment extends Fragment {
         ListView betNotarList = (ListView) rootView.findViewById(R.id.betNotarList);
         adapter = new CustomAdapterParticipantInfo (activity, notars);
         betNotarList.setAdapter(adapter);
+    }
+
+    private List<Friend> removeParticipatingFriendsFromList(List<Friend> friendList){
+        List<Friend> friendsToChoose = friendList;
+
+        for(int i = 0; i < betSupporters.size(); i++){
+            for(int n = 0; n < friendsToChoose.size(); n++){
+                if(betSupporters.get(i).getUsername().equals( friendsToChoose.get(n).getUsername())){
+                    friendsToChoose.remove(n);
+                    n = 0;
+                }
+            }
+
+        }
+
+        for(int i = 0; i < betOpposers.size(); i++){
+            for(int n = 0; n < friendsToChoose.size(); n++){
+                if(betOpposers.get(i).getUsername().equals( friendsToChoose.get(n).getUsername())){
+                    friendsToChoose.remove(n);
+                    n = 0;
+                }
+            }
+
+        }
+
+        for(int i = 0; i < notars.size(); i++){
+            for(int n = 0; n < friendsToChoose.size(); n++){
+                if(notars.get(i).getUsername().equals( friendsToChoose.get(n).getUsername())){
+                    friendsToChoose.remove(n);
+                    n = 0;
+                }
+            }
+
+        }
+
+        return friendsToChoose;
     }
 
 

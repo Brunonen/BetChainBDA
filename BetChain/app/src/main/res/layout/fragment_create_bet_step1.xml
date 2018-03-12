@@ -39,10 +39,12 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginTop="10dp"
                 android:textAlignment="center"
                 android:textColor="@android:color/black"
                 android:textSize="20sp"
                 android:textStyle="bold"
+                android:visibility="visible"
                 tools:text="CREATE NEW BET" />
 
             <TextView
@@ -60,7 +62,7 @@
                 android:ems="10"
                 android:inputType="textPersonName"
                 android:paddingTop="0dp"
-                />
+                android:textColorLink="@android:color/holo_orange_dark" />
 
 
 
