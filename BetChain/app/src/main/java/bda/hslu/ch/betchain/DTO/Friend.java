@@ -8,14 +8,16 @@ public class Friend {
 
     private String username ="";
     private int profilePicture = 0;
+    private String address = "";
 
     public Friend(){
 
     }
 
 
-    public Friend(String username, int profilePicture){
+    public Friend(String username, String address, int profilePicture){
         this.username = username;
+        this.address = address;
         this.profilePicture = profilePicture;
     }
 
@@ -28,6 +30,10 @@ public class Friend {
         this.profilePicture = profilePicture;
     }
 
+    public void setAddress(String address){
+        this.address = address;
+    }
+
     public String getUsername(){
         return this.username;
     }
@@ -35,4 +41,6 @@ public class Friend {
     public int getProfilePicture(){
         return this.profilePicture;
     }
+
+    public String getAddress(){ return this.address;}
 }
