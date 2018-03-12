@@ -11,8 +11,8 @@
 
         <ImageView
             android:id="@+id/listFriendInfoProfilePicture"
-            android:layout_width="27dp"
-            android:layout_height="27dp"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:layout_marginBottom="5dp"
@@ -31,7 +31,7 @@
             android:text="userName"
             android:textAlignment="textStart"
             android:textColor="@android:color/black"
-            android:textSize="18sp"
+            android:textSize="24sp"
             android:textStyle="bold"
             tools:layout_editor_absoluteX="0dp"
             tools:layout_editor_absoluteY="0dp"
@@ -39,8 +39,8 @@
 
         <Button
             android:id="@id/listUnfriendButton"
-            android:layout_width="27dp"
-            android:layout_height="27dp"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
             android:layout_alignParentEnd="true"
             android:layout_alignParentTop="true"
             android:layout_marginBottom="5dp"
