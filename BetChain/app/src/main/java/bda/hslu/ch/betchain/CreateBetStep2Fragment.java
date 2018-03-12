@@ -22,6 +22,15 @@ public class CreateBetStep2Fragment extends Fragment {
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_create_bet_step2, container, false);
 
+        MainActivity activity = (MainActivity) getActivity();
+
+        TextView betConditions = (TextView) rootView.findViewById(R.id.betConditions);
+        betConditions.setText(activity.getBetCreationBetConditions());
+
+        EditText betEntryFees = (EditText) rootView.findViewById(R.id.betEntryFee);
+        betEntryFees.setText(String.valueOf(activity.getBetCreationBetEntryFee()));
+
+
         final Button goToStep3 = (Button) rootView.findViewById(R.id.button_goToStep3);
         goToStep3.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -33,6 +42,14 @@ public class CreateBetStep2Fragment extends Fragment {
 
                 if(!betConditions.getText().equals("")){
                     Fragment step3 = new CreateBetStep3Fragment();
+
+                    activity.setBetCreationBetConditions(betConditions.getText().toString());
+
+                    try {
+                        activity.setBetCreationBetEntryFee(Float.valueOf(betEntryFees.getText().toString()));
+                    }catch(Exception e){
+                        Toast.makeText(activity ,"The bet Entry fee must be a number!",  Toast.LENGTH_SHORT).show();
+                    }
 
                     activity.changeFragment(step3);
                 }else{

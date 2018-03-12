@@ -1,6 +1,7 @@
 package bda.hslu.ch.betchain;
 
 import android.os.Bundle;
+import android.provider.Telephony;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.view.View;
@@ -15,8 +16,18 @@ import android.view.MenuItem;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.Fragment;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import bda.hslu.ch.betchain.DTO.Participant;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private String betCreationBetTitle = "";
+    private String betCreationBetConditions = "";
+    private float betCreationBetEntryFee = 0.0f;
+    private List<Participant> betCreationParticipants = new ArrayList<Participant>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,5 +126,45 @@ public class MainActivity extends AppCompatActivity
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).addToBackStack("LastFragment").commit();
 
+    }
+
+    public void setBetCreationBetTitle(String betTitle){
+        this.betCreationBetTitle = betTitle;
+    }
+
+    public void setBetCreationBetConditions(String betConditions){
+        this.betCreationBetConditions = betConditions;
+    }
+
+    public void setBetCreationBetEntryFee(float entryFee){
+        this.betCreationBetEntryFee = entryFee;
+    }
+
+    public void setBetCreationParticipants(List<Participant> participants){
+        this.betCreationParticipants =participants;
+    }
+
+    public String getBetCreationBetTitle(){
+        return this.betCreationBetTitle;
+    }
+
+    public String getBetCreationBetConditions(){
+        return this.betCreationBetConditions;
+    }
+
+    public float getBetCreationBetEntryFee(){
+        return this.betCreationBetEntryFee;
+    }
+
+    public List<Participant> getBetCreationParticipants(){
+        return this.betCreationParticipants;
+    }
+
+    public void addParticipantToList(Participant part){
+        this.betCreationParticipants.add(part);
+    }
+
+    public void removeParticipantFromList(Participant part){
+        this.betCreationParticipants.remove(part);
     }
 }

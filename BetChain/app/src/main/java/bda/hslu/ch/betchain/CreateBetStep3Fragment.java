@@ -49,7 +49,7 @@ public class CreateBetStep3Fragment extends Fragment {
 
         List<Participant> betSupporters = new ArrayList<Participant>();
         List<Participant> betOpposers = new ArrayList<Participant>();
-        List<Participant> notars = new ArrayList<Participant>();;
+        List<Participant> notars = new ArrayList<Participant>();
 
         betSupporters.add(kay);
         betSupporters.add(alex);

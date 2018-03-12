@@ -54,7 +54,7 @@ public class CustomAdapterParticipantInfo extends ArrayAdapter<Participant> {
         if(tmp.getInfoIcon() != 0) {
             infoIcon.setImageResource(tmp.getInfoIcon());
         }else{
-            infoIcon.setVisibility(0);
+            infoIcon.setVisibility(View.GONE);
         }
 
         return rowView;

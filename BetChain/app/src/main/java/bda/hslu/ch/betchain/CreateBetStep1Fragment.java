@@ -20,6 +20,10 @@ public class CreateBetStep1Fragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_create_bet_step1, container, false);
+        MainActivity activity = (MainActivity) getActivity();
+
+        TextView betTitle = (TextView) rootView.findViewById(R.id.inputBetTitle);
+        betTitle.setText(activity.getBetCreationBetTitle());
 
         final Button startBetCreation = (Button) rootView.findViewById(R.id.createBetButtonStart);
         startBetCreation.setOnClickListener(new View.OnClickListener() {
@@ -30,7 +34,7 @@ public class CreateBetStep1Fragment extends Fragment {
                 MainActivity activity = (MainActivity) getActivity();
                 if (betTitle.getText() != "" && betTitle.getText().length() >= 8) {
 
-
+                    activity.setBetCreationBetTitle(betTitle.getText().toString());
                     Fragment step2 = new CreateBetStep2Fragment();
 
                     activity.changeFragment(step2);

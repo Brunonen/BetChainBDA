@@ -11,8 +11,8 @@
 
         <ImageView
             android:id="@+id/listPartInfoProfilePicture"
-            android:layout_width="55dp"
-            android:layout_height="55dp"
+            android:layout_width="27dp"
+            android:layout_height="27dp"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             app:srcCompat="@drawable/ic_blank_avatar" />
@@ -20,19 +20,20 @@
         <TextView
             android:id="@+id/listPartInfoUserRole"
             android:layout_width="fill_parent"
-            android:layout_height="20dp"
+            android:layout_height="13dp"
             android:layout_below="@+id/listPartInfoUsername"
             android:layout_marginLeft="10dp"
             android:layout_toEndOf="@+id/listPartInfoProfilePicture"
             android:layout_toStartOf="@+id/listPartInfoInfoIcon"
             android:text="userrole"
+            android:textSize="10sp"
             android:textStyle="italic"
             tools:text="User Role" />
 
         <TextView
             android:id="@+id/listPartInfoUsername"
             android:layout_width="fill_parent"
-            android:layout_height="35dp"
+            android:layout_height="13dp"
             android:layout_alignParentTop="true"
             android:layout_marginLeft="10dp"
             android:layout_toEndOf="@+id/listPartInfoProfilePicture"
@@ -40,14 +41,14 @@
             android:gravity="center_vertical"
             android:text="userName"
             android:textColor="@android:color/black"
-            android:textSize="18sp"
+            android:textSize="11sp"
             android:textStyle="bold"
             tools:text="Username" />
 
         <ImageView
             android:id="@+id/listPartInfoInfoIcon"
-            android:layout_width="55dp"
-            android:layout_height="55dp"
+            android:layout_width="27dp"
+            android:layout_height="27dp"
             android:layout_alignParentEnd="true"
             android:layout_alignParentTop="true"
             app:srcCompat="@drawable/ic_menu_createbet" />
