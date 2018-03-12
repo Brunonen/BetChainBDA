@@ -4,17 +4,17 @@ package bda.hslu.ch.betchain.DTO;
  * Created by Kay on 12/03/2018.
  */
 
-public class Friends {
+public class Friend {
 
     private String username ="";
     private int profilePicture = 0;
 
-    public Friends(){
+    public Friend(){
 
     }
 
 
-    public Friends(String username, int profilePicture){
+    public Friend(String username, int profilePicture){
         this.username = username;
         this.profilePicture = profilePicture;
     }
