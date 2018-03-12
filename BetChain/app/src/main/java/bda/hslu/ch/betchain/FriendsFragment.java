@@ -29,7 +29,7 @@ public class FriendsFragment extends Fragment {
         Friend alex = new Friend("Alex Neher", R.drawable.alex);
         Friend suki = new Friend("Suki Kasipillai", R.drawable.suki);
 
-        List<Friend> friends = new ArrayList<Friend>();
+        List<Friend> friends = new ArrayList<>();
 
         friends.add(kay);
         friends.add(bruno);
