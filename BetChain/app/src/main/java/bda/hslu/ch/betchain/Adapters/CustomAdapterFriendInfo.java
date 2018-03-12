@@ -41,7 +41,7 @@ public class CustomAdapterFriendInfo extends  ArrayAdapter<Friend> {
         TextView username = (TextView) rowView.findViewById(R.id.listFriendInfoUsername);
         ImageView profilePicture = (ImageView) rowView.findViewById(R.id.listFriendInfoProfilePicture);
         Button unfriendButton = (Button) rowView.findViewById(R.id.listUnfriendButton);
-        Friend tmp = items.get(position);
+        final Friend tmp = items.get(position);
 
         username.setText(tmp.getUsername());
 
@@ -50,6 +50,20 @@ public class CustomAdapterFriendInfo extends  ArrayAdapter<Friend> {
         }else{
             profilePicture.setImageResource(R.drawable.ic_blank_avatar);
         }
+
+
+        unfriendButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+
+
+                System.out.println(tmp.getUsername());
+
+
+
+            }
+        });
+
 
         return rowView;
     }

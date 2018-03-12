@@ -35,8 +35,7 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="Username"
-            android:inputType="textPersonName"
-            android:textColorLink="@android:color/holo_orange_dark" />
+            android:inputType="textPersonName" />
 
         <EditText
             android:id="@+id/editText2"
@@ -44,8 +43,7 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="Password"
-            android:inputType="textPassword"
-            android:textColorLink="@android:color/holo_orange_dark" />
+            android:inputType="textPassword" />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -57,7 +55,6 @@
                 android:layout_height="wrap_content"
                 android:layout_above="@+id/button4"
                 android:layout_centerHorizontal="true"
-                android:elevation="0dp"
                 android:text="LOGIN"
                 android:layout_centerInParent="true" />
 
@@ -65,12 +62,12 @@
                 android:id="@+id/button4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="18dp"
-                android:background="@android:color/white"
-                android:text="REGISTER"
-                android:layout_centerInParent="true"
                 android:layout_alignParentBottom="true"
-                android:layout_alignStart="@+id/button3" />
+                android:layout_alignStart="@+id/button3"
+                android:layout_centerInParent="true"
+                android:layout_marginBottom="18dp"
+                android:background="@android:color/transparent"
+                android:text="REGISTER" />
         </RelativeLayout>
 
     </LinearLayout>

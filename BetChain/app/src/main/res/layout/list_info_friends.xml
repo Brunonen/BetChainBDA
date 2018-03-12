@@ -15,33 +15,36 @@
             android:layout_height="27dp"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
+            android:layout_marginBottom="5dp"
             app:srcCompat="@drawable/ic_blank_avatar" />
 
         <TextView
             android:id="@+id/listFriendInfoUsername"
             android:layout_width="fill_parent"
             android:layout_height="13dp"
-            android:layout_alignBottom="@+id/listPartInfoInfoIcon"
+            android:layout_alignBottom="@+id/listFriendInfoProfilePicture"
             android:layout_alignParentTop="true"
-            android:layout_marginLeft="10dp"
-            android:layout_toEndOf="@+id/listPartInfoProfilePicture"
-            android:layout_toStartOf="@+id/listPartInfoInfoIcon"
+            android:layout_marginLeft="5dp"
+            android:layout_toEndOf="@+id/listFriendInfoProfilePicture"
+            android:layout_toStartOf="@+id/listUnfriendButton"
             android:gravity="center_vertical"
             android:text="userName"
+            android:textAlignment="textStart"
             android:textColor="@android:color/black"
             android:textSize="18sp"
             android:textStyle="bold"
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="0dp"
             tools:text="Username" />
 
         <Button
-            android:id="@+id/listUnfriendButton"
+            android:id="@id/listUnfriendButton"
             android:layout_width="27dp"
             android:layout_height="27dp"
             android:layout_alignParentEnd="true"
             android:layout_alignParentTop="true"
-            android:background="@drawable/ic_minus"
-            />
-
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/ic_minus" />
 
 
     </RelativeLayout>
