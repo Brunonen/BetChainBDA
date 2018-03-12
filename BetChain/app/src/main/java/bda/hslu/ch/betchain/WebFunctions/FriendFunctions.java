@@ -7,7 +7,7 @@ import bda.hslu.ch.betchain.DTO.Friend;
 import bda.hslu.ch.betchain.R;
 
 /**
- * Created by ssj10 on 12/03/2018.
+ * Created by Bruno Fischlin on 12/03/2018.
  */
 
 public class FriendFunctions {

@@ -1,5 +1,7 @@
 package bda.hslu.ch.betchain;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.provider.Telephony;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -20,11 +22,18 @@ import java.util.ArrayList;
 import bda.hslu.ch.betchain.Adapters.CustomAdapterParticipantInfo;
 import bda.hslu.ch.betchain.DTO.BetRole;
 import bda.hslu.ch.betchain.DTO.Participant;
+import bda.hslu.ch.betchain.DTO.Friend;
+import bda.hslu.ch.betchain.WebFunctions.FriendFunctions;
 
 
 public class CreateBetStep3Fragment extends Fragment {
 
     private View rootView;
+    private List<Participant> betParticipants = new ArrayList<Participant>();
+
+    private List<Participant> betSupporters = new ArrayList<Participant>();
+    private List<Participant> betOpposers = new ArrayList<Participant>();
+    private List<Participant> notars = new ArrayList<Participant>();
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -36,14 +45,11 @@ public class CreateBetStep3Fragment extends Fragment {
 
         MainActivity activity = (MainActivity) getActivity();
 
-        final List<Participant> participantList = activity.getBetCreationParticipants();
+        betParticipants = activity.getBetCreationParticipants();
 
-        List<Participant> betSupporters = new ArrayList<Participant>();
-        List<Participant> betOpposers = new ArrayList<Participant>();
-        List<Participant> notars = new ArrayList<Participant>();
 
-        if(participantList.size() > 0){
-            for(Participant p : participantList){
+        if(betParticipants.size() > 0){
+            for(Participant p : betParticipants){
                 switch(p.getBetRole()){
                     case OWNER:     betSupporters.add(p);
                                     break;
@@ -137,6 +143,36 @@ public class CreateBetStep3Fragment extends Fragment {
             }
         });
 
+        final Button addBetSupporter = (Button) rootView.findViewById(R.id.buttonAddBetSupporter);
+        goToStep4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                MainActivity activity = (MainActivity) getActivity();
+
+                final List<Friend> userFriends = FriendFunctions.getUserFriendList();
+                CharSequence friends[] = new CharSequence[userFriends.size()];
+                for(int i = 0; i < userFriends.size(); i++){
+                    friends[i] = userFriends.get(i).getUsername();
+                }
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                builder.setTitle("Choose Participant");
+                builder.setItems(friends, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Friend userToAdd = userFriends.get(which);
+                        //String username, String address, boolean betAccepted, boolean voted, BetRole betRole) {
+                        Participant participantToAdd = new Participant(userToAdd.getUsername(), userToAdd.getAddress(), false, false, BetRole.SUPPORTER);
+                        participantToAdd.setProfilePicture(userToAdd.getProfilePicture());
+
+                        betSupporters.add(participantToAdd);
+                        updateParticipantLists();
+                    }
+                });
+                builder.show();
+            }
+        });
+
         return rootView;
     }
 
@@ -154,6 +190,22 @@ public class CreateBetStep3Fragment extends Fragment {
         }
 
         return participantList;
+    }
+
+    private void updateParticipantLists(){
+        MainActivity activity = (MainActivity) getActivity();
+
+        ListView betSupporterList = (ListView) rootView.findViewById(R.id.betSupporterList);
+        CustomAdapterParticipantInfo adapter = new CustomAdapterParticipantInfo (activity, betSupporters);
+        betSupporterList.setAdapter(adapter);
+
+        ListView betOpposerList = (ListView) rootView.findViewById(R.id.betOpposerList);
+        adapter = new CustomAdapterParticipantInfo (activity, betOpposers);
+        betOpposerList.setAdapter(adapter);
+
+        ListView betNotarList = (ListView) rootView.findViewById(R.id.betNotarList);
+        adapter = new CustomAdapterParticipantInfo (activity, notars);
+        betNotarList.setAdapter(adapter);
     }
 
 

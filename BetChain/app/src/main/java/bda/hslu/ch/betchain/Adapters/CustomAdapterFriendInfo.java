@@ -23,7 +23,7 @@ public class CustomAdapterFriendInfo extends  ArrayAdapter<Friend> {
     private final List<Friend> items;
 
 
-    public CustomAdapterFriendInfo(Activity content, List<Friend> items){
+    public CustomAdapterFriendInfo(Activity context, List<Friend> items){
 
         super(context, R.layout.list_info_friends, items);
         this.context = context;
