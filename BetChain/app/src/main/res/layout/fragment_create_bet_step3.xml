@@ -139,14 +139,6 @@
                     android:layout_alignParentEnd="true"
                     android:text="Next" />
 
-                <Button
-                    android:id="@+id/step2BackButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
-                    android:background="@android:color/white"
-                    android:text="Back"
-                    android:textColor="@color/colorPrimary" />
             </RelativeLayout>
 
         </LinearLayout>

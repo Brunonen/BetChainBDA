@@ -45,7 +45,7 @@
                 android:text="Bet Title" />
 
             <EditText
-                android:id="@+id/editText3"
+                android:id="@+id/inputBetTitleConfirmation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
@@ -59,7 +59,7 @@
                 android:text="Conditions" />
 
             <EditText
-                android:id="@+id/editText4"
+                android:id="@+id/inputBetConditionsConfirmation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
@@ -73,7 +73,7 @@
                 android:text="Entry Fee" />
 
             <EditText
-                android:id="@+id/editText5"
+                android:id="@+id/inputEntryFeeConfirmation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
@@ -95,16 +95,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="bottom">
-
-                <Button
-                    android:id="@+id/button_goBackToStep3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@android:color/white"
-                    android:gravity="center_vertical|center_horizontal|start"
-                    android:text="Back"
-                    android:textAlignment="center"
-                    android:textColor="@color/colorPrimary" />
 
                 <Button
                     android:id="@+id/button_confirmBetCreation"

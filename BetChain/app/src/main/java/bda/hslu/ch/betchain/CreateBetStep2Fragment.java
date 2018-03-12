@@ -58,7 +58,6 @@ public class CreateBetStep2Fragment extends Fragment {
             }
         });
 
-
         return rootView;
     }
 

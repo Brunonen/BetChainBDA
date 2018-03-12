@@ -31,6 +31,20 @@ public class CreateBetStep4Fragment extends Fragment {
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_create_bet_step4, container, false);
 
+        MainActivity activity = (MainActivity) getActivity();
+
+        TextView betTitle = (TextView) rootView.findViewById(R.id.inputBetTitleConfirmation);
+        betTitle.setText(activity.getBetCreationBetTitle());
+
+        TextView betConditions = (TextView) rootView.findViewById(R.id.inputBetConditionsConfirmation);
+        betConditions.setText(activity.getBetCreationBetConditions());
+
+        EditText betEntryFees = (EditText) rootView.findViewById(R.id.inputEntryFeeConfirmation);
+        betEntryFees.setText(String.valueOf(activity.getBetCreationBetEntryFee()));
+
+        final List<Participant> participantList = activity.getBetCreationParticipants();
+
+        /*
         Participant kay = new Participant("Kay Hartmann", "0x627306090abaB3A6e1400e9345bC60c78a8BEf57", true, false, BetRole.OWNER);
         kay.setProfilePicture(R.drawable.kay);
 
@@ -56,13 +70,11 @@ public class CreateBetStep4Fragment extends Fragment {
         participants.add(damir);
 
         participants.add(suki);
+    */
 
-
-        MainActivity activity = (MainActivity) getActivity();
-        ListView betSupporterList = (ListView) rootView.findViewById(R.id.betParticipantList);
-        CustomAdapterParticipantInfo adapter = new CustomAdapterParticipantInfo (activity, participants);
-        betSupporterList.setAdapter(adapter);
-
+        ListView betParticipantListView = (ListView) rootView.findViewById(R.id.betParticipantList);
+        CustomAdapterParticipantInfo adapter = new CustomAdapterParticipantInfo (activity, participantList);
+        betParticipantListView.setAdapter(adapter);
 
         return rootView;
     }

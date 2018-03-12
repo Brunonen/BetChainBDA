@@ -29,9 +29,38 @@ public class CreateBetStep3Fragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+
+
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_create_bet_step3, container, false);
 
+        MainActivity activity = (MainActivity) getActivity();
+
+        final List<Participant> participantList = activity.getBetCreationParticipants();
+
+        List<Participant> betSupporters = new ArrayList<Participant>();
+        List<Participant> betOpposers = new ArrayList<Participant>();
+        List<Participant> notars = new ArrayList<Participant>();
+
+        if(participantList.size() > 0){
+            for(Participant p : participantList){
+                switch(p.getBetRole()){
+                    case OWNER:     betSupporters.add(p);
+                                    break;
+                    case SUPPORTER: betSupporters.add(p);
+                                    break;
+                    case OPPOSER:   betOpposers.add(p);
+                                    break;
+                    case NOTAR:     notars.add(p);
+                                    break;
+
+                }
+            }
+        }
+
+
+
+/*
         Participant kay = new Participant("Kay Hartmann", "0x627306090abaB3A6e1400e9345bC60c78a8BEf57", true, false, BetRole.OWNER);
         kay.setProfilePicture(R.drawable.kay);
 
@@ -47,9 +76,6 @@ public class CreateBetStep3Fragment extends Fragment {
         Participant suki = new Participant("Suki Kasipillai", "0x0d1d4e623D10F9FBA5Db95830F7d3839406C6AF2", false, false, BetRole.NOTAR);
         suki.setProfilePicture(R.drawable.suki);
 
-        List<Participant> betSupporters = new ArrayList<Participant>();
-        List<Participant> betOpposers = new ArrayList<Participant>();
-        List<Participant> notars = new ArrayList<Participant>();
 
         betSupporters.add(kay);
         betSupporters.add(alex);
@@ -59,9 +85,8 @@ public class CreateBetStep3Fragment extends Fragment {
 
         notars.add(suki);
 
-
-        MainActivity activity = (MainActivity) getActivity();
-        ListView betSupporterList = (ListView) rootView.findViewById(R.id.betSupporterList);
+*/
+        final ListView betSupporterList = (ListView) rootView.findViewById(R.id.betSupporterList);
         CustomAdapterParticipantInfo adapter = new CustomAdapterParticipantInfo (activity, betSupporters);
         betSupporterList.setAdapter(adapter);
 
@@ -80,9 +105,34 @@ public class CreateBetStep3Fragment extends Fragment {
                 MainActivity activity = (MainActivity) getActivity();
                 //Fragment step2 = new CreateBetStep2Fragment();
 
-                Fragment step4 = new CreateBetStep4Fragment();
+                List<Participant> betParticipants = new ArrayList<Participant>();
 
-                activity.changeFragment(step4);
+                List<Participant> currentBetSupporters = getParticipantsFromListView((ListView) rootView.findViewById(R.id.betSupporterList));
+                for(Participant p : currentBetSupporters){
+                    betParticipants.add(p);
+                }
+
+                List<Participant> currentBetOpposers = getParticipantsFromListView((ListView) rootView.findViewById(R.id.betOpposerList));
+                for(Participant p : currentBetOpposers){
+                    betParticipants.add(p);
+                }
+
+                List<Participant> currentBetNotars = getParticipantsFromListView((ListView) rootView.findViewById(R.id.betNotarList));
+                for(Participant p : currentBetNotars){
+                    betParticipants.add(p);
+                }
+
+                if(currentBetSupporters.size() > 0 && currentBetOpposers.size() > 0){
+
+                    activity.setBetCreationParticipants(betParticipants);
+                    Fragment step4 = new CreateBetStep4Fragment();
+
+                    activity.changeFragment(step4);
+                }else{
+                    Toast.makeText(activity ,"A bet must at least have 1 Supporter and 1 Opposer",  Toast.LENGTH_SHORT).show();
+                }
+
+
 
             }
         });
@@ -90,6 +140,21 @@ public class CreateBetStep3Fragment extends Fragment {
         return rootView;
     }
 
+
+    private List<Participant> getParticipantsFromListView(ListView listView){
+
+        List<Participant> participantList = new ArrayList<Participant>();
+
+        ListView participantListView = listView;
+        CustomAdapterParticipantInfo adapter = (CustomAdapterParticipantInfo) participantListView.getAdapter();
+        if(adapter.getCount() > 0){
+            for(int i = 0; i < adapter.getCount(); i++){
+                participantList.add(adapter.getItem(i));
+            }
+        }
+
+        return participantList;
+    }
 
 
 }
