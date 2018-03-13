@@ -44,7 +44,7 @@
                 android:layout_height="60dp"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentEnd="true"
-                android:layout_marginBottom="100dp"
+                android:layout_marginBottom="31dp"
                 android:background="@drawable/round_button"
                 android:elevation="24dp"
                 android:text="+"

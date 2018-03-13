@@ -50,24 +50,25 @@
             android:layout_height="match_parent">
 
             <Button
-                android:id="@+id/button3"
+                android:id="@+id/loginButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_above="@+id/button4"
+                android:layout_above="@+id/registerButton"
                 android:layout_centerHorizontal="true"
                 android:text="LOGIN"
                 android:layout_centerInParent="true" />
 
             <Button
-                android:id="@+id/button4"
+                android:id="@+id/registerButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:layout_alignStart="@+id/button3"
+                android:layout_alignStart="@+id/loginButton"
                 android:layout_centerInParent="true"
                 android:layout_marginBottom="18dp"
                 android:background="@android:color/transparent"
-                android:text="REGISTER" />
+                android:text="REGISTER"
+                android:textColor="@color/colorPrimary" />
         </RelativeLayout>
 
     </LinearLayout>

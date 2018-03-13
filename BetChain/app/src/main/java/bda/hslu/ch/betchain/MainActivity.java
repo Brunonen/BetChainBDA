@@ -107,7 +107,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.menu_friends) {
             fragment = new FriendsFragment();
         } else if (id == R.id.menu_account) {
-            fragment = new LoginFragment();
+            fragment = new AccountInfoFragment();
         } else if (id == R.id.menu_settings) {
             fragment = new LoginFragment();
         } else if (id == R.id.menu_logout) {

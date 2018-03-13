@@ -36,7 +36,19 @@ public class FriendsFragment extends Fragment {
         friendsList.setAdapter(adapter);
 
 
+        Button addFriendButton = (Button) rootView.findViewById(R.id.addFriendsButton);
 
+        addFriendButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+
+                Fragment addFriendFragment = new AddFriendFragment();
+                MainActivity activity = (MainActivity) getActivity();
+                activity.changeFragment(addFriendFragment);
+
+
+            }
+        });
 
         return rootView;
     }

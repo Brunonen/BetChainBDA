@@ -10,16 +10,16 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 
-public class LoginFragment extends Fragment {
+public class QrScannerFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View root = inflater.inflate(R.layout.fragment_login, container, false);
+        View root = inflater.inflate(R.layout.fragment_qr_scanner, container, false);
 
 
-        Button registerButton = (Button) root.findViewById(R.id.registerButton);
+        /*Button registerButton = (Button) root.findViewById(R.id.registerButton);
 
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -31,7 +31,7 @@ public class LoginFragment extends Fragment {
 
 
             }
-        });
+        });*/
 
 
         return root;
