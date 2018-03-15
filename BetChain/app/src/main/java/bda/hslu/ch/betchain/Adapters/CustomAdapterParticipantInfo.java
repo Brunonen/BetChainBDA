@@ -1,7 +1,6 @@
 package bda.hslu.ch.betchain.Adapters;
 
 import android.app.Activity;
-import android.media.Image;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,7 +35,7 @@ public class CustomAdapterParticipantInfo extends ArrayAdapter<Participant> {
         LayoutInflater inflater = context.getLayoutInflater();
         View rowView = inflater.inflate(R.layout.list_info_participant, null, true);
 
-        TextView username = (TextView) rowView.findViewById(R.id.listPartInfoUsername);
+        TextView username = (TextView) rowView.findViewById(R.id.listPartInfoBetTitle);
         TextView userRole = (TextView) rowView.findViewById(R.id.listPartInfoUserRole);
         ImageView profilePicture = (ImageView) rowView.findViewById(R.id.listPartInfoProfilePicture);
         ImageView infoIcon = (ImageView) rowView.findViewById(R.id.listPartInfoInfoIcon);
