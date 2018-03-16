@@ -102,9 +102,16 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentTop="true"
+                    android:layout_marginTop="7dp"
+                    android:background="@drawable/confirmation_button"
                     android:gravity="right|center_vertical|center_horizontal|center|end"
+                    android:shadowColor="#A8A8A8"
+                    android:shadowDx="0"
+                    android:shadowDy="0"
+                    android:shadowRadius="5"
                     android:text="Confirm"
-                    android:textAlignment="center" />
+                    android:textAlignment="center"
+                    android:textColor="#FFFFFF" />
             </RelativeLayout>
 
         </LinearLayout>
