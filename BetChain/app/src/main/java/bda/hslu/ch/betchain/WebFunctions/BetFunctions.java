@@ -9,6 +9,7 @@ import bda.hslu.ch.betchain.DTO.Bet;
 import bda.hslu.ch.betchain.DTO.BetRole;
 import bda.hslu.ch.betchain.DTO.BetState;
 import bda.hslu.ch.betchain.DTO.Participant;
+import bda.hslu.ch.betchain.R;
 
 /**
  * Created by Bruno Fischlin on 15/03/2018.
@@ -21,11 +22,20 @@ public class BetFunctions {
 
         List<Participant> participants = new ArrayList<Participant>();
         //BetState betState, String betTitle, String betConditions, float betEntryFee, float betPrizePool, List<Participant> participants, String betAddress
-        userBets.add(new Bet(BetState.PENDING, "Kay's Bet", "Kay bets that he can chuck an entire Pitcher in less then 3 seconds.", 2.0f, 8.0f, getParticipantsBet1() , "sldkslkdsldksldksl"));
-        userBets.add(new Bet(BetState.LOCKED, "Ice Bucket", "Bruno bets he completes the Ice Bucket challenge with 5 Buckets and no shirt in winter.", 10.0f, 40.0f, getParticipantsBet2() , "sldkslkdsldksldksl"));
-        userBets.add(new Bet(BetState.EVALUATION, "Test Bet", "Test", 0.5f, 1.5f, getParticipantsBet3() , "sldkslkdsldksldksl"));
+        userBets.add(new Bet(BetState.PENDING, "Kays Bet", "Kay bets that he can chuck an entire Pitcher in less then 3 seconds.", 2.0f, 8.0f, getParticipantsBet1() , "addressBet1", false));
+        userBets.add(new Bet(BetState.LOCKED, "Ice Bucket", "Bruno bets he completes the Ice Bucket challenge with 5 Buckets and no shirt in winter.", 10.0f, 40.0f, getParticipantsBet2() , "addressBet2", false));
+        userBets.add(new Bet(BetState.EVALUATION, "Test Bet", "Test", 0.5f, 1.5f, getParticipantsBet3() , "addressBet3", false));
 
         return userBets;
+    }
+
+    public static Bet getBetFromAddress(String address){
+        switch(address){
+            case "addressBet1": return new Bet(BetState.PENDING, "Kays Bet", "Kay bets that he can chuck an entire Pitcher in less then 3 seconds.", 2.0f, 8.0f, getParticipantsBet1() , "addressBet1", false);
+            case "addressBet2": return new Bet(BetState.LOCKED, "Ice Bucket", "Bruno bets he completes the Ice Bucket challenge with 5 Buckets and no shirt in winter.", 10.0f, 40.0f, getParticipantsBet2() , "addressBet2", false);
+            case "addressBet3": return new Bet(BetState.EVALUATION, "Test Bet", "Test", 0.5f, 1.5f, getParticipantsBet2() , "addressBet3", false);
+            default : return new Bet(BetState.EVALUATION, "Test Bet", "Test", 0.5f, 1.5f, getParticipantsBet3() , "addressBet3", false);
+        }
     }
 
     private static List<Participant> getParticipantsBet1(){

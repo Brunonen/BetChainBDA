@@ -56,7 +56,7 @@ public class CustomAdapterMyBetInfo extends ArrayAdapter<Bet>{
                 activity.setSelectedBetAddress(tmp.getBetAddress());
 
                 activity.changeFragment(new BetInfoFragment());
-                //System.out.println(tmp.getBetAddress());
+                System.out.println(activity.getSelectedBetAddress());
             }
         });
 

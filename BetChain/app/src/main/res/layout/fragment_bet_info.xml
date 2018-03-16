@@ -6,4 +6,219 @@
 
     <!-- TODO: Update blank fragment layout -->
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/betInfoBetTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="dsd"
+            android:textAlignment="center"
+            android:textColor="@android:color/black"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/textView27"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="Conditions"
+            android:textStyle="italic" />
+
+        <EditText
+            android:id="@+id/betInfoBetConditions"
+            android:layout_width="match_parent"
+            android:layout_height="65dp"
+            android:ems="10"
+            android:inputType="textMultiLine" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/textView32"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Entry Fee"
+                android:textStyle="italic" />
+
+            <TextView
+                android:id="@+id/textView33"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Prize Pool"
+                android:textAllCaps="false"
+                android:textStyle="italic" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/betInfoBetEntryFee"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:text="Name" />
+
+            <EditText
+                android:id="@+id/betInfoBetPrizePool"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:text="Name" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/textView28"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="Status"
+            android:textStyle="italic" />
+
+        <EditText
+            android:id="@+id/betInfoBetStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text="Name" />
+
+        <TextView
+            android:id="@+id/textView34"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="Participants"
+            android:textStyle="italic" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ListView
+                android:id="@+id/betInfoBetParticpantsList"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true" />
+
+            <Button
+                android:id="@+id/buttonBetInfoStartVote"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/buttonBetInfoStartBet"
+                android:layout_alignBottom="@+id/buttonBetInfoStartBet"
+                android:layout_alignStart="@+id/buttonBetInfoStartBet"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/confirmation_button"
+                android:shadowColor="#A8A8A8"
+                android:shadowDx="0"
+                android:shadowDy="0"
+                android:shadowRadius="5"
+                android:text="Start Vote"
+                android:textColor="#FFFFFF" />
+
+            <Button
+                android:id="@+id/buttonBetInfoBetFailure"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/buttonBetInfoRetreat"
+                android:layout_alignBottom="@+id/buttonBetInfoRetreat"
+                android:layout_alignEnd="@+id/buttonBetInfoRetreat"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/bet_failure_button"
+                android:shadowColor="#A8A8A8"
+                android:shadowDx="0"
+                android:shadowDy="0"
+                android:shadowRadius="5"
+                android:text="Bet Failure"
+                android:textColor="#000000" />
+
+            <Button
+                android:id="@+id/buttonBetInfoBetSuccess"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/buttonBetInfoAcceptBet"
+                android:layout_alignStart="@+id/buttonBetInfoAcceptBet"
+                android:layout_alignTop="@+id/buttonBetInfoAcceptBet"
+                android:background="@drawable/bet_success_button"
+                android:shadowColor="#A8A8A8"
+                android:shadowDx="0"
+                android:shadowDy="0"
+                android:shadowRadius="5"
+                android:text="Bet Scucess"
+                android:textColor="#000000" />
+
+            <Button
+                android:id="@+id/buttonBetInfoRetreat"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/buttonBetInfoStartBet"
+                android:layout_alignBottom="@+id/buttonBetInfoStartBet"
+                android:layout_alignParentEnd="true"
+                android:layout_marginRight="15dp"
+                android:layout_marginTop="5dp"
+                android:background="@android:color/transparent"
+                android:text="Retreat"
+                android:textColor="@color/colorPrimary"
+                android:visibility="invisible" />
+
+            <Button
+                android:id="@+id/buttonBetInfoStartBet"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/buttonBetInfoAcceptBet"
+                android:layout_alignBottom="@+id/buttonBetInfoAcceptBet"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/confirmation_button"
+                android:shadowColor="#A8A8A8"
+                android:shadowDx="0"
+                android:shadowDy="0"
+                android:shadowRadius="5"
+                android:text="Start Bet"
+                android:textColor="#FFFFFF"
+                android:visibility="invisible" />
+
+            <Button
+                android:id="@+id/buttonBetInfoAcceptBet"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginBottom="5dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/confirmation_button"
+                android:shadowColor="#A8A8A8"
+                android:shadowDx="0"
+                android:shadowDy="0"
+                android:shadowRadius="5"
+                android:text="Accept Bet"
+                android:textColor="#FFFFFF"
+                android:visibility="invisible" />
+
+        </RelativeLayout>
+
+    </LinearLayout>
 </FrameLayout>

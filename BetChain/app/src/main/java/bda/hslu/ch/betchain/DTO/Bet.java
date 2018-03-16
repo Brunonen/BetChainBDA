@@ -16,6 +16,7 @@ public class Bet {
     private float betEntryFee;
     private float betPrizePool;
     private String betAddress;
+    private boolean betSuccessful;
 
     public Bet(){
         this.betState = BetState.PENDING;
@@ -27,7 +28,7 @@ public class Bet {
         this.betAddress = "";
     }
 
-    public Bet(BetState betState, String betTitle, String betConditions, float betEntryFee, float betPrizePool, List<Participant> participants, String betAddress){
+    public Bet(BetState betState, String betTitle, String betConditions, float betEntryFee, float betPrizePool, List<Participant> participants, String betAddress, boolean betSuccessful){
         this.betState = betState;
         this.betTitle = betTitle;
         this.betConditions = betConditions;
@@ -35,6 +36,7 @@ public class Bet {
         this.betEntryFee = betEntryFee;
         this.betPrizePool = betPrizePool;
         this.betAddress = betAddress;
+        this.betSuccessful = betSuccessful;
     }
 
     public void setBetState(BetState betState) {
@@ -91,5 +93,13 @@ public class Bet {
 
     public String getBetAddress() {
         return betAddress;
+    }
+
+    public boolean isBetSuccessful() {
+        return betSuccessful;
+    }
+
+    public void setBetSuccessful(boolean betSuccessful) {
+        this.betSuccessful = betSuccessful;
     }
 }
