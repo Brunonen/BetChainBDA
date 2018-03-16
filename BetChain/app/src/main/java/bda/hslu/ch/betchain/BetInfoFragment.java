@@ -15,6 +15,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.List;
+
 import bda.hslu.ch.betchain.Adapters.CustomAdapterParticipantInfo;
 import bda.hslu.ch.betchain.DTO.Bet;
 import bda.hslu.ch.betchain.DTO.BetRole;
@@ -33,6 +35,7 @@ public class BetInfoFragment extends Fragment {
         rootView = inflater.inflate(R.layout.fragment_bet_info, container, false);
         MainActivity activity = (MainActivity) getActivity();
         Bet selectedBetInfo = BetFunctions.getBetFromAddress(activity.getSelectedBetAddress());
+        selectedBetInfo.setParticipants(addProfilePictures(selectedBetInfo.getParticipants()));
 
         TextView betTitle = (TextView) rootView.findViewById(R.id.betInfoBetTitle);
         betTitle.setText(selectedBetInfo.getBetTitle());
@@ -41,10 +44,10 @@ public class BetInfoFragment extends Fragment {
         betConditions.setText(selectedBetInfo.getBetConditions());
 
         EditText betEntryFee = (EditText) rootView.findViewById(R.id.betInfoBetEntryFee);
-        betEntryFee.setText(String.valueOf(selectedBetInfo.getBetEntryFee()) + "Eth");
+        betEntryFee.setText(String.valueOf(selectedBetInfo.getBetEntryFee()) + " Eth");
 
         EditText betPrizePool = (EditText) rootView.findViewById(R.id.betInfoBetPrizePool);
-        betPrizePool.setText(String.valueOf(selectedBetInfo.getBetPrizePool()) + "Eth");
+        betPrizePool.setText(String.valueOf(selectedBetInfo.getBetPrizePool()) + " Eth");
 
         EditText betStatus = (EditText) rootView.findViewById(R.id.betInfoBetStatus);
         betStatus.setText(selectedBetInfo.getBetState().toString());
@@ -168,5 +171,28 @@ public class BetInfoFragment extends Fragment {
         startVoteButton.setEnabled(false);
         betSuccessButton.setEnabled(false);
         betFailureButton.setEnabled(false);
+    }
+
+    private List<Participant> addProfilePictures(List<Participant> betParticipants){
+        for(int i = 0; i < betParticipants.size(); i++){
+            if(betParticipants.get(i).getUsername() == "Kay Hartmann"){
+                betParticipants.get(i).setProfilePicture(R.drawable.kay);
+            }
+            if(betParticipants.get(i).getUsername() == "Bruno Fischlin"){
+                betParticipants.get(i).setProfilePicture(R.drawable.bruno);
+            }
+            if(betParticipants.get(i).getUsername() == "Damir Hodzic"){
+                betParticipants.get(i).setProfilePicture(R.drawable.damir);
+            }
+            if(betParticipants.get(i).getUsername() == "Alex Neher"){
+                betParticipants.get(i).setProfilePicture(R.drawable.alex);
+            }
+            if(betParticipants.get(i).getUsername() == "Suki Kasipillai"){
+                betParticipants.get(i).setProfilePicture(R.drawable.suki);
+            }
+        }
+
+        return betParticipants;
+
     }
 }
