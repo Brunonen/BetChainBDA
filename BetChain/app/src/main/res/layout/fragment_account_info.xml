@@ -43,9 +43,10 @@
             android:id="@+id/editText3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:editable="false"
             android:ems="10"
             android:freezesText="true"
-            android:inputType="textPersonName"
+            android:inputType="none"
             android:text="Kay Hartmann" />
 
         <TextView
@@ -60,7 +61,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:inputType="textPassword"
+            android:inputType="none"
+            android:password="true"
             android:text="xkvxkjvxkvljxckl" />
 
         <TextView
