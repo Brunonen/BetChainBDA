@@ -11,8 +11,10 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import bda.hslu.ch.betchain.BetInfoFragment;
 import bda.hslu.ch.betchain.DTO.Bet;
 import bda.hslu.ch.betchain.DTO.Participant;
+import bda.hslu.ch.betchain.MainActivity;
 import bda.hslu.ch.betchain.R;
 
 /**
@@ -35,7 +37,7 @@ public class CustomAdapterMyBetInfo extends ArrayAdapter<Bet>{
     public View getView(final int position, View view, ViewGroup parent) {
 
         LayoutInflater inflater = context.getLayoutInflater();
-        View rowView = inflater.inflate(R.layout.list_info_mybets, null, true);
+        final View rowView = inflater.inflate(R.layout.list_info_mybets, null, true);
 
         TextView betTitle = (TextView) rowView.findViewById(R.id.listMyBetInfoBetTitle);
         TextView betStatus = (TextView) rowView.findViewById(R.id.listMyBetInfoBetStatus);
@@ -49,7 +51,12 @@ public class CustomAdapterMyBetInfo extends ArrayAdapter<Bet>{
         rowView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                System.out.println(tmp.getBetAddress());
+
+                MainActivity activity = (MainActivity) context;
+                activity.setSelectedBetAddress(tmp.getBetAddress());
+
+                activity.changeFragment(new BetInfoFragment());
+                //System.out.println(tmp.getBetAddress());
             }
         });
 

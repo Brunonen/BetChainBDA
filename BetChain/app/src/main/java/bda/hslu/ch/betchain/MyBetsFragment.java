@@ -7,7 +7,10 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -33,6 +36,20 @@ public class MyBetsFragment extends Fragment {
         ListView betList = (ListView) rootView.findViewById(R.id.myBetsListViewBox);
         CustomAdapterMyBetInfo adapter = new CustomAdapterMyBetInfo (activity, bets);
         betList.setAdapter(adapter);
+
+        final Button startBetCreation = (Button) rootView.findViewById(R.id.buttonGoToCreateNewBet);
+        startBetCreation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+
+                MainActivity activity = (MainActivity) getActivity();
+
+                Fragment createBet = new CreateBetStep1Fragment();
+
+                activity.changeFragment(createBet);
+
+            }
+        });
 
 
         return rootView;

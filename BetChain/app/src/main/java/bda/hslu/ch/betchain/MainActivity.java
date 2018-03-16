@@ -28,6 +28,7 @@ public class MainActivity extends AppCompatActivity
     private String betCreationBetConditions = "";
     private float betCreationBetEntryFee = 0.0f;
     private List<Participant> betCreationParticipants = new ArrayList<Participant>();
+    private String selectedBetAddress = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -166,5 +167,13 @@ public class MainActivity extends AppCompatActivity
 
     public void removeParticipantFromList(Participant part){
         this.betCreationParticipants.remove(part);
+    }
+
+    public String getSelectedBetAddress() {
+        return selectedBetAddress;
+    }
+
+    public void setSelectedBetAddress(String selectedBetAddress) {
+        this.selectedBetAddress = selectedBetAddress;
     }
 }
