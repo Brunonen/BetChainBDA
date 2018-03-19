@@ -27,17 +27,12 @@ public class RegisterUserFragment extends Fragment {
         rootView = inflater.inflate(R.layout.fragment_register_user, container, false);
 
 
-
-
-
         Button scanQrButton = (Button) rootView.findViewById(R.id.scanQrButton);
 
         scanQrButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
                 getQrCode();
-
-
             }
         });
 

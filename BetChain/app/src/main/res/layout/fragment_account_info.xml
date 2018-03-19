@@ -50,19 +50,21 @@
             android:text="Kay Hartmann" />
 
         <TextView
-            android:id="@+id/textView21"
+            android:id="@+id/textview3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
+            android:focusable="false"
             android:text="Private Key" />
 
         <EditText
-            android:id="@+id/editText4"
+            android:id="@+id/privateKey"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
             android:inputType="none"
             android:password="true"
+            android:focusable="false"
             android:text="xkvxkjvxkvljxckl" />
 
         <TextView
