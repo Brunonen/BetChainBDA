@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.menu_account) {
             fragment = new AccountInfoFragment();
         } else if (id == R.id.menu_settings) {
-            fragment = new LoginFragment();
+            fragment = new SettingsFragment();
         } else if (id == R.id.menu_logout) {
             fragment = new LoginFragment();
         }
