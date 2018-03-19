@@ -22,7 +22,8 @@
             android:textAlignment="center"
             android:textColor="@android:color/black"
             android:textSize="20sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:focusable="false"/>
 
         <TextView
             android:id="@+id/textView27"
@@ -37,7 +38,9 @@
             android:layout_width="match_parent"
             android:layout_height="65dp"
             android:ems="10"
-            android:inputType="none" />
+            android:inputType="none"
+            tools:focusable="false"
+            android:focusable="false"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -76,7 +79,8 @@
                 android:ems="10"
                 android:inputType="none"
                 android:singleLine="true"
-                android:text="Name" />
+                android:text="Name"
+                android:focusable="false"/>
 
             <EditText
                 android:id="@+id/betInfoBetPrizePool"
@@ -86,7 +90,8 @@
                 android:ems="10"
                 android:inputType="none"
                 android:singleLine="true"
-                android:text="Name" />
+                android:text="Name"
+                android:focusable="false"/>
         </LinearLayout>
 
         <TextView
@@ -104,7 +109,8 @@
             android:ems="10"
             android:inputType="none"
             android:singleLine="true"
-            android:text="Name" />
+            android:text="Name"
+            android:focusable="false"/>
 
         <TextView
             android:id="@+id/textView34"
