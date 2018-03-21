@@ -3,6 +3,7 @@ package bda.hslu.ch.betchain;
 import android.app.ExpandableListActivity;
 import android.os.AsyncTask;
 import android.os.StrictMode;
+import android.text.TextUtils;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -12,12 +13,19 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.net.CookieManager;
+import java.net.HttpCookie;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
+import java.util.List;
+import java.util.Map;
 
 public class CallAPI  {
+
+    static final String COOKIES_HEADER = "Set-Cookie";
+    static CookieManager msCookieManager = new CookieManager();
 
     public CallAPI(){
         //set context variables if required
@@ -46,6 +54,13 @@ public class CallAPI  {
             URL url = new URL(urlString);
 
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+
+            if (msCookieManager.getCookieStore().getCookies().size() > 0) {
+                // While joining the Cookies, use ',' or ';' as needed. Most of the servers are using ';'
+                urlConnection.setRequestProperty("Cookie",
+                        TextUtils.join(";",  msCookieManager.getCookieStore().getCookies()));
+            }
+
             urlConnection.setDoOutput(true);
             urlConnection.setDoInput(true);
             urlConnection.setRequestMethod("POST");
@@ -55,6 +70,8 @@ public class CallAPI  {
             urlConnection.setConnectTimeout(15000);
             //urlConnection.setFixedLengthStreamingMode(data.getBytes().length);
             //urlConnection.setChunkedStreamingMode(0);
+
+
 
             urlConnection.connect();
 
@@ -85,6 +102,14 @@ public class CallAPI  {
                 sb.append(line + "\n");
             }
 
+            Map<String, List<String>> headerFields = urlConnection.getHeaderFields();
+            List<String> cookiesHeader = headerFields.get(COOKIES_HEADER);
+
+            if (cookiesHeader != null && msCookieManager.getCookieStore().getCookies().size() <= 0 ) {
+                for (String cookie : cookiesHeader) {
+                    msCookieManager.getCookieStore().add(null, HttpCookie.parse(cookie).get(0));
+                }
+            }
 
             response = sb.toString();
             urlConnection.disconnect();
@@ -103,4 +128,5 @@ public class CallAPI  {
 
         return response;
     }
+
 }

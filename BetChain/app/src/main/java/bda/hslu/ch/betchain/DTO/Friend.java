@@ -1,5 +1,10 @@
 package bda.hslu.ch.betchain.DTO;
 
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Kay on 12/03/2018.
  */
@@ -43,4 +48,5 @@ public class Friend {
     }
 
     public String getAddress(){ return this.address;}
+
 }
