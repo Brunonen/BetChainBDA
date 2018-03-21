@@ -14,6 +14,7 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import bda.hslu.ch.betchain.Database.SQLWrapper;
 import bda.hslu.ch.betchain.WebFunctions.AuthenticationFunctions;
 
 
@@ -31,6 +32,28 @@ public class LoginFragment extends Fragment {
         Button loginButton = (Button) root.findViewById(R.id.loginButton);
         final EditText username = (EditText) root.findViewById(R.id.inputUsernameLogin);
         final EditText password = (EditText) root.findViewById(R.id.inputPasswordLogin);
+
+        SQLWrapper db = new SQLWrapper(getActivity());
+
+        if(db.checkIfUserNeedsToBeLoggedIn()){
+            String[] userInfo = db.getLoggedInUserInfo();
+
+            String response = AuthenticationFunctions.loginUser(userInfo[0], userInfo[1]);
+
+
+            MainActivity activity = (MainActivity) getActivity();
+
+            try {
+                JSONObject responseJSON = new JSONObject(response);
+                if (responseJSON.getInt("is_error") == 0) {
+                    activity.changeFragment(new MyBetsFragment());
+                }else{
+                    Toast.makeText(activity,responseJSON.getString("message") , Toast.LENGTH_SHORT).show();
+                }
+            }catch(JSONException exec){
+                Toast.makeText(activity, "Something went Wrong", Toast.LENGTH_SHORT).show();
+            }
+        }
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -50,12 +73,18 @@ public class LoginFragment extends Fragment {
                         try {
                             JSONObject responseJSON = new JSONObject(response);
                             if (responseJSON.getInt("is_error") == 0) {
+
+                                SQLWrapper db = new SQLWrapper(activity);
+                                db.addOrUpdateAppUser(username.getText().toString(), hash);
+
+                                String[] test = db.getLoggedInUserInfo();
+                                System.out.println(test[0] + " P : " + test[1]);
                                 activity.changeFragment(new MyBetsFragment());
                             }else{
                                 Toast.makeText(activity,responseJSON.getString("message") , Toast.LENGTH_SHORT).show();
                             }
                         }catch(JSONException exec){
-                            Toast.makeText(activity, "Please enter a Bet Title that is atleast 8 Characters long.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(activity, "Something went wrong", Toast.LENGTH_SHORT).show();
                         }
                     }
                 }catch(JSONException exec){

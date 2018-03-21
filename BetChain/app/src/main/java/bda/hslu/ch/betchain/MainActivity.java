@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import bda.hslu.ch.betchain.DTO.Participant;
+import bda.hslu.ch.betchain.Database.SQLWrapper;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -36,6 +37,8 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        SQLWrapper sqlWrapper = new SQLWrapper(this);
 
         /*FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -112,6 +115,8 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.menu_settings) {
             fragment = new SettingsFragment();
         } else if (id == R.id.menu_logout) {
+            SQLWrapper db = new SQLWrapper(this);
+            db.logoutUser();
             fragment = new LoginFragment();
         }
 
