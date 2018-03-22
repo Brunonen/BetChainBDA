@@ -30,6 +30,8 @@ public class MainActivity extends AppCompatActivity
     private float betCreationBetEntryFee = 0.0f;
     private List<Participant> betCreationParticipants = new ArrayList<Participant>();
     private String selectedBetAddress = "";
+    private String userToGetInfoFrom = "";
+    private String userAddressToGetInfoFrom = "";
 
 
 
@@ -197,5 +199,21 @@ public class MainActivity extends AppCompatActivity
 
     public void setSelectedBetAddress(String selectedBetAddress) {
         this.selectedBetAddress = selectedBetAddress;
+    }
+
+    public String getUserToGetInfoFrom() {
+        return userToGetInfoFrom;
+    }
+
+    public void setUserToGetInfoFrom(String userToGetInfoFrom) {
+        this.userToGetInfoFrom = userToGetInfoFrom;
+    }
+
+    public String getUserAddressToGetInfoFrom() {
+        return userAddressToGetInfoFrom;
+    }
+
+    public void setUserAddressToGetInfoFrom(String userAddressToGetInfoFrom) {
+        this.userAddressToGetInfoFrom = userAddressToGetInfoFrom;
     }
 }

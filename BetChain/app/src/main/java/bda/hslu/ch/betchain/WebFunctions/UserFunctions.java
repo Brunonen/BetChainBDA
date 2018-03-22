@@ -4,56 +4,24 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import bda.hslu.ch.betchain.CallAPI;
 import bda.hslu.ch.betchain.DTO.Friend;
-import bda.hslu.ch.betchain.R;
+import bda.hslu.ch.betchain.DTO.User;
 import bda.hslu.ch.betchain.WebRequestException;
 
 /**
- * Created by Bruno Fischlin on 12/03/2018.
+ * Created by ssj10 on 22/03/2018.
  */
 
-public class FriendFunctions {
-
+public class UserFunctions {
     private static final String SERVER_URL = "http://blockchaincontracts.enterpriselab.ch/index.php";
-    public static List<Friend> getUserFriendList() throws WebRequestException {
-        List<Friend> friendList = new ArrayList<Friend>();
 
-        try {
-            JSONObject requestParams = new JSONObject();
-            requestParams.put("method", "getFriendList");
-
-
-            String response = CallAPI.makePOSTRequestToServer(SERVER_URL, requestParams.toString());
-            JSONObject jsonResponse = new JSONObject(response);
-
-
-            if (jsonResponse.getInt("is_error") == 0) {
-                JSONArray friendJSONS = jsonResponse.getJSONArray("data");
-
-                return parseDataResponseToFriends(friendJSONS);
-
-            }else{
-                throw new WebRequestException(jsonResponse.getString("message"));
-            }
-        }catch(JSONException exec){
-            System.out.println(exec.getMessage());
-            //return "";
-        }
-
-        return friendList;
-
-    }
-
-    public static boolean addFriend(String userToAddAsFriend) throws WebRequestException{
+    public static User getUserInfo(String username) throws WebRequestException{
+        User userInfo = new User();
         try {
             JSONObject requestParams = new JSONObject();
             requestParams.put("method", "addFriend");
-            requestParams.put("userToAdd", userToAddAsFriend);
+            requestParams.put("username", username);
 
 
             String response = CallAPI.makePOSTRequestToServer(SERVER_URL, requestParams.toString());
@@ -61,7 +29,7 @@ public class FriendFunctions {
 
 
             if (jsonResponse.getInt("is_error") == 0) {
-                return true;
+                return parseJSONResponseToUserObject(jsonResponse.getJSONObject("data"));
             }else{
                 throw new WebRequestException(jsonResponse.getString("message"));
             }
@@ -70,14 +38,15 @@ public class FriendFunctions {
             //return "";
         }
 
-        return false;
+        return userInfo;
     }
 
-    public static boolean removeFriend(String userToRemove) throws WebRequestException{
+    public static User getUserByQR(String address) throws WebRequestException{
+        User userInfo = new User();
         try {
             JSONObject requestParams = new JSONObject();
-            requestParams.put("method", "removeFriend");
-            requestParams.put("userToRemove", userToRemove);
+            requestParams.put("method", "getUserByQR");
+            requestParams.put("hash", address);
 
 
             String response = CallAPI.makePOSTRequestToServer(SERVER_URL, requestParams.toString());
@@ -85,7 +54,7 @@ public class FriendFunctions {
 
 
             if (jsonResponse.getInt("is_error") == 0) {
-                return true;
+                return parseJSONResponseToUserObject(jsonResponse.getJSONObject("data"));
             }else{
                 throw new WebRequestException(jsonResponse.getString("message"));
             }
@@ -94,36 +63,55 @@ public class FriendFunctions {
             //return "";
         }
 
-        return false;
+        return userInfo;
     }
 
-    private static List<Friend> parseDataResponseToFriends(JSONArray data) {
-        List<Friend> friendList = new ArrayList<Friend>();
-        String friendName = "";
-        String friendAddress = "";
+    public static User getUserByUsername(String username) throws WebRequestException{
+        User userInfo = new User();
+        try {
+            JSONObject requestParams = new JSONObject();
+            requestParams.put("method", "getUserByQR");
+            requestParams.put("username", username);
+
+
+            String response = CallAPI.makePOSTRequestToServer(SERVER_URL, requestParams.toString());
+            JSONObject jsonResponse = new JSONObject(response);
+
+
+            if (jsonResponse.getInt("is_error") == 0) {
+                return parseJSONResponseToUserObject(jsonResponse.getJSONObject("data"));
+            }else{
+                throw new WebRequestException(jsonResponse.getString("message"));
+            }
+        }catch(JSONException exec){
+            System.out.println(exec.getMessage());
+            //return "";
+        }
+
+        return userInfo;
+    }
+
+    private static User parseJSONResponseToUserObject(JSONObject data){
+        String username = "";
+        String userAddress = "";
+        int userShowOnline;
 
         try {
-            for (int i = 0; i < data.length(); i++) {
 
-                JSONObject friendO = data.getJSONObject(i);
+                username = data.getString("username");
+                userAddress = data.getString("address");
 
-                Iterator<?> keys = friendO.keys();
-
-                while( keys.hasNext() ) {
-                    friendName = (String)keys.next();
-                    friendAddress = friendO.getString(friendName);
-                    System.out.println("name: " + friendName );
-                    friendList.add(new Friend(friendName, friendAddress, 0));
+                boolean showOnline = false;
+                if(data.has("showOnline")) {
+                    userShowOnline = data.getInt("showOnline");
+                    if(userShowOnline != 0){
+                        showOnline = true;
+                    }
                 }
 
-
-            }
-
-            return friendList;
+                return new User(username, userAddress, showOnline, 0);
         } catch(JSONException exec) {
-            return friendList;
+            return null;
         }
     }
-
-
 }

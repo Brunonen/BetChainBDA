@@ -8,11 +8,16 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
 import bda.hslu.ch.betchain.DTO.Friend;
+import bda.hslu.ch.betchain.FriendsFragment;
+import bda.hslu.ch.betchain.MainActivity;
 import bda.hslu.ch.betchain.R;
+import bda.hslu.ch.betchain.WebFunctions.FriendFunctions;
+import bda.hslu.ch.betchain.WebRequestException;
 
 /**
  * Created by Kay on 12/03/2018.
@@ -38,7 +43,7 @@ public class CustomAdapterFriendInfo extends  ArrayAdapter<Friend> {
         LayoutInflater inflater = context.getLayoutInflater();
         View rowView = inflater.inflate(R.layout.list_info_friends, null, true);
 
-        TextView username = (TextView) rowView.findViewById(R.id.listFriendInfoUsername);
+        final TextView username = (TextView) rowView.findViewById(R.id.listFriendInfoUsername);
         ImageView profilePicture = (ImageView) rowView.findViewById(R.id.listFriendInfoProfilePicture);
         Button unfriendButton = (Button) rowView.findViewById(R.id.listUnfriendButton);
         final Friend tmp = items.get(position);
@@ -56,9 +61,16 @@ public class CustomAdapterFriendInfo extends  ArrayAdapter<Friend> {
             @Override
             public void onClick(final View v) {
 
+                MainActivity activity = (MainActivity) context;
+                try {
+                    FriendFunctions.removeFriend(tmp.getUsername());
+                    activity.changeFragmentNoBackstack(new FriendsFragment());
+                } catch (WebRequestException e) {
 
-                System.out.println(tmp.getUsername());
+                    Toast.makeText(activity,e.getMessage() , Toast.LENGTH_SHORT).show();
 
+
+                }
 
 
             }
