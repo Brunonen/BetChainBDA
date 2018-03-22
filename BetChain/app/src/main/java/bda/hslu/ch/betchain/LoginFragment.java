@@ -37,58 +37,34 @@ public class LoginFragment extends Fragment {
 
         if(db.checkIfUserNeedsToBeLoggedIn()){
             String[] userInfo = db.getLoggedInUserInfo();
-
-            String response = AuthenticationFunctions.loginUser(userInfo[0], userInfo[1]);
-
-
             MainActivity activity = (MainActivity) getActivity();
-
             try {
-                JSONObject responseJSON = new JSONObject(response);
-                if (responseJSON.getInt("is_error") == 0) {
-                    activity.changeFragment(new MyBetsFragment());
-                }else{
-                    Toast.makeText(activity,responseJSON.getString("message") , Toast.LENGTH_SHORT).show();
+                if(AuthenticationFunctions.loginUser(userInfo[0], userInfo[1])){
+                    activity.changeFragmentNoBackstack(new MyBetsFragment());
                 }
-            }catch(JSONException exec){
-                Toast.makeText(activity, "Something went Wrong", Toast.LENGTH_SHORT).show();
+            } catch (WebRequestException e) {
+                Toast.makeText(activity,e.getMessage() , Toast.LENGTH_SHORT).show();
             }
         }
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
-                String userSaltResponse = AuthenticationFunctions.getUserSalt(username.getText().toString());
 
+                MainActivity activity = (MainActivity) getActivity();
                 try{
-                    JSONObject userSaltJSON = new JSONObject(userSaltResponse);
-                    if(userSaltJSON.getInt("is_error") == 0){
-                        String userSalt = userSaltJSON.getString("data");
-                        String hash = HashClass.bin2hex(HashClass.getHash(password.getText().toString() + userSalt));
+                    String userSaltResponse = AuthenticationFunctions.getUserSalt(username.getText().toString());
+                    if(!userSaltResponse.equals("")){
+                        String hash = HashClass.bin2hex(HashClass.getHash(password.getText().toString() + userSaltResponse));
 
-                        String response = AuthenticationFunctions.loginUser(username.getText().toString(), hash);
-
-                        MainActivity activity = (MainActivity) getActivity();
-
-                        try {
-                            JSONObject responseJSON = new JSONObject(response);
-                            if (responseJSON.getInt("is_error") == 0) {
-
-                                SQLWrapper db = new SQLWrapper(activity);
-                                db.addOrUpdateAppUser(username.getText().toString(), hash);
-
-                                String[] test = db.getLoggedInUserInfo();
-                                System.out.println(test[0] + " P : " + test[1]);
-                                activity.changeFragment(new MyBetsFragment());
-                            }else{
-                                Toast.makeText(activity,responseJSON.getString("message") , Toast.LENGTH_SHORT).show();
-                            }
-                        }catch(JSONException exec){
-                            Toast.makeText(activity, "Something went wrong", Toast.LENGTH_SHORT).show();
+                        if(AuthenticationFunctions.loginUser(username.getText().toString(), hash)){
+                            SQLWrapper db = new SQLWrapper(activity);
+                            db.addOrUpdateAppUser(username.getText().toString(), hash);
+                            activity.changeFragmentNoBackstack(new MyBetsFragment());
                         }
                     }
-                }catch(JSONException exec){
-                    System.out.println(exec.getMessage());
+                } catch (WebRequestException e) {
+                    Toast.makeText(activity,e.getMessage() , Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -97,11 +73,9 @@ public class LoginFragment extends Fragment {
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
-
                 Fragment registerUserFragment = new RegisterUserFragment();
                 MainActivity activity = (MainActivity) getActivity();
                 activity.changeFragment(registerUserFragment);
-
 
             }
         });
@@ -109,4 +83,5 @@ public class LoginFragment extends Fragment {
 
         return root;
     }
+
 }

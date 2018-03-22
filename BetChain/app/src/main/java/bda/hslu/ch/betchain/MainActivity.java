@@ -31,6 +31,8 @@ public class MainActivity extends AppCompatActivity
     private List<Participant> betCreationParticipants = new ArrayList<Participant>();
     private String selectedBetAddress = "";
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,7 +62,7 @@ public class MainActivity extends AppCompatActivity
 
         Fragment fragment = new LoginFragment();
 
-        changeFragment(fragment);
+        changeFragmentNoBackstack(fragment);
     }
 
     @Override
@@ -117,7 +119,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.menu_logout) {
             SQLWrapper db = new SQLWrapper(this);
             db.logoutUser();
-            fragment = new LoginFragment();
+            deleteFragmentBackstack();
         }
 
         if(fragment != null) {
@@ -132,6 +134,21 @@ public class MainActivity extends AppCompatActivity
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).addToBackStack("LastFragment").commit();
 
+    }
+
+    public void changeFragmentNoBackstack(Fragment fragment){
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+    }
+
+    private void deleteFragmentBackstack(){
+        FragmentManager manager = getSupportFragmentManager();
+        if (manager.getBackStackEntryCount() > 0) {
+            FragmentManager.BackStackEntry first = manager.getBackStackEntryAt(0);
+            manager.popBackStack(first.getId(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        }
+
+        changeFragmentNoBackstack(new LoginFragment());
     }
 
     public void setBetCreationBetTitle(String betTitle){

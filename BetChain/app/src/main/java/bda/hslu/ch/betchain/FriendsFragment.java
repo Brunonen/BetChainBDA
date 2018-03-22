@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -24,16 +25,21 @@ public class FriendsFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_friends, container, false);
-
-
-
-        List<Friend> friends = FriendFunctions.getUserFriendList();
-
-
         MainActivity activity = (MainActivity) getActivity();
-        ListView friendsList = (ListView) rootView.findViewById(R.id.friendList);
-        CustomAdapterFriendInfo adapter = new CustomAdapterFriendInfo (activity, friends);
-        friendsList.setAdapter(adapter);
+
+        List<Friend> friends = null;
+        try {
+            friends = FriendFunctions.getUserFriendList();
+
+            if(friends.size() > 0) {
+                ListView friendsList = (ListView) rootView.findViewById(R.id.friendList);
+                CustomAdapterFriendInfo adapter = new CustomAdapterFriendInfo(activity, friends);
+                friendsList.setAdapter(adapter);
+            }
+        } catch (WebRequestException e) {
+            Toast.makeText(activity,e.getMessage() , Toast.LENGTH_SHORT).show();
+        }
+
 
 
         Button addFriendButton = (Button) rootView.findViewById(R.id.addFriendsButton);

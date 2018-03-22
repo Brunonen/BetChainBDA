@@ -52,7 +52,11 @@ public class CreateBetStep3Fragment extends Fragment {
         userFriends = new ArrayList<Friend>();
 
         betParticipants = activity.getBetCreationParticipants();
-        userFriends = FriendFunctions.getUserFriendList();
+        try {
+            userFriends = FriendFunctions.getUserFriendList();
+        } catch (WebRequestException e) {
+            Toast.makeText(activity,e.getMessage() , Toast.LENGTH_SHORT).show();
+        }
 
         if(betParticipants.size() > 0){
             for(Participant p : betParticipants){
@@ -75,29 +79,7 @@ public class CreateBetStep3Fragment extends Fragment {
 
         Participant kay = new Participant("Kay Hartmann", "0x627306090abaB3A6e1400e9345bC60c78a8BEf57", true, false, BetRole.OWNER);
         kay.setProfilePicture(R.drawable.kay);
-/*
-        Participant bruno = new Participant("Bruno Fischlin", "0xf17f52151EbEF6C7334FAD080c5704D77216b732", false, false, BetRole.OPPOSER);
-        bruno.setProfilePicture(R.drawable.bruno);
 
-        Participant damir = new Participant("Damir Hodzic", "0xC5fdf4076b8F3A5357c5E395ab970B5B54098Fef", false, false, BetRole.OPPOSER);
-        damir.setProfilePicture(R.drawable.damir);
-
-        Participant alex = new Participant("Alex Neher", "0x821aEa9a577a9b44299B9c15c88cf3087F3b5544", false, false, BetRole.SUPPORTER);
-        alex.setProfilePicture(R.drawable.alex);
-
-        Participant suki = new Participant("Suki Kasipillai", "0x0d1d4e623D10F9FBA5Db95830F7d3839406C6AF2", false, false, BetRole.NOTAR);
-        suki.setProfilePicture(R.drawable.suki);
-
-
-        betSupporters.add(kay);
-        betSupporters.add(alex);
-
-        betOpposers.add(bruno);
-        betOpposers.add(damir);
-
-        notars.add(suki);
-
-*/
         if(betParticipants.size() == 0) {
             betSupporters.add(kay);
         }
@@ -162,25 +144,28 @@ public class CreateBetStep3Fragment extends Fragment {
 
                 final List<Friend> userFriendsToChooseFrom = removeParticipatingFriendsFromList(userFriends);
                 CharSequence friends[] = new CharSequence[userFriendsToChooseFrom.size()];
-                for(int i = 0; i < userFriends.size(); i++){
-                    friends[i] = userFriends.get(i).getUsername();
-                }
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-                builder.setTitle("Choose Participant");
-                builder.setItems(friends, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Friend userToAdd = userFriendsToChooseFrom.get(which);
-                        //String username, String address, boolean betAccepted, boolean voted, BetRole betRole) {
-                        Participant participantToAdd = new Participant(userToAdd.getUsername(), userToAdd.getAddress(), false, false, BetRole.SUPPORTER);
-                        participantToAdd.setProfilePicture(userToAdd.getProfilePicture());
-
-                        betSupporters.add(participantToAdd);
-                        updateParticipantLists();
+                if(userFriendsToChooseFrom.size() > 0) {
+                    for (int i = 0; i < userFriends.size(); i++) {
+                        friends[i] = userFriends.get(i).getUsername();
                     }
-                });
-                builder.show();
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                    builder.setTitle("Choose Participant");
+                    builder.setItems(friends, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Friend userToAdd = userFriendsToChooseFrom.get(which);
+                            //String username, String address, boolean betAccepted, boolean voted, BetRole betRole) {
+                            Participant participantToAdd = new Participant(userToAdd.getUsername(), userToAdd.getAddress(), false, false, BetRole.SUPPORTER);
+                            participantToAdd.setProfilePicture(userToAdd.getProfilePicture());
+
+                            betSupporters.add(participantToAdd);
+                            updateParticipantLists();
+                        }
+                    });
+                    builder.show();
+                }
             }
         });
 
@@ -192,25 +177,27 @@ public class CreateBetStep3Fragment extends Fragment {
 
                 final List<Friend> userFriendsToChooseFrom = removeParticipatingFriendsFromList(userFriends);
                 CharSequence friends[] = new CharSequence[userFriendsToChooseFrom.size()];
-                for(int i = 0; i < userFriends.size(); i++){
-                    friends[i] = userFriends.get(i).getUsername();
-                }
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-                builder.setTitle("Choose Participant");
-                builder.setItems(friends, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Friend userToAdd = userFriendsToChooseFrom.get(which);
-                        //String username, String address, boolean betAccepted, boolean voted, BetRole betRole) {
-                        Participant participantToAdd = new Participant(userToAdd.getUsername(), userToAdd.getAddress(), false, false, BetRole.OPPOSER);
-                        participantToAdd.setProfilePicture(userToAdd.getProfilePicture());
-
-                        betOpposers.add(participantToAdd);
-                        updateParticipantLists();
+                if(userFriendsToChooseFrom.size() > 0) {
+                    for (int i = 0; i < userFriends.size(); i++) {
+                        friends[i] = userFriends.get(i).getUsername();
                     }
-                });
-                builder.show();
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                    builder.setTitle("Choose Participant");
+                    builder.setItems(friends, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Friend userToAdd = userFriendsToChooseFrom.get(which);
+                            //String username, String address, boolean betAccepted, boolean voted, BetRole betRole) {
+                            Participant participantToAdd = new Participant(userToAdd.getUsername(), userToAdd.getAddress(), false, false, BetRole.OPPOSER);
+                            participantToAdd.setProfilePicture(userToAdd.getProfilePicture());
+
+                            betOpposers.add(participantToAdd);
+                            updateParticipantLists();
+                        }
+                    });
+                    builder.show();
+                }
             }
         });
 
@@ -222,25 +209,27 @@ public class CreateBetStep3Fragment extends Fragment {
 
                 final List<Friend> userFriendsToChooseFrom = removeParticipatingFriendsFromList(userFriends);
                 CharSequence friends[] = new CharSequence[userFriendsToChooseFrom.size()];
-                for(int i = 0; i < userFriends.size(); i++){
-                    friends[i] = userFriends.get(i).getUsername();
-                }
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-                builder.setTitle("Choose Participant");
-                builder.setItems(friends, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Friend userToAdd = userFriendsToChooseFrom.get(which);
-                        //String username, String address, boolean betAccepted, boolean voted, BetRole betRole) {
-                        Participant participantToAdd = new Participant(userToAdd.getUsername(), userToAdd.getAddress(), false, false, BetRole.NOTAR);
-                        participantToAdd.setProfilePicture(userToAdd.getProfilePicture());
-
-                        notars.add(participantToAdd);
-                        updateParticipantLists();
+                if(userFriendsToChooseFrom.size() > 0) {
+                    for (int i = 0; i < userFriends.size(); i++) {
+                        friends[i] = userFriends.get(i).getUsername();
                     }
-                });
-                builder.show();
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                    builder.setTitle("Choose Participant");
+                    builder.setItems(friends, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Friend userToAdd = userFriendsToChooseFrom.get(which);
+                            //String username, String address, boolean betAccepted, boolean voted, BetRole betRole) {
+                            Participant participantToAdd = new Participant(userToAdd.getUsername(), userToAdd.getAddress(), false, false, BetRole.NOTAR);
+                            participantToAdd.setProfilePicture(userToAdd.getProfilePicture());
+
+                            notars.add(participantToAdd);
+                            updateParticipantLists();
+                        }
+                    });
+                    builder.show();
+                }
             }
         });
 

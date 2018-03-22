@@ -64,15 +64,15 @@ public class SQLWrapper extends SQLiteOpenHelper {
             values.put(APP_USERS_P_KEY, "");
             int id = (int) db.insert(TABLE_APP_USERS, null, values);
 
-            db.close();
             return id;
         }else{
             ContentValues values = new ContentValues();
             values.put(APP_USERS_PWD, pwd);
             values.put(APP_USERS_STAY_LOGGED_IN, 1);
             int id = db.update(TABLE_APP_USERS, values, APP_USERS_USERNAME + "='"+username+"'", null);
-            db.close();
+
             logoutAllOtherUsers(username);
+            db.close();
             return 0;
         }
 
@@ -96,7 +96,6 @@ public class SQLWrapper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(APP_USERS_STAY_LOGGED_IN, 0);
         db.update(TABLE_APP_USERS, values, APP_USERS_USERNAME + "!='" + username + "'", null);
-        db.close();
     }
 
     public void logoutUser(){
@@ -105,7 +104,6 @@ public class SQLWrapper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(APP_USERS_STAY_LOGGED_IN, 0);
         db.update(TABLE_APP_USERS, values, APP_USERS_STAY_LOGGED_IN + "='" + 1 + "'", null);
-        db.close();
     }
 
     public String[] getLoggedInUserInfo(){
@@ -130,6 +128,7 @@ public class SQLWrapper extends SQLiteOpenHelper {
         if(cursor.getCount() > 0) {
             return true;
         }
+        cursor.close();
         return false;
     }
 

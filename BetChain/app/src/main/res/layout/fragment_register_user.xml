@@ -33,7 +33,7 @@
             android:textStyle="bold" />
 
         <EditText
-            android:id="@+id/editText5"
+            android:id="@+id/registerUserUsername"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
@@ -42,7 +42,7 @@
             android:inputType="textPersonName" />
 
         <EditText
-            android:id="@+id/editText6"
+            android:id="@+id/registerUserPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
@@ -50,9 +50,8 @@
             android:inputType="textPassword" />
 
 
-
         <EditText
-            android:id="@+id/editText7"
+            android:id="@+id/registerUserPasswordConfirm"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
@@ -78,17 +77,17 @@
             android:textColor="@color/colorPrimary" />
 
         <Button
-            android:id="@+id/button2"
+            android:id="@+id/buttonRegisterUser"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="10dp"
-            android:text="REGISTER"
             android:background="@drawable/confirmation_button"
             android:shadowColor="#A8A8A8"
             android:shadowDx="0"
             android:shadowDy="0"
             android:shadowRadius="5"
-            android:textColor="#FFFFFF"/>
+            android:text="REGISTER"
+            android:textColor="#FFFFFF" />
     </LinearLayout>
 </FrameLayout>
