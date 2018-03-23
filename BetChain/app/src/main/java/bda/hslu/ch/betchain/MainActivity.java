@@ -32,6 +32,8 @@ public class MainActivity extends AppCompatActivity
     private String selectedBetAddress = "";
     private String userToGetInfoFrom = "";
     private String userAddressToGetInfoFrom = "";
+    private DrawerLayout drawer;
+    private ActionBarDrawerToggle toggle;
 
 
 
@@ -53,16 +55,18 @@ public class MainActivity extends AppCompatActivity
             }
         });*/
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
+
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         Fragment fragment = new LoginFragment();
+        setDrawerState(false);
 
         changeFragmentNoBackstack(fragment);
     }
@@ -153,8 +157,26 @@ public class MainActivity extends AppCompatActivity
             FragmentManager.BackStackEntry first = manager.getBackStackEntryAt(0);
             manager.popBackStack(first.getId(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
         }
-
+        setDrawerState(false);
         changeFragmentNoBackstack(new LoginFragment());
+    }
+
+    public void setDrawerState(boolean isEnabled) {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+
+        if ( isEnabled ) {
+            drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+            toggle.onDrawerStateChanged(DrawerLayout.LOCK_MODE_UNLOCKED);
+            toggle.setDrawerIndicatorEnabled(true);
+            toggle.syncState();
+
+        }
+        else {
+            drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+            toggle.onDrawerStateChanged(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+            toggle.setDrawerIndicatorEnabled(false);
+            toggle.syncState();
+        }
     }
 
     public void setBetCreationBetTitle(String betTitle){

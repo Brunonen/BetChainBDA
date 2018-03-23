@@ -42,6 +42,7 @@ public class LoginFragment extends Fragment {
             MainActivity activity = (MainActivity) getActivity();
             try {
                 if(AuthenticationFunctions.loginUser(userInfo[0], userInfo[1])){
+                    activity.setDrawerState(true);
                     activity.changeFragmentNoBackstack(new MyBetsFragment());
                 }
             } catch (WebRequestException e) {
@@ -64,7 +65,7 @@ public class LoginFragment extends Fragment {
                             User userInfos = UserFunctions.getUserInfo(username.getText().toString());
                             SQLWrapper db = new SQLWrapper(activity);
                             db.addOrUpdateAppUser(userInfos.getUsername(), hash, userInfos.getAddress());
-
+                            activity.setDrawerState(true);
                             activity.changeFragmentNoBackstack(new MyBetsFragment());
                         }
                     }
