@@ -44,46 +44,44 @@ public class SearchFriendOnlineFragment extends Fragment {
                                         event.getAction() == KeyEvent.ACTION_DOWN &&
                                         event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
                             if (event == null || !event.isShiftPressed()) {
-                                try {
-                                    List<User> foundUsers = UserFunctions.getUserByUsername(usernameToSearchFor.getText().toString());
-                                    List<Friend> userFriends = new ArrayList<>();
+                                if(!getUserInfo()[0].equals(usernameToSearchFor.getText().toString())) {
+                                    try {
+                                        List<User> foundUsers = UserFunctions.getUserByUsername(usernameToSearchFor.getText().toString());
+                                        List<Friend> userFriends = new ArrayList<>();
 
-                                    try{
-                                        userFriends = FriendFunctions.getUserFriendList();
-                                    }catch(WebRequestException e){
+                                        try {
+                                            userFriends = FriendFunctions.getUserFriendList();
+                                        } catch (WebRequestException e) {
 
-                                    }
+                                        }
 
-                                    ListView userList = (ListView) rootView.findViewById(R.id.usersToAddAsFriendList);
+                                        ListView userList = (ListView) rootView.findViewById(R.id.usersToAddAsFriendList);
 
-                                    if(userFriends.size() > 0) {
-                                        for (int i = 0; i < userFriends.size(); i++) {
-                                            for (int n = 0; n < foundUsers.size(); n++) {
-                                                if (userFriends.get(i).getUsername().equals(foundUsers.get(n).getUsername())) {
-                                                    foundUsers.remove(n);
-                                                    n = 0;
+                                        //Remove all entries which are already friends
+                                        if (userFriends.size() > 0) {
+                                            for (int i = 0; i < userFriends.size(); i++) {
+                                                for (int n = 0; n < foundUsers.size(); n++) {
+                                                    if (userFriends.get(i).getUsername().equals(foundUsers.get(n).getUsername())) {
+                                                        foundUsers.remove(n);
+                                                        n = 0;
+                                                    }
                                                 }
                                             }
                                         }
-                                    }
 
-                                    for(int i = 0; i < foundUsers.size(); i++){
-                                        if(foundUsers.get(i).getUsername().equals(getUserInfo()[0])){
-                                            foundUsers.remove(i);
-                                            i = 0;
+                                        if (foundUsers.size() > 0) {
+
+
+                                            CustomAdapterAddFriend adapter = new CustomAdapterAddFriend(activity, foundUsers);
+                                            userList.setAdapter(adapter);
+                                        } else {
+                                            Toast.makeText(activity, "All users that match this criteria are already your friend!", Toast.LENGTH_SHORT).show();
                                         }
+                                    } catch (WebRequestException e) {
+                                        Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
                                     }
-
-                                    if(foundUsers.size() > 0) {
-
-
-                                        CustomAdapterAddFriend adapter = new CustomAdapterAddFriend(activity, foundUsers);
-                                        userList.setAdapter(adapter);
-                                    }else{
-                                        Toast.makeText(activity, "All users that match this criteria are already your friend!", Toast.LENGTH_SHORT).show();
-                                    }
-                                } catch (WebRequestException e) {
-                                    Toast.makeText(activity,e.getMessage() , Toast.LENGTH_SHORT).show();
+                                }else{
+                                    Toast.makeText(activity, "You can't add yourself as a friend!", Toast.LENGTH_SHORT).show();
                                 }
 
                                 return true; // consume.
