@@ -57,7 +57,7 @@ public class SQLWrapper extends SQLiteOpenHelper {
 
     }
 
-    public void addOrUpdateAppUser(String username, String pwd) throws LocalDBException{
+    public void addOrUpdateAppUser(String username, String pwd, String address) throws LocalDBException{
         SQLiteDatabase db = this.getWritableDatabase();
         db.beginTransaction();
         try{
@@ -65,7 +65,7 @@ public class SQLWrapper extends SQLiteOpenHelper {
                 ContentValues values = new ContentValues();
                 values.put(APP_USERS_USERNAME, username);
                 values.put(APP_USERS_PWD, pwd);
-                values.put(APP_USERS_ADDRESS, "");
+                values.put(APP_USERS_ADDRESS, address);
                 values.put(APP_USERS_STAY_LOGGED_IN, 1);
                 values.put(APP_USERS_P_KEY, "");
                 int id = (int) db.insert(TABLE_APP_USERS, null, values);
@@ -74,6 +74,7 @@ public class SQLWrapper extends SQLiteOpenHelper {
                 ContentValues values = new ContentValues();
                 values.put(APP_USERS_PWD, pwd);
                 values.put(APP_USERS_STAY_LOGGED_IN, 1);
+                values.put(APP_USERS_ADDRESS, address);
                 int id = db.update(TABLE_APP_USERS, values, APP_USERS_USERNAME + "='"+username+"'", null);
 
                 logoutAllOtherUsers(username);
@@ -152,7 +153,7 @@ public class SQLWrapper extends SQLiteOpenHelper {
         try {
             ContentValues values = new ContentValues();
             values.put(APP_USERS_P_KEY, p_key);
-            int i = db.update(TABLE_APP_USERS, values, APP_USERS_USERNAME + "=='" + username + "'", null);
+            int i = db.update(TABLE_APP_USERS, values, APP_USERS_USERNAME + "='" + username + "'", null);
 
             if (i == 1) {
                 db.setTransactionSuccessful();

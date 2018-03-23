@@ -34,11 +34,8 @@ public class UserFunctions {
                 throw new WebRequestException(jsonResponse.getString("message"));
             }
         }catch(JSONException exec){
-            System.out.println(exec.getMessage());
-            //return "";
+            throw new WebRequestException(exec.getMessage());
         }
-
-        return userInfo;
     }
 
     public static User getUserByQR(String address) throws WebRequestException{

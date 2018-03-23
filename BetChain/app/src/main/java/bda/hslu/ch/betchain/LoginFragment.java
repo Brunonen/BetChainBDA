@@ -14,8 +14,10 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import bda.hslu.ch.betchain.DTO.User;
 import bda.hslu.ch.betchain.Database.SQLWrapper;
 import bda.hslu.ch.betchain.WebFunctions.AuthenticationFunctions;
+import bda.hslu.ch.betchain.WebFunctions.UserFunctions;
 
 
 public class LoginFragment extends Fragment {
@@ -58,12 +60,17 @@ public class LoginFragment extends Fragment {
                         String hash = HashClass.bin2hex(HashClass.getHash(password.getText().toString() + userSaltResponse));
 
                         if(AuthenticationFunctions.loginUser(username.getText().toString(), hash)){
+
+                            User userInfos = UserFunctions.getUserInfo(username.getText().toString());
                             SQLWrapper db = new SQLWrapper(activity);
-                            db.addOrUpdateAppUser(username.getText().toString(), hash);
+                            db.addOrUpdateAppUser(userInfos.getUsername(), hash, userInfos.getAddress());
+
                             activity.changeFragmentNoBackstack(new MyBetsFragment());
                         }
                     }
                 } catch (WebRequestException e) {
+                    Toast.makeText(activity,e.getMessage() , Toast.LENGTH_SHORT).show();
+                } catch (LocalDBException e) {
                     Toast.makeText(activity,e.getMessage() , Toast.LENGTH_SHORT).show();
                 }
 
