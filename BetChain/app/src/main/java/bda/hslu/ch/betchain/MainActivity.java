@@ -120,8 +120,12 @@ public class MainActivity extends AppCompatActivity
             fragment = new SettingsFragment();
         } else if (id == R.id.menu_logout) {
             SQLWrapper db = new SQLWrapper(this);
-            db.logoutUser();
-            deleteFragmentBackstack();
+            try {
+                db.logoutUser();
+                deleteFragmentBackstack();
+            }catch(LocalDBException e){
+
+            }
         }
 
         if(fragment != null) {
