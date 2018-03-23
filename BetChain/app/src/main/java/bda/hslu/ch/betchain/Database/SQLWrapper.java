@@ -107,7 +107,7 @@ public class SQLWrapper extends SQLiteOpenHelper {
     }
 
     public String[] getLoggedInUserInfo(){
-        String[] returnString = new String[2];
+        String[] returnString = new String[4];
         SQLiteDatabase db = this.getReadableDatabase();
         String sqlSelect = "SELECT * FROM " + TABLE_APP_USERS + " WHERE " + APP_USERS_STAY_LOGGED_IN + " = '1'";
         Cursor cursor = db.rawQuery(sqlSelect, null);
@@ -115,7 +115,9 @@ public class SQLWrapper extends SQLiteOpenHelper {
             cursor.moveToFirst();
             returnString[0] = cursor.getString(cursor.getColumnIndex(APP_USERS_USERNAME));
             returnString[1] = cursor.getString(cursor.getColumnIndex(APP_USERS_PWD));
-        }
+            returnString[2] = cursor.getString(cursor.getColumnIndex(APP_USERS_P_KEY));
+            returnString[3] = cursor.getString(cursor.getColumnIndex(APP_USERS_ADDRESS));
+         }
         cursor.close();
 
         return returnString;
