@@ -3,8 +3,13 @@ package bda.hslu.ch.betchain.Database;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import java.security.acl.LastOwnerException;
+
+import bda.hslu.ch.betchain.LocalDBException;
 
 /**
  * Created by ssj10 on 21/03/2018.
@@ -52,28 +57,32 @@ public class SQLWrapper extends SQLiteOpenHelper {
 
     }
 
-    public int addOrUpdateAppUser(String username, String pwd) {
+    public void addOrUpdateAppUser(String username, String pwd) throws LocalDBException{
         SQLiteDatabase db = this.getWritableDatabase();
+        db.beginTransaction();
+        try{
+            if(!checkIfUserExists(username)) {
+                ContentValues values = new ContentValues();
+                values.put(APP_USERS_USERNAME, username);
+                values.put(APP_USERS_PWD, pwd);
+                values.put(APP_USERS_ADDRESS, "");
+                values.put(APP_USERS_STAY_LOGGED_IN, 1);
+                values.put(APP_USERS_P_KEY, "");
+                int id = (int) db.insert(TABLE_APP_USERS, null, values);
+                db.setTransactionSuccessful();
+            }else{
+                ContentValues values = new ContentValues();
+                values.put(APP_USERS_PWD, pwd);
+                values.put(APP_USERS_STAY_LOGGED_IN, 1);
+                int id = db.update(TABLE_APP_USERS, values, APP_USERS_USERNAME + "='"+username+"'", null);
 
-        if(!checkIfUserExists(username)) {
-            ContentValues values = new ContentValues();
-            values.put(APP_USERS_USERNAME, username);
-            values.put(APP_USERS_PWD, pwd);
-            values.put(APP_USERS_ADDRESS, "");
-            values.put(APP_USERS_STAY_LOGGED_IN, 1);
-            values.put(APP_USERS_P_KEY, "");
-            int id = (int) db.insert(TABLE_APP_USERS, null, values);
-
-            return id;
-        }else{
-            ContentValues values = new ContentValues();
-            values.put(APP_USERS_PWD, pwd);
-            values.put(APP_USERS_STAY_LOGGED_IN, 1);
-            int id = db.update(TABLE_APP_USERS, values, APP_USERS_USERNAME + "='"+username+"'", null);
-
-            logoutAllOtherUsers(username);
-            db.close();
-            return 0;
+                logoutAllOtherUsers(username);
+                db.setTransactionSuccessful();
+            }
+        }catch(SQLException e){
+            throw new LocalDBException("Could not write to Database");
+        }finally{
+            db.endTransaction();
         }
 
     }
@@ -90,20 +99,34 @@ public class SQLWrapper extends SQLiteOpenHelper {
         return true;
     }
 
-    private void logoutAllOtherUsers(String username){
+    private void logoutAllOtherUsers(String username) throws LocalDBException {
         SQLiteDatabase db = this.getWritableDatabase();
-
-        ContentValues values = new ContentValues();
-        values.put(APP_USERS_STAY_LOGGED_IN, 0);
-        db.update(TABLE_APP_USERS, values, APP_USERS_USERNAME + "!='" + username + "'", null);
+        db.beginTransaction();
+        try{
+            ContentValues values = new ContentValues();
+            values.put(APP_USERS_STAY_LOGGED_IN, 0);
+            db.update(TABLE_APP_USERS, values, APP_USERS_USERNAME + "!='" + username + "'", null);
+            db.setTransactionSuccessful();
+        }catch(SQLException e){
+            throw new LocalDBException("Could not write to Database");
+        }finally{
+            db.endTransaction();
+        }
     }
 
-    public void logoutUser(){
+    public void logoutUser() throws LocalDBException {
         SQLiteDatabase db = this.getWritableDatabase();
-
-        ContentValues values = new ContentValues();
-        values.put(APP_USERS_STAY_LOGGED_IN, 0);
-        db.update(TABLE_APP_USERS, values, APP_USERS_STAY_LOGGED_IN + "='" + 1 + "'", null);
+        db.beginTransaction();
+        try {
+            ContentValues values = new ContentValues();
+            values.put(APP_USERS_STAY_LOGGED_IN, 0);
+            db.update(TABLE_APP_USERS, values, APP_USERS_STAY_LOGGED_IN + "='" + 1 + "'", null);
+            db.setTransactionSuccessful();
+        }catch(SQLException e){
+            throw new LocalDBException("Could not write to Database");
+        }finally{
+            db.endTransaction();
+        }
     }
 
     public String[] getLoggedInUserInfo(){
@@ -121,6 +144,25 @@ public class SQLWrapper extends SQLiteOpenHelper {
         cursor.close();
 
         return returnString;
+    }
+
+    public void changeUserPrivateKey(String username, String p_key) throws LocalDBException{
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.beginTransaction();
+        try {
+            ContentValues values = new ContentValues();
+            values.put(APP_USERS_P_KEY, p_key);
+            int i = db.update(TABLE_APP_USERS, values, APP_USERS_USERNAME + "=='" + username + "'", null);
+
+            if (i == 1) {
+                db.setTransactionSuccessful();
+            }
+        }catch (SQLException e){
+            throw new LocalDBException("Could not write to Database");
+        }finally{
+            db.endTransaction();
+        }
+
     }
 
     public boolean checkIfUserNeedsToBeLoggedIn(){
