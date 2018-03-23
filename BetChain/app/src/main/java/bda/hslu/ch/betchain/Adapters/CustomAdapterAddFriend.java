@@ -64,7 +64,7 @@ public class CustomAdapterAddFriend extends  ArrayAdapter<User> {
                 MainActivity activity = (MainActivity) context;
                 try {
                     FriendFunctions.addFriend(tmp.getUsername());
-                    activity.changeFragmentNoBackstack(new FriendsFragment());
+                    activity.changeFragment(new FriendsFragment());
                     Toast.makeText(activity, "User sucessfully Added" , Toast.LENGTH_SHORT).show();
                 } catch (WebRequestException e) {
 

@@ -64,7 +64,7 @@ public class CustomAdapterFriendInfo extends  ArrayAdapter<Friend> {
                 MainActivity activity = (MainActivity) context;
                 try {
                     FriendFunctions.removeFriend(tmp.getUsername());
-                    activity.changeFragmentNoBackstack(new FriendsFragment());
+                    activity.changeFragment(new FriendsFragment());
                 } catch (WebRequestException e) {
 
                     Toast.makeText(activity,e.getMessage() , Toast.LENGTH_SHORT).show();

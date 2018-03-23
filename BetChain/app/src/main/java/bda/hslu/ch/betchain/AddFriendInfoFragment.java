@@ -59,7 +59,7 @@ public class AddFriendInfoFragment extends Fragment {
                     try {
                         if(FriendFunctions.addFriend(usertoAddInfo.getUsername())){
                             Toast.makeText(activity,"Friend Successfully added!" , Toast.LENGTH_SHORT).show();
-                            activity.changeFragmentNoBackstack(new FriendsFragment());
+                            activity.changeFragment(new FriendsFragment());
                         }
                     } catch (WebRequestException e) {
                         Toast.makeText(activity,e.getMessage() , Toast.LENGTH_SHORT).show();

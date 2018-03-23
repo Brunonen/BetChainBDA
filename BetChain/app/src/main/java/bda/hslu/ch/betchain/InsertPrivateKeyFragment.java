@@ -59,7 +59,7 @@ public class InsertPrivateKeyFragment extends Fragment {
                 savePrivateKey(privateKeyText.getText().toString());
                 MainActivity activity = (MainActivity) getActivity();
                 Fragment accountInfo = new AccountInfoFragment();
-                activity.changeFragmentNoBackstack(accountInfo);
+                activity.changeFragment(accountInfo);
 
             }
         });
