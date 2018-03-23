@@ -50,6 +50,7 @@ public class AddFriendInfoFragment extends Fragment {
 
         } catch (WebRequestException e) {
             Toast.makeText(activity,e.getMessage() , Toast.LENGTH_SHORT).show();
+            activity.changeFragment(new AddFriendFragment());
         }
 
         addFriendbutton.setOnClickListener(new View.OnClickListener() {
