@@ -20,7 +20,7 @@ public class UserFunctions {
         User userInfo = new User();
         try {
             JSONObject requestParams = new JSONObject();
-            requestParams.put("method", "getUserByUsername");
+            requestParams.put("method", "getUserInfo");
             requestParams.put("username", username);
 
 

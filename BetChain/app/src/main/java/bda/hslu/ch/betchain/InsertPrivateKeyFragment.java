@@ -17,6 +17,8 @@ import android.widget.Toast;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+import bda.hslu.ch.betchain.Database.SQLWrapper;
+
 
 public class InsertPrivateKeyFragment extends Fragment {
     private String qrData;
@@ -45,6 +47,20 @@ public class InsertPrivateKeyFragment extends Fragment {
                 }else{
                     getQrCode();
                 }
+            }
+        });
+
+        Button savePrivateKeyButton = (Button) rootView.findViewById(R.id.privateKeySaveButton);
+
+        savePrivateKeyButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EditText privateKeyText = (EditText) rootView.findViewById(R.id.privateKeyTextBox);
+                savePrivateKey(privateKeyText.getText().toString());
+                MainActivity activity = (MainActivity) getActivity();
+                Fragment accountInfo = new AccountInfoFragment();
+                activity.changeFragmentNoBackstack(accountInfo);
+
             }
         });
 
@@ -95,5 +111,17 @@ public class InsertPrivateKeyFragment extends Fragment {
             }
         }
         // END_INCLUDE(onRequestPermissionsResult)
+    }
+
+    private void savePrivateKey(String privateKey){
+        String[] userInfo;
+        MainActivity activity = (MainActivity) getActivity();
+        SQLWrapper db = new SQLWrapper(activity);
+        userInfo = db.getLoggedInUserInfo();
+        try {
+            db.changeUserPrivateKey(userInfo[0], privateKey);
+        }catch (LocalDBException e){
+            Toast.makeText(activity,e.getMessage() , Toast.LENGTH_SHORT).show();
+        }
     }
 }
