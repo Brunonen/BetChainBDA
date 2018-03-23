@@ -72,8 +72,6 @@ public class CustomAdapterAddFriend extends  ArrayAdapter<User> {
 
 
                 }
-
-
             }
         });
 

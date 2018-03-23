@@ -12,11 +12,15 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import bda.hslu.ch.betchain.Adapters.CustomAdapterAddFriend;
 import bda.hslu.ch.betchain.Adapters.CustomAdapterFriendInfo;
+import bda.hslu.ch.betchain.DTO.Friend;
 import bda.hslu.ch.betchain.DTO.User;
+import bda.hslu.ch.betchain.Database.SQLWrapper;
+import bda.hslu.ch.betchain.WebFunctions.FriendFunctions;
 import bda.hslu.ch.betchain.WebFunctions.UserFunctions;
 
 
@@ -42,9 +46,42 @@ public class SearchFriendOnlineFragment extends Fragment {
                             if (event == null || !event.isShiftPressed()) {
                                 try {
                                     List<User> foundUsers = UserFunctions.getUserByUsername(usernameToSearchFor.getText().toString());
+                                    List<Friend> userFriends = new ArrayList<>();
+
+                                    try{
+                                        userFriends = FriendFunctions.getUserFriendList();
+                                    }catch(WebRequestException e){
+
+                                    }
+
                                     ListView userList = (ListView) rootView.findViewById(R.id.usersToAddAsFriendList);
-                                    CustomAdapterAddFriend adapter = new CustomAdapterAddFriend(activity, foundUsers);
-                                    userList.setAdapter(adapter);
+
+                                    if(userFriends.size() > 0) {
+                                        for (int i = 0; i < userFriends.size(); i++) {
+                                            for (int n = 0; n < foundUsers.size(); n++) {
+                                                if (userFriends.get(i).getUsername().equals(foundUsers.get(n).getUsername())) {
+                                                    foundUsers.remove(n);
+                                                    n = 0;
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    for(int i = 0; i < foundUsers.size(); i++){
+                                        if(foundUsers.get(i).getUsername().equals(getUserInfo()[0])){
+                                            foundUsers.remove(i);
+                                            i = 0;
+                                        }
+                                    }
+
+                                    if(foundUsers.size() > 0) {
+
+
+                                        CustomAdapterAddFriend adapter = new CustomAdapterAddFriend(activity, foundUsers);
+                                        userList.setAdapter(adapter);
+                                    }else{
+                                        Toast.makeText(activity, "All users that match this criteria are already your friend!", Toast.LENGTH_SHORT).show();
+                                    }
                                 } catch (WebRequestException e) {
                                     Toast.makeText(activity,e.getMessage() , Toast.LENGTH_SHORT).show();
                                 }
@@ -57,5 +94,13 @@ public class SearchFriendOnlineFragment extends Fragment {
                 }
         );
         return rootView;
+    }
+
+    private String[] getUserInfo(){
+        String[] returnString;
+        MainActivity activity = (MainActivity) getActivity();
+        SQLWrapper db = new SQLWrapper(activity);
+        returnString = db.getLoggedInUserInfo();
+        return returnString;
     }
 }
