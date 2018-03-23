@@ -45,12 +45,9 @@ public class CallAPI  {
 
         String data = params[1]; //data to post
 
-        System.out.println(data);
 
         OutputStream out = null;
         try {
-
-            System.out.println(urlString);
             URL url = new URL(urlString);
 
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
