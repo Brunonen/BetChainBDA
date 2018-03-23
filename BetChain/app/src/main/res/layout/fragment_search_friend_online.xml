@@ -39,7 +39,7 @@
             android:layout_height="wrap_content">
 
             <EditText
-                android:id="@+id/editText8"
+                android:id="@+id/searchUserUsername"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
@@ -62,6 +62,7 @@
         </RelativeLayout>
 
         <ListView
+            android:id="@+id/usersToAddAsFriendList"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 

@@ -4,6 +4,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import bda.hslu.ch.betchain.CallAPI;
 import bda.hslu.ch.betchain.DTO.Friend;
 import bda.hslu.ch.betchain.DTO.User;
@@ -63,11 +67,10 @@ public class UserFunctions {
         return userInfo;
     }
 
-    public static User getUserByUsername(String username) throws WebRequestException{
-        User userInfo = new User();
+    public static List<User> getUserByUsername(String username) throws WebRequestException{
         try {
             JSONObject requestParams = new JSONObject();
-            requestParams.put("method", "getUserByQR");
+            requestParams.put("method", "getUserByUsername");
             requestParams.put("username", username);
 
 
@@ -76,16 +79,15 @@ public class UserFunctions {
 
 
             if (jsonResponse.getInt("is_error") == 0) {
-                return parseJSONResponseToUserObject(jsonResponse.getJSONObject("data"));
+                return parseDataResponseToUserList(jsonResponse.getJSONArray("data"));
             }else{
                 throw new WebRequestException(jsonResponse.getString("message"));
             }
         }catch(JSONException exec){
-            System.out.println(exec.getMessage());
+            throw new WebRequestException(exec.getMessage());
             //return "";
         }
 
-        return userInfo;
     }
 
     private static User parseJSONResponseToUserObject(JSONObject data){
@@ -109,6 +111,34 @@ public class UserFunctions {
                 return new User(username, userAddress, showOnline, 0);
         } catch(JSONException exec) {
             return null;
+        }
+    }
+
+    private static List<User> parseDataResponseToUserList(JSONArray data) {
+        List<User> userList = new ArrayList<User>();
+        String userName = "";
+        String userAddress = "";
+
+        try {
+            for (int i = 0; i < data.length(); i++) {
+
+                JSONObject friendO = data.getJSONObject(i);
+
+                Iterator<?> keys = friendO.keys();
+
+                while( keys.hasNext() ) {
+                    userName = (String)keys.next();
+                    userAddress = friendO.getString(userName);
+                    System.out.println("name: " + userName );
+                    userList.add(new User(userName, userAddress, true, 0));
+                }
+
+
+            }
+
+            return userList;
+        } catch(JSONException exec) {
+            return userList;
         }
     }
 }
