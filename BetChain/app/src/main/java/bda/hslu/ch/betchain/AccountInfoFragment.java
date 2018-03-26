@@ -17,7 +17,7 @@ import com.journeyapps.barcodescanner.BarcodeEncoder;
 import bda.hslu.ch.betchain.DTO.User;
 import bda.hslu.ch.betchain.Database.SQLWrapper;
 import bda.hslu.ch.betchain.WebFunctions.UserFunctions;
-
+import bda.hslu.ch.betchain.Blockchain.AcccountBalance;
 
 public class AccountInfoFragment extends Fragment {
 
@@ -74,6 +74,11 @@ public class AccountInfoFragment extends Fragment {
             MainActivity activity = (MainActivity) getActivity();
             Toast.makeText(activity,"No Public-Address found" , Toast.LENGTH_SHORT).show();
         }
+
+
+        AcccountBalance balance = new AcccountBalance();
+        MainActivity activity = (MainActivity) getActivity();
+        Toast.makeText(activity,balance.getAccountBalance().toString() , Toast.LENGTH_SHORT).show();
 
         return root;
     }

@@ -149,7 +149,7 @@ public class MainActivity extends AppCompatActivity
     public void changeFragmentNoBackstack(Fragment fragment){
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
-    }
+}
 
     private void deleteFragmentBackstack(){
         FragmentManager manager = getSupportFragmentManager();
