@@ -47,11 +47,12 @@ public class CreateBetStep2Fragment extends Fragment {
 
                     try {
                         activity.setBetCreationBetEntryFee(Float.valueOf(betEntryFees.getText().toString()));
+                        activity.changeFragment(step3);
                     }catch(Exception e){
                         Toast.makeText(activity ,"The bet Entry fee must be a number!",  Toast.LENGTH_SHORT).show();
                     }
 
-                    activity.changeFragment(step3);
+
                 }else{
                     Toast.makeText(activity ,"Please enter Conditions for your bet!",  Toast.LENGTH_SHORT).show();
                 }
