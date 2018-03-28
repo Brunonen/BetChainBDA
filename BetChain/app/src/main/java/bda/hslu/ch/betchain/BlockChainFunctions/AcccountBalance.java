@@ -1,4 +1,4 @@
-package bda.hslu.ch.betchain.Blockchain;
+package bda.hslu.ch.betchain.BlockChainFunctions;
 
 import android.app.WallpaperManager;
 

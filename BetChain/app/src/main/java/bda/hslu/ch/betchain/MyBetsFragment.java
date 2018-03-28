@@ -16,6 +16,7 @@ import java.util.List;
 
 import bda.hslu.ch.betchain.Adapters.CustomAdapterFriendInfo;
 import bda.hslu.ch.betchain.Adapters.CustomAdapterMyBetInfo;
+import bda.hslu.ch.betchain.BlockChainFunctions.BlockChainFunctions;
 import bda.hslu.ch.betchain.DTO.Bet;
 import bda.hslu.ch.betchain.DTO.Friend;
 import bda.hslu.ch.betchain.WebFunctions.BetFunctions;
@@ -32,10 +33,26 @@ public class MyBetsFragment extends Fragment {
 
         List<Bet> bets = BetFunctions.getBetsOfUser("0x627306090abaB3A6e1400e9345bC60c78a8BEf57");
 
-        MainActivity activity = (MainActivity) getActivity();
+        final MainActivity activity = (MainActivity) getActivity();
         ListView betList = (ListView) rootView.findViewById(R.id.myBetsListViewBox);
         CustomAdapterMyBetInfo adapter = new CustomAdapterMyBetInfo (activity, bets);
         betList.setAdapter(adapter);
+
+        BlockChainFunctions smartContract = new BlockChainFunctions() {
+            @Override
+            public void onSuccess(Object result) {
+                //Toast.makeText(activity, "Your Bet has been successfully created!", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(Object result) {
+                Exception exec = (Exception) result;
+                Toast.makeText(activity, exec.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        };
+
+        smartContract.execute("getContractInfo", "0x4e72770760c011647d4873f60a3cf6cdea896cd8");
+
 
         final Button startBetCreation = (Button) rootView.findViewById(R.id.buttonGoToCreateNewBet);
         startBetCreation.setOnClickListener(new View.OnClickListener() {

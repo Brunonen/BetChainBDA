@@ -1,7 +1,6 @@
 package bda.hslu.ch.betchain;
 
 import android.graphics.Bitmap;
-import android.media.Image;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -17,7 +16,7 @@ import com.journeyapps.barcodescanner.BarcodeEncoder;
 import bda.hslu.ch.betchain.DTO.User;
 import bda.hslu.ch.betchain.Database.SQLWrapper;
 import bda.hslu.ch.betchain.WebFunctions.UserFunctions;
-import bda.hslu.ch.betchain.Blockchain.AcccountBalance;
+import bda.hslu.ch.betchain.BlockChainFunctions.AcccountBalance;
 
 public class AccountInfoFragment extends Fragment {
 

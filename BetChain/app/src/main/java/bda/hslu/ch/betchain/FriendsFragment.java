@@ -25,20 +25,41 @@ public class FriendsFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_friends, container, false);
-        MainActivity activity = (MainActivity) getActivity();
+        final MainActivity activity = (MainActivity) getActivity();
 
         List<Friend> friends = null;
-        try {
-            friends = FriendFunctions.getUserFriendList();
 
-            if(friends.size() > 0) {
-                ListView friendsList = (ListView) rootView.findViewById(R.id.friendList);
-                CustomAdapterFriendInfo adapter = new CustomAdapterFriendInfo(activity, friends);
-                friendsList.setAdapter(adapter);
+        FriendFunctions getUserFriends = new FriendFunctions(){
+
+
+            @Override
+            public void onSuccess(Object result) {
+                List<Friend> friends;
+                friends = (List<Friend>) result;
+                if(friends.size() > 0) {
+                    ListView friendsList = (ListView) rootView.findViewById(R.id.friendList);
+                    CustomAdapterFriendInfo adapter = new CustomAdapterFriendInfo(activity, friends);
+                    friendsList.setAdapter(adapter);
+                }
             }
-        } catch (WebRequestException e) {
-            Toast.makeText(activity,e.getMessage() , Toast.LENGTH_SHORT).show();
-        }
+
+            @Override
+            public void onFailure(Object e) {
+                Exception exec = (Exception) e;
+                Toast.makeText(activity, exec.getMessage() , Toast.LENGTH_SHORT).show();
+            }
+        };
+
+        getUserFriends.execute("getUserFriendList");
+
+        /*friends = FriendFunctions.getUserFriendList();
+
+        if(friends.size() > 0) {
+            ListView friendsList = (ListView) rootView.findViewById(R.id.friendList);
+            CustomAdapterFriendInfo adapter = new CustomAdapterFriendInfo(activity, friends);
+            friendsList.setAdapter(adapter);
+        }*/
+
 
 
 

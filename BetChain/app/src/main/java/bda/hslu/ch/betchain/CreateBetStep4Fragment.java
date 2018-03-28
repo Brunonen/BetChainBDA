@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 import bda.hslu.ch.betchain.Adapters.CustomAdapterParticipantInfo;
+import bda.hslu.ch.betchain.BlockChainFunctions.BlockChainFunctions;
 import bda.hslu.ch.betchain.DTO.BetRole;
 import bda.hslu.ch.betchain.DTO.Participant;
 
@@ -67,26 +68,27 @@ public class CreateBetStep4Fragment extends Fragment {
                    if(!betConditions.getText().equals("")){
                        try {
                            if (Float.valueOf(betEntryFees.getText().toString()) >= 0) {
-                               BigDecimal eth = Convert.toWei(Float.valueOf(betEntryFees.getText().toString()).toString(), Convert.Unit.ETHER);
-                               Web3j web3 = Web3jFactory.build(new HttpService("http://10.0.2.2:7545"));  // defaults to http://localhost:8545/
-                               Credentials credentials = Credentials.create("c87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3");
 
-                               BetChainBetContract contract = BetChainBetContract.deploy(
-                                       web3, credentials,
-                                       GAS_PRICE, GAS_LIMIT,
-                                       stringToBytes32(betConditions.getText().toString()), eth.toBigInteger()).send();  // constructor params
+                               BlockChainFunctions smartContract = new BlockChainFunctions() {
+                                   @Override
+                                   public void onSuccess(Object result) {
+                                       Toast.makeText(activity, "Your Bet has been successfully created!", Toast.LENGTH_SHORT).show();
+                                   }
 
-                               System.out.println(contract.getContractAddress());
-                               contract.addBetOpposer("0xf17f52151EbEF6C7334FAD080c5704D77216b732").send();
-                               contract.acceptBet(Convert.toWei(Float.valueOf(betEntryFees.getText().toString()).toString(), Convert.Unit.ETHER).toBigInteger()).send();
-                               BigInteger numberOFParticipants = contract.getNumberOfParticipants().send();
-                               System.out.println(numberOFParticipants);
-                               for(int i = 0; i < numberOFParticipants.intValue(); i++){
-                                   System.out.println(contract.getParticipantInfo(BigInteger.valueOf(i)).send());
-                               }
+                                   @Override
+                                   public void onFailure(Object result) {
+                                       Exception exec = (Exception) result;
+                                       Toast.makeText(activity, exec.getMessage(), Toast.LENGTH_SHORT).show();
+                                       exec.printStackTrace();
+                                   }
+                               };
+
+                               smartContract.execute("createSmartContract", betConditions.getText().toString(), betEntryFees.getText().toString(), participantList);
+
                                //System.out.println(contract.getContractAddress());
                            } else {
                                Toast.makeText(activity, "Entry Fee can not be less than 0!", Toast.LENGTH_SHORT).show();
+
                            }
                        }catch(Exception ex){
                            System.out.println(ex.getMessage());
@@ -99,7 +101,7 @@ public class CreateBetStep4Fragment extends Fragment {
                }
            });
 
-                ListView betParticipantListView = (ListView) rootView.findViewById(R.id.betParticipantList);
+        ListView betParticipantListView = (ListView) rootView.findViewById(R.id.betParticipantList);
         CustomAdapterParticipantInfo adapter = new CustomAdapterParticipantInfo (activity, participantList);
         betParticipantListView.setAdapter(adapter);
 
