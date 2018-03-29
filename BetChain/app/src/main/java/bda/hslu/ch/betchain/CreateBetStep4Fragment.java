@@ -1,5 +1,7 @@
 package bda.hslu.ch.betchain;
 
+import android.app.IntentService;
+import android.content.Intent;
 import android.provider.Telephony;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -23,6 +25,7 @@ import org.web3j.protocol.core.RemoteCall;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.utils.Convert;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.List;
@@ -30,6 +33,7 @@ import java.util.ArrayList;
 
 import bda.hslu.ch.betchain.Adapters.CustomAdapterParticipantInfo;
 import bda.hslu.ch.betchain.BlockChainFunctions.BlockChainFunctions;
+import bda.hslu.ch.betchain.BlockChainFunctions.ContractCreationIntentService;
 import bda.hslu.ch.betchain.DTO.BetRole;
 import bda.hslu.ch.betchain.DTO.Participant;
 
@@ -69,6 +73,15 @@ public class CreateBetStep4Fragment extends Fragment {
                        try {
                            if (Float.valueOf(betEntryFees.getText().toString()) >= 0) {
 
+                               Intent betCreation = new Intent(activity, ContractCreationIntentService.class);
+                               betCreation.putExtra("betConditions", betConditions.getText().toString());
+                               betCreation.putExtra("betEntryFee", betEntryFees.getText().toString());
+                               betCreation.putExtra("participants" , (Serializable) participantList);
+                               betCreation.setAction("bda.hslu.ch.betchain.BlockChainFunctions.ContractCreationIntentService");
+                               activity.sendBroadcast(betCreation);
+                               activity.startService(betCreation);
+
+                               /*
                                BlockChainFunctions smartContract = new BlockChainFunctions() {
                                    @Override
                                    public void onSuccess(Object result) {
@@ -84,7 +97,7 @@ public class CreateBetStep4Fragment extends Fragment {
                                };
 
                                smartContract.execute("createSmartContract", betConditions.getText().toString(), betEntryFees.getText().toString(), participantList);
-
+                                */
                                //System.out.println(contract.getContractAddress());
                            } else {
                                Toast.makeText(activity, "Entry Fee can not be less than 0!", Toast.LENGTH_SHORT).show();

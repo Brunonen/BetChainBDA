@@ -23,7 +23,10 @@ import bda.hslu.ch.betchain.Adapters.CustomAdapterParticipantInfo;
 import bda.hslu.ch.betchain.DTO.BetRole;
 import bda.hslu.ch.betchain.DTO.Participant;
 import bda.hslu.ch.betchain.DTO.Friend;
+import bda.hslu.ch.betchain.DTO.User;
+import bda.hslu.ch.betchain.Database.SQLWrapper;
 import bda.hslu.ch.betchain.WebFunctions.FriendFunctions;
+import bda.hslu.ch.betchain.WebFunctions.UserFunctions;
 
 
 public class CreateBetStep3Fragment extends Fragment {
@@ -75,13 +78,30 @@ public class CreateBetStep3Fragment extends Fragment {
         }
 
 
+        String[] loggedInUserInfo = getUserInfo();
 
 
-        Participant kay = new Participant("Kay Hartmann", "0x627306090abaB3A6e1400e9345bC60c78a8BEf57", true, false, BetRole.OWNER);
-        kay.setProfilePicture(R.drawable.kay);
+        Participant owner = new Participant(loggedInUserInfo[0], loggedInUserInfo[3], true, false, BetRole.OWNER);
+
+
+        User serverInfo = null;
+        try {
+            serverInfo = UserFunctions.getUserInfo(loggedInUserInfo[0]);
+
+            if(serverInfo.getProfilePicture() != 0){
+                owner.setProfilePicture(serverInfo.getProfilePicture());
+            }else{
+
+            }
+
+
+        } catch (WebRequestException e) {
+            Toast.makeText(activity ,"Could not get User Info from Server",  Toast.LENGTH_SHORT).show();
+            owner.setProfilePicture(R.drawable.ic_blank_avatar);
+        }
 
         if(betParticipants.size() == 0) {
-            betSupporters.add(kay);
+            betSupporters.add(owner);
         }
 
         final ListView betSupporterList = (ListView) rootView.findViewById(R.id.betSupporterList);
@@ -304,5 +324,12 @@ public class CreateBetStep3Fragment extends Fragment {
         return friendsToChoose;
     }
 
+    private String[] getUserInfo(){
+        String[] returnString;
+        MainActivity activity = (MainActivity) getActivity();
+        SQLWrapper db = new SQLWrapper(activity);
+        returnString = db.getLoggedInUserInfo();
+        return returnString;
+    }
 
 }

@@ -16,9 +16,12 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
+                <action android:name="bda.hslu.ch.betchain.BlockChainFunctions.ContractCreationIntentService" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <service android:name=".BlockChainFunctions.ContractCreationIntentService"/>
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />

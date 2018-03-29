@@ -26,6 +26,9 @@ public abstract class BlockChainFunctions extends AsyncTask<Object, Void, Object
     private static BigInteger GAS_PRICE = new BigInteger("100000");
     private static BigInteger GAS_LIMIT = new BigInteger("4000000");
 
+    private static final String BRUNO_P_KEY = "c87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3";
+    //private static final String BRUNO_P_KEY = "cdfccc4c39b60a7b591eac331dc9860a5ba643ef5d7e09cdfb86a91e7c14464c";
+
     public static Exception mException;
     public abstract void onSuccess(Object result);
     public abstract void onFailure(Object result);
@@ -39,10 +42,6 @@ public abstract class BlockChainFunctions extends AsyncTask<Object, Void, Object
         try {
             String method = (String) params[0];
             switch (method) {
-                case "createSmartContract":
-                    createSmartContract((String) params[1], (String) params[2], (List<Participant>) params[3]);
-                    break;
-
                     //return getUserFriendList();
 
 
@@ -63,7 +62,7 @@ public abstract class BlockChainFunctions extends AsyncTask<Object, Void, Object
 
     private static void getSmartContractInfo(String contractAddress) throws Exception{
         Web3j web3 = Web3jFactory.build(new HttpService(BLOCKCHAIN_URL));  // defaults to http://localhost:8545/
-        Credentials credentials = Credentials.create("c87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3");
+        Credentials credentials = Credentials.create(BRUNO_P_KEY);
 
 
         BetChainBetContract contract = BetChainBetContract.load(
@@ -82,37 +81,7 @@ public abstract class BlockChainFunctions extends AsyncTask<Object, Void, Object
 
     }
 
-    private static boolean createSmartContract(String betConditions, String betEntryFees, List<Participant> participants) throws Exception {
-        BigDecimal eth = Convert.toWei(Float.valueOf(betEntryFees).toString(), Convert.Unit.ETHER);
-        Web3j web3 = Web3jFactory.build(new HttpService(BLOCKCHAIN_URL));  // defaults to http://localhost:8545/
-        Credentials credentials = Credentials.create("c87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3");
 
-        BetChainBetContract contract = BetChainBetContract.deploy(
-                web3, credentials,
-                GAS_PRICE, GAS_LIMIT,
-                stringToBytes32(betConditions), eth.toBigInteger()).send();  // constructor params
-
-        System.out.println(contract.getContractAddress());
-        contract.acceptBet(Convert.toWei(Float.valueOf(betEntryFees).toString(), Convert.Unit.ETHER).toBigInteger()).send();
-
-        for(Participant p : participants){
-            System.out.println(p.getUsername() + " Address: " + p.getAddress());
-            switch(p.getBetRole()){
-                case OWNER:     break;
-                case SUPPORTER: contract.addBetSupporter(p.getAddress().toString()).send();
-                                System.out.println("Adding Supporter");
-                                break;
-                case OPPOSER: contract.addBetOpposer(p.getAddress().toString()).send();
-                                System.out.println("Adding Oppser");
-                                break;
-                case NOTAR: contract.addBetNotar(p.getAddress()).send();
-                                System.out.println("Adding Notar");
-                                break;
-            }
-        }
-
-        return true;
-    }
 
     private static byte[] stringToBytes32(String string) {
         byte[] byteValue = string.getBytes();

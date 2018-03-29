@@ -1,5 +1,11 @@
 package bda.hslu.ch.betchain;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.provider.Telephony;
 import android.support.design.widget.FloatingActionButton;
@@ -61,6 +67,8 @@ public class MainActivity extends AppCompatActivity
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
+        IntentFilter filter = new IntentFilter("bda.hslu.ch.betchain.BlockChainFunctions.ContractCreationIntentService");
+        this.registerReceiver(new Receiver(), filter);
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -241,5 +249,19 @@ public class MainActivity extends AppCompatActivity
 
     public void setUserAddressToGetInfoFrom(String userAddressToGetInfoFrom) {
         this.userAddressToGetInfoFrom = userAddressToGetInfoFrom;
+    }
+
+    private class Receiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context arg0, Intent arg1) {
+            NotificationManager notif=(NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+            Notification notify=new Notification.Builder
+                    (getApplicationContext()).setContentTitle("BetChain").setContentText("Your Contract was deployed!").
+                    setContentTitle("Contract Deployed").setSmallIcon(R.mipmap.logo).build();
+
+            notify.flags |= Notification.FLAG_AUTO_CANCEL;
+            notif.notify(0, notify);
+        }
     }
 }

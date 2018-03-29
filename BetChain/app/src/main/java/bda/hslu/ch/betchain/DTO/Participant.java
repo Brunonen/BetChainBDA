@@ -1,10 +1,12 @@
 package bda.hslu.ch.betchain.DTO;
 
+import java.io.Serializable;
+
 /**
  * Created by Bruno Fischlin on 11/03/2018.
  */
 
-public class Participant {
+public class Participant implements Serializable {
     private String username = "";
     private String address = "";
     private boolean betAccepted = false;

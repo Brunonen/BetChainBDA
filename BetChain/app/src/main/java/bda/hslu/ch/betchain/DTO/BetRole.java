@@ -29,6 +29,7 @@ public enum BetRole {
         return map.get(betRole);
     }
 
+
     public int getBetRole() {
         return betRole;
     }
