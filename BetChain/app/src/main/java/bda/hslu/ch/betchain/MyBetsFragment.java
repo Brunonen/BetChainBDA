@@ -51,7 +51,7 @@ public class MyBetsFragment extends Fragment {
             }
         };
 
-        smartContract.execute("getContractInfo", "0x2a504b5e7ec284aca5b6f49716611237239f0b97");
+        smartContract.execute("getContractInfo", "0x8f0483125fcb9aaaefa9209d8e9d7b9c8b9fb90f");
 
 
         final Button startBetCreation = (Button) rootView.findViewById(R.id.buttonGoToCreateNewBet);

@@ -64,6 +64,7 @@ public class ContractCreationIntentService extends IntentService {
 
             System.out.println(contract.getContractAddress());
 
+
         }catch(Exception ex){
             System.out.println(ex.getMessage() );
             ex.printStackTrace();
