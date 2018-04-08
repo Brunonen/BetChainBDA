@@ -1,6 +1,7 @@
 package bda.hslu.ch.betchain.Adapters;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,11 +9,13 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
 import bda.hslu.ch.betchain.BetInfoFragment;
 import bda.hslu.ch.betchain.DTO.Bet;
+import bda.hslu.ch.betchain.DTO.BetState;
 import bda.hslu.ch.betchain.DTO.Participant;
 import bda.hslu.ch.betchain.MainActivity;
 import bda.hslu.ch.betchain.R;
@@ -45,18 +48,27 @@ public class CustomAdapterMyBetInfo extends ArrayAdapter<Bet>{
         final Bet tmp = items.get(position);
 
         betTitle.setText(tmp.getBetTitle());
+
+        //Set Text of Bet to YELLOW if it has not been Deployed yet!
+        if(tmp.getBetState() == BetState.NOTDEPLOYED){
+            betTitle.setTextColor(Color.MAGENTA);
+        }
+
         betStatus.setText(tmp.getBetState().toString());
         betPrizePool.setText(String.valueOf(tmp.getBetPrizePool()) + " Eth");
 
         rowView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 MainActivity activity = (MainActivity) context;
-                activity.setSelectedBetAddress(tmp.getBetAddress());
 
-                activity.changeFragment(new BetInfoFragment());
-                System.out.println(activity.getSelectedBetAddress());
+                //Display Bet Info on BetInfoFragment if Bet has been deplyoed to the Blockchain
+                if(tmp.getBetState() != BetState.NOTDEPLOYED) {
+                    activity.setSelectedBet(tmp);
+                    activity.changeFragment(new BetInfoFragment());
+                }else{
+                    Toast.makeText(activity, "This bet has not yet been deplyoed on the Blockchain!" , Toast.LENGTH_SHORT).show();
+                }
             }
         });
 

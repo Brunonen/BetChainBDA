@@ -8,7 +8,7 @@ import java.util.Map;
  */
 
 public enum BetState {
-    PENDING(0), LOCKED(1), EVALUATION(2), CONCLUDED(3), ABORTED(4);
+    PENDING(0), LOCKED(1), EVALUATION(2), CONCLUDED(3), ABORTED(4), NOTDEPLOYED(5);
 
     private final int betSate;
 
@@ -41,6 +41,7 @@ public enum BetState {
             case 2: return "Evaluation";
             case 3: return "Concluded";
             case 4: return "Aborted";
+            case 5: return "Waiting for Deployment";
             default: return "unknown";
         }
     }

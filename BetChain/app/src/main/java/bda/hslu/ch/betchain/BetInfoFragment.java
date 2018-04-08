@@ -22,6 +22,7 @@ import bda.hslu.ch.betchain.DTO.Bet;
 import bda.hslu.ch.betchain.DTO.BetRole;
 import bda.hslu.ch.betchain.DTO.BetState;
 import bda.hslu.ch.betchain.DTO.Participant;
+import bda.hslu.ch.betchain.Database.SQLWrapper;
 import bda.hslu.ch.betchain.WebFunctions.BetFunctions;
 
 
@@ -34,119 +35,128 @@ public class BetInfoFragment extends Fragment {
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_bet_info, container, false);
         MainActivity activity = (MainActivity) getActivity();
-        Bet selectedBetInfo = BetFunctions.getBetFromAddress(activity.getSelectedBetAddress());
-        selectedBetInfo.setParticipants(addProfilePictures(selectedBetInfo.getParticipants()));
+        Bet selectedBetInfo;
+        try {
+            selectedBetInfo = BetFunctions.getBetInfoFromBlockchain(activity.getSelectedBet());
 
-        TextView betTitle = (TextView) rootView.findViewById(R.id.betInfoBetTitle);
-        betTitle.setText(selectedBetInfo.getBetTitle());
+            TextView betTitle = (TextView) rootView.findViewById(R.id.betInfoBetTitle);
+            betTitle.setText(selectedBetInfo.getBetTitle());
 
-        EditText betConditions = (EditText) rootView.findViewById(R.id.betInfoBetConditions);
-        betConditions.setText(selectedBetInfo.getBetConditions());
+            EditText betConditions = (EditText) rootView.findViewById(R.id.betInfoBetConditions);
+            betConditions.setText(selectedBetInfo.getBetConditions());
 
-        EditText betEntryFee = (EditText) rootView.findViewById(R.id.betInfoBetEntryFee);
-        betEntryFee.setText(String.valueOf(selectedBetInfo.getBetEntryFee()) + " Eth");
+            EditText betEntryFee = (EditText) rootView.findViewById(R.id.betInfoBetEntryFee);
+            betEntryFee.setText(String.valueOf(selectedBetInfo.getBetEntryFee()) + " Eth");
 
-        EditText betPrizePool = (EditText) rootView.findViewById(R.id.betInfoBetPrizePool);
-        betPrizePool.setText(String.valueOf(selectedBetInfo.getBetPrizePool()) + " Eth");
+            EditText betPrizePool = (EditText) rootView.findViewById(R.id.betInfoBetPrizePool);
+            betPrizePool.setText(String.valueOf(selectedBetInfo.getBetPrizePool()) + " Eth");
 
-        EditText betStatus = (EditText) rootView.findViewById(R.id.betInfoBetStatus);
-        betStatus.setText(selectedBetInfo.getBetState().toString());
+            EditText betStatus = (EditText) rootView.findViewById(R.id.betInfoBetStatus);
+            betStatus.setText(selectedBetInfo.getBetState().toString());
 
-        Button acceptBetButton = (Button) rootView.findViewById(R.id.buttonBetInfoAcceptBet);
-        Button retreatFromBetButton = (Button) rootView.findViewById(R.id.buttonBetInfoRetreat);
-        Button startBetButton = (Button) rootView.findViewById(R.id.buttonBetInfoStartBet);
-        Button startVoteButton = (Button) rootView.findViewById(R.id.buttonBetInfoStartVote);
-        Button betSuccessButton = (Button) rootView.findViewById(R.id.buttonBetInfoBetSuccess);
-        Button betFailureButton = (Button) rootView.findViewById(R.id.buttonBetInfoBetFailure);
+            Button acceptBetButton = (Button) rootView.findViewById(R.id.buttonBetInfoAcceptBet);
+            Button retreatFromBetButton = (Button) rootView.findViewById(R.id.buttonBetInfoRetreat);
+            Button startBetButton = (Button) rootView.findViewById(R.id.buttonBetInfoStartBet);
+            Button startVoteButton = (Button) rootView.findViewById(R.id.buttonBetInfoStartVote);
+            Button betSuccessButton = (Button) rootView.findViewById(R.id.buttonBetInfoBetSuccess);
+            Button betFailureButton = (Button) rootView.findViewById(R.id.buttonBetInfoBetFailure);
 
-        Participant betOwner = new Participant();
-        Participant loggedInUser = new Participant();
+            Participant betOwner = new Participant();
+            String[] loggedInUserInfo = getUserInfo();
+            Participant loggedInUser = new Participant();
 
-        for(Participant p : selectedBetInfo.getParticipants()){
-            if(p.getBetRole() == BetRole.OWNER){
-                betOwner = p;
+            loggedInUser.setUsername(loggedInUserInfo[0]);
+            loggedInUser.setAddress(loggedInUserInfo[3]);
+
+            //Loop through all participants to find the user and which of those is the logged in User.
+            for(Participant p : selectedBetInfo.getParticipants()){
+                if(p.getBetRole() == BetRole.OWNER){
+                    betOwner = p;
+                }
+
+                if(p.getUsername().equals(loggedInUser.getUsername())){
+                    loggedInUser = p;
+                }
             }
-            if(p.getUsername() == "Kay Hartmann"){
-                loggedInUser = p;
-            }
-        }
 
-        disableAllButtons();
+            disableAllButtons();
 
-        if(selectedBetInfo.getBetState() == BetState.PENDING){
-            for(int i = 0; i < selectedBetInfo.getParticipants().size(); i++) {
-                if(selectedBetInfo.getParticipants().get(i).hasBetAccepted()){
-                    selectedBetInfo.getParticipants().get(i).setInfoIcon(R.drawable.ic_check_black_24dp);
+            if(selectedBetInfo.getBetState() == BetState.PENDING){
+                for(int i = 0; i < selectedBetInfo.getParticipants().size(); i++) {
+                    if(selectedBetInfo.getParticipants().get(i).hasBetAccepted()){
+                        selectedBetInfo.getParticipants().get(i).setInfoIcon(R.drawable.ic_check_black_24dp);
+                    }else{
+                        selectedBetInfo.getParticipants().get(i).setInfoIcon(R.drawable.ic_close_black_24dp);
+                    }
+                }
+
+                if(betOwner.getUsername().equals(loggedInUser.getUsername()) || betOwner.getAddress().equals(loggedInUser.getAddress())){
+                    startBetButton.setVisibility(View.VISIBLE);
+                    startBetButton.setEnabled(true);
                 }else{
-                    selectedBetInfo.getParticipants().get(i).setInfoIcon(R.drawable.ic_close_black_24dp);
+                    if(!loggedInUser.hasBetAccepted()){
+                        acceptBetButton.setEnabled(true);
+                        acceptBetButton.setVisibility(View.VISIBLE);
+                        retreatFromBetButton.setEnabled(false);
+                        retreatFromBetButton.setVisibility(View.VISIBLE);
+                    }else{
+                        retreatFromBetButton.setEnabled(true);
+                        retreatFromBetButton.setVisibility(View.VISIBLE);
+                        acceptBetButton.setEnabled(false);
+                        acceptBetButton.setVisibility(View.VISIBLE);
+                    }
                 }
             }
 
-            if(betOwner.getUsername() == loggedInUser.getUsername()){
-                startBetButton.setVisibility(View.VISIBLE);
-                startBetButton.setEnabled(true);
-            }else{
-                if(!loggedInUser.hasBetAccepted()){
-                    acceptBetButton.setEnabled(true);
-                    acceptBetButton.setVisibility(View.VISIBLE);
-                    retreatFromBetButton.setEnabled(false);
-                    retreatFromBetButton.setVisibility(View.VISIBLE);
-                }else{
-                    retreatFromBetButton.setEnabled(true);
-                    retreatFromBetButton.setVisibility(View.VISIBLE);
-                    acceptBetButton.setEnabled(false);
-                    acceptBetButton.setVisibility(View.VISIBLE);
+            if(selectedBetInfo.getBetState() == BetState.LOCKED){
+                if(betOwner.getUsername() == loggedInUser.getUsername()){
+                    startVoteButton.setVisibility(View.VISIBLE);
+                    startVoteButton.setEnabled(true);
                 }
             }
+
+            if(selectedBetInfo.getBetState() == BetState.EVALUATION){
+                for(int i = 0; i < selectedBetInfo.getParticipants().size(); i++) {
+                    if(selectedBetInfo.getParticipants().get(i).hasVoted()){
+                        selectedBetInfo.getParticipants().get(i).setInfoIcon(R.drawable.ic_mode_comment_black_24dp);
+                    }
+                }
+
+                if(betOwner.getUsername() != loggedInUser.getUsername()){
+                    if(!loggedInUser.hasVoted()){
+                        betSuccessButton.setEnabled(true);
+                        betSuccessButton.setVisibility(View.VISIBLE);
+                        betFailureButton.setEnabled(true);
+                        betFailureButton.setVisibility(View.VISIBLE);
+                    }
+                }
+            }
+
+            if(selectedBetInfo.getBetState() == BetState.CONCLUDED){
+                for(int i = 0; i < selectedBetInfo.getParticipants().size(); i++){
+                    if(selectedBetInfo.isBetSuccessful() && selectedBetInfo.getParticipants().get(i).getBetRole() == BetRole.SUPPORTER){
+                        selectedBetInfo.getParticipants().get(i).setInfoIcon(R.drawable.ic_menu_createbet);
+                    }
+                    else if(!selectedBetInfo.isBetSuccessful() && selectedBetInfo.getParticipants().get(i).getBetRole() == BetRole.OPPOSER){
+                        selectedBetInfo.getParticipants().get(i).setInfoIcon(R.drawable.ic_menu_createbet);
+                    }
+                }
+            }
+
+            if(selectedBetInfo.getBetState() == BetState.ABORTED){
+                betStatus.setTextColor(Color.RED);
+            }
+
+
+
+
+            ListView betParticipantListView = (ListView) rootView.findViewById(R.id.betInfoBetParticpantsList);
+            CustomAdapterParticipantInfo adapter = new CustomAdapterParticipantInfo (activity, selectedBetInfo.getParticipants());
+            betParticipantListView.setAdapter(adapter);
+
+        } catch (Exception e) {
+            Toast.makeText(activity, e.getMessage() , Toast.LENGTH_SHORT).show();
         }
-
-        if(selectedBetInfo.getBetState() == BetState.LOCKED){
-            if(betOwner.getUsername() == loggedInUser.getUsername()){
-                startVoteButton.setVisibility(View.VISIBLE);
-                startVoteButton.setEnabled(true);
-            }
-        }
-
-        if(selectedBetInfo.getBetState() == BetState.EVALUATION){
-            for(int i = 0; i < selectedBetInfo.getParticipants().size(); i++) {
-                if(selectedBetInfo.getParticipants().get(i).hasVoted()){
-                    selectedBetInfo.getParticipants().get(i).setInfoIcon(R.drawable.ic_mode_comment_black_24dp);
-                }
-            }
-
-            if(betOwner.getUsername() != loggedInUser.getUsername()){
-                if(!loggedInUser.hasVoted()){
-                    betSuccessButton.setEnabled(true);
-                    betSuccessButton.setVisibility(View.VISIBLE);
-                    betFailureButton.setEnabled(true);
-                    betFailureButton.setVisibility(View.VISIBLE);
-                }
-            }
-        }
-
-        if(selectedBetInfo.getBetState() == BetState.CONCLUDED){
-            for(int i = 0; i < selectedBetInfo.getParticipants().size(); i++){
-                if(selectedBetInfo.isBetSuccessful() && selectedBetInfo.getParticipants().get(i).getBetRole() == BetRole.SUPPORTER){
-                    selectedBetInfo.getParticipants().get(i).setInfoIcon(R.drawable.ic_menu_createbet);
-                }
-                else if(!selectedBetInfo.isBetSuccessful() && selectedBetInfo.getParticipants().get(i).getBetRole() == BetRole.OPPOSER){
-                    selectedBetInfo.getParticipants().get(i).setInfoIcon(R.drawable.ic_menu_createbet);
-                }
-            }
-        }
-
-        if(selectedBetInfo.getBetState() == BetState.ABORTED){
-            betStatus.setTextColor(Color.RED);
-        }
-
-
-
-
-        ListView betParticipantListView = (ListView) rootView.findViewById(R.id.betInfoBetParticpantsList);
-        CustomAdapterParticipantInfo adapter = new CustomAdapterParticipantInfo (activity, selectedBetInfo.getParticipants());
-        betParticipantListView.setAdapter(adapter);
-
-
         return rootView;
     }
 
@@ -195,4 +205,14 @@ public class BetInfoFragment extends Fragment {
         return betParticipants;
 
     }
+
+    private String[] getUserInfo(){
+        String[] returnString;
+        MainActivity activity = (MainActivity) getActivity();
+        SQLWrapper db = new SQLWrapper(activity);
+        returnString = db.getLoggedInUserInfo();
+        return returnString;
+    }
+
+
 }

@@ -1,6 +1,7 @@
 package bda.hslu.ch.betchain;
 
 
+import android.annotation.SuppressLint;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -29,7 +30,7 @@ public class FriendsFragment extends Fragment {
 
         List<Friend> friends = null;
 
-        FriendFunctions getUserFriends = new FriendFunctions(){
+        @SuppressLint("StaticFieldLeak") FriendFunctions getUserFriends = new FriendFunctions(){
 
 
             @Override

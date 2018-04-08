@@ -30,8 +30,9 @@
             <TextView
                 android:id="@+id/textView7"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
+                android:text="CREATE NEW BET"
                 android:textAlignment="center"
                 android:textColor="@android:color/black"
                 android:textSize="20sp"

@@ -16,15 +16,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.web3j.abi.datatypes.generated.Bytes32;
-import org.web3j.crypto.Credentials;
-import org.web3j.crypto.WalletUtils;
-import org.web3j.protocol.Web3j;
-import org.web3j.protocol.Web3jFactory;
-import org.web3j.protocol.core.RemoteCall;
-import org.web3j.protocol.http.HttpService;
-import org.web3j.utils.Convert;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -36,13 +27,13 @@ import bda.hslu.ch.betchain.BlockChainFunctions.BlockChainFunctions;
 import bda.hslu.ch.betchain.BlockChainFunctions.ContractCreationIntentService;
 import bda.hslu.ch.betchain.DTO.BetRole;
 import bda.hslu.ch.betchain.DTO.Participant;
+import bda.hslu.ch.betchain.Database.SQLWrapper;
+import bda.hslu.ch.betchain.WebFunctions.BetFunctions;
 
 
 public class CreateBetStep4Fragment extends Fragment {
 
     private View rootView;
-    private static BigInteger GAS_PRICE = new BigInteger("100000");
-    private static BigInteger GAS_LIMIT = new BigInteger("4000000");
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -52,7 +43,7 @@ public class CreateBetStep4Fragment extends Fragment {
 
         final MainActivity activity = (MainActivity) getActivity();
 
-        TextView betTitle = (TextView) rootView.findViewById(R.id.inputBetTitleConfirmation);
+        final TextView betTitle = (TextView) rootView.findViewById(R.id.inputBetTitleConfirmation);
         betTitle.setText(activity.getBetCreationBetTitle());
 
         final TextView betConditions = (TextView) rootView.findViewById(R.id.inputBetConditionsConfirmation);
@@ -69,17 +60,45 @@ public class CreateBetStep4Fragment extends Fragment {
                @Override
                public void onClick(final View v) {
 
-                   if(!betConditions.getText().equals("")){
-                       try {
-                           if (Float.valueOf(betEntryFees.getText().toString()) >= 0) {
+                   try{
+                       float betEntryFee = Float.valueOf(betEntryFees.getText().toString());
+                       String inputError = BetFunctions.checkIfBetInputsAreValid(betTitle.getText().toString(), betConditions.getText().toString(), participantList, betEntryFee);
 
-                               Intent betCreation = new Intent(activity, ContractCreationIntentService.class);
-                               betCreation.putExtra("betConditions", betConditions.getText().toString());
-                               betCreation.putExtra("betEntryFee", betEntryFees.getText().toString());
-                               betCreation.putExtra("participants" , (Serializable) participantList);
-                               betCreation.setAction("bda.hslu.ch.betchain.BlockChainFunctions.ContractCreationIntentService");
-                               activity.sendBroadcast(betCreation);
-                               activity.startService(betCreation);
+
+                       if(inputError == "") {
+
+                           String[] loggedInUserInfo = getUserInfo();
+
+                           //Check if the logged in user has the required Information provided, in order to create a Bet!
+                           if(!loggedInUserInfo[3].equals("")) {
+                               if(!loggedInUserInfo[2].equals("")) {
+                                    Intent betCreation = new Intent(activity, ContractCreationIntentService.class);
+                                    betCreation.putExtra("betConditions", betConditions.getText().toString());
+                                    betCreation.putExtra("betEntryFee", betEntryFees.getText().toString());
+                                    betCreation.putExtra("participants", (Serializable) participantList);
+                                    betCreation.putExtra("betTitle", betTitle.getText().toString());
+                                    betCreation.setAction("bda.hslu.ch.betchain.BlockChainFunctions.ContractCreationIntentService");
+
+                                    activity.sendBroadcast(betCreation);
+                                    activity.startService(betCreation);
+                                }else{
+                                   Toast.makeText(activity, "Your account has no private key set! The app needs this information in order to deploy a contract onto the blockchain!" , Toast.LENGTH_SHORT).show();
+                               }
+                           }else{
+                               Toast.makeText(activity, "Your account needs to be connected to an ethereum account in order to create a bet!" , Toast.LENGTH_SHORT).show();
+
+                           }
+
+                           //Change Fragment to myBets after succeffull deplyoment. (Display loading Screen for the duration)
+                           //activity.changeFragment(new MyBetsFragment());
+
+                       }else{
+                           Toast.makeText(activity, inputError , Toast.LENGTH_SHORT).show();
+                       }
+                   }catch(Exception e) {
+                       Toast.makeText(activity, "Entry needs to be a valid value" , Toast.LENGTH_SHORT).show();
+                   }
+
 
                                /*
                                BlockChainFunctions smartContract = new BlockChainFunctions() {
@@ -99,16 +118,7 @@ public class CreateBetStep4Fragment extends Fragment {
                                smartContract.execute("createSmartContract", betConditions.getText().toString(), betEntryFees.getText().toString(), participantList);
                                 */
                                //System.out.println(contract.getContractAddress());
-                           } else {
-                               Toast.makeText(activity, "Entry Fee can not be less than 0!", Toast.LENGTH_SHORT).show();
 
-                           }
-                       }catch(Exception ex){
-                           System.out.println(ex.getMessage());
-                       }
-                   }else{
-                       Toast.makeText(activity ,"Please enter Conditions for your bet!",  Toast.LENGTH_SHORT).show();
-                   }
 
 
                }
@@ -121,10 +131,12 @@ public class CreateBetStep4Fragment extends Fragment {
         return rootView;
     }
 
-    public static byte[] stringToBytes32(String string) {
-        byte[] byteValue = string.getBytes();
-        byte[] byteValueLen32 = new byte[32];
-        System.arraycopy(byteValue, 0, byteValueLen32, 0, byteValue.length);
-        return byteValueLen32;
+    private String[] getUserInfo(){
+        String[] returnString;
+        MainActivity activity = (MainActivity) getActivity();
+        SQLWrapper db = new SQLWrapper(activity);
+        returnString = db.getLoggedInUserInfo();
+        return returnString;
     }
+
 }

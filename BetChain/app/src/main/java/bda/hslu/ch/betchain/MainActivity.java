@@ -25,6 +25,7 @@ import android.support.v4.app.Fragment;
 import java.util.ArrayList;
 import java.util.List;
 
+import bda.hslu.ch.betchain.DTO.Bet;
 import bda.hslu.ch.betchain.DTO.Participant;
 import bda.hslu.ch.betchain.Database.SQLWrapper;
 
@@ -40,6 +41,7 @@ public class MainActivity extends AppCompatActivity
     private String userAddressToGetInfoFrom = "";
     private DrawerLayout drawer;
     private ActionBarDrawerToggle toggle;
+    private Bet selectedBet = null;
 
 
 
@@ -263,5 +265,13 @@ public class MainActivity extends AppCompatActivity
             notify.flags |= Notification.FLAG_AUTO_CANCEL;
             notif.notify(0, notify);
         }
+    }
+
+    public Bet getSelectedBet() {
+        return selectedBet;
+    }
+
+    public void setSelectedBet(Bet selectedBet) {
+        this.selectedBet = selectedBet;
     }
 }

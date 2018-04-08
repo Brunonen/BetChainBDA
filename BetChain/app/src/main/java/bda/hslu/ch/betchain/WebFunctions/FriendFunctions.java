@@ -138,6 +138,7 @@ public abstract class FriendFunctions extends AsyncTask<String, Void, Object>{
 
     @Override
     protected Object doInBackground(String... params) {
+        mException = null;
         try {
             switch (params[0]) {
                 case "getUserFriendList":

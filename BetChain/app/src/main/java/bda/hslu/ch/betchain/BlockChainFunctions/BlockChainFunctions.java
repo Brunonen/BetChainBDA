@@ -49,10 +49,6 @@ public abstract class BlockChainFunctions extends AsyncTask<Object, Void, Object
                     getSmartContractInfo((String) params[1]);
                     break;
 
-
-
-                case "removeFriend":
-                    //return removeFriend(params[1]);
             }
         }catch(Exception e){
             mException = e;

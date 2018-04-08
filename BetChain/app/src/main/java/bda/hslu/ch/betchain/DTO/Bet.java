@@ -17,6 +17,8 @@ public class Bet {
     private float betPrizePool;
     private String betAddress;
     private boolean betSuccessful;
+    private String betTransactionHash;
+    private int betID;
 
     public Bet(){
         this.betState = BetState.PENDING;
@@ -101,5 +103,21 @@ public class Bet {
 
     public void setBetSuccessful(boolean betSuccessful) {
         this.betSuccessful = betSuccessful;
+    }
+
+    public String getBetTransactionHash() {
+        return betTransactionHash;
+    }
+
+    public void setBetTransactionHash(String betTransactionHash) {
+        this.betTransactionHash = betTransactionHash;
+    }
+
+    public int getBetID() {
+        return betID;
+    }
+
+    public void setBetID(int betID) {
+        this.betID = betID;
     }
 }
