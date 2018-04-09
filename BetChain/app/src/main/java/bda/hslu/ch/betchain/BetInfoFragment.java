@@ -154,6 +154,7 @@ public class BetInfoFragment extends Fragment {
 
 
 
+
             ListView betParticipantListView = (ListView) rootView.findViewById(R.id.betInfoBetParticpantsList);
             CustomAdapterParticipantInfo adapter = new CustomAdapterParticipantInfo (activity, selectedBetInfo.getParticipants());
             betParticipantListView.setAdapter(adapter);
