@@ -203,6 +203,31 @@ public class SQLWrapper extends SQLiteOpenHelper {
     }
 
     /***
+     * Updates the Public key of the submitted user in the local DB
+     * @param username          : The username of the user
+     * @param address           : The  private key to be updated.
+     * @throws LocalDBException : If something goes wrong a LocalDbException is thrown
+     */
+    public void changeUserPublicKey(String username, String address) throws LocalDBException{
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.beginTransaction();
+        try {
+            ContentValues values = new ContentValues();
+            values.put(APP_USERS_ADDRESS, address);
+            int i = db.update(TABLE_APP_USERS, values, APP_USERS_USERNAME + "='" + username + "'", null);
+
+            if (i == 1) {
+                db.setTransactionSuccessful();
+            }
+        }catch (SQLException e){
+            throw new LocalDBException("Could not write to Database");
+        }finally{
+            db.endTransaction();
+        }
+
+    }
+
+    /***
      * Checks if the user needs to be automatically logged in
      * @return  : True if yes, False if no
      */

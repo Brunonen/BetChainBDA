@@ -17,7 +17,7 @@ import bda.hslu.ch.betchain.DTO.User;
 import bda.hslu.ch.betchain.Database.DBSessionSingleton;
 import bda.hslu.ch.betchain.Database.SQLWrapper;
 import bda.hslu.ch.betchain.WebFunctions.UserFunctions;
-import bda.hslu.ch.betchain.BlockChainFunctions.AcccountBalance;
+import bda.hslu.ch.betchain.BlockChainFunctions.AccountBalance;
 
 public class AccountInfoFragment extends Fragment {
 
@@ -34,6 +34,8 @@ public class AccountInfoFragment extends Fragment {
         EditText privateKey = (EditText) root.findViewById(R.id.privateKey);
         EditText username = (EditText) root.findViewById(R.id.accountInfoUsername);
         ImageView profilePic = (ImageView) root.findViewById(R.id.accountInfoProfilePic);
+        ImageView qrFriendCode = (ImageView) root.findViewById(R.id.qrFriendCode);
+        EditText ethValue = (EditText) root.findViewById(R.id.accountInfoETH);
 
 
 
@@ -75,14 +77,19 @@ public class AccountInfoFragment extends Fragment {
             Toast.makeText(activity,"No Public-Address found" , Toast.LENGTH_SHORT).show();
         }
 
+        qrFriendCode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final MainActivity activity = (MainActivity) getActivity();
+                activity.changeFragment(new InsertPublicKeyFragment());
+            }
+        });
 
-        AcccountBalance balance = new AcccountBalance();
-        MainActivity activity = (MainActivity) getActivity();
-        Toast.makeText(activity,balance.getAccountBalance().toString() , Toast.LENGTH_SHORT).show();
+        AccountBalance balance = new AccountBalance();
+        ethValue.setText(balance.getAccountBalance().toString());
 
         return root;
     }
-
 
     private String[] getUserInfo(){
         String[] returnString;

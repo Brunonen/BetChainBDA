@@ -22,23 +22,29 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.concurrent.ExecutionException;
 
+import bda.hslu.ch.betchain.Database.SQLWrapper;
+import bda.hslu.ch.betchain.MainActivity;
+
 import static java.lang.System.err;
 
 /**
  * Created by Kay on 26/03/2018.
  */
 
-public class AcccountBalance {
+public class AccountBalance {
     private String testnet = "https://ropsten.infura.io/";
     private String walletAddress = "0x6F52912815A67C51BDFdB851ad34F46C7FF4Af8E";
     private BigDecimal eth;
 
-    public AcccountBalance() {
+    public AccountBalance() {
 
 
     }
 
     public BigDecimal getAccountBalance(){
+        String[] userInfos;
+        SQLWrapper db = new SQLWrapper();
+        userInfo = db.getLoggedInUserInfo();
         Web3j web3 = Web3jFactory.build(new HttpService(testnet));
         try {
             EthGetBalance ethGetBalance = web3.ethGetBalance(walletAddress, DefaultBlockParameterName.LATEST).sendAsync().get();
