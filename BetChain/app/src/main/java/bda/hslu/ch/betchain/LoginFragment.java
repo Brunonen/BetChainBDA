@@ -15,6 +15,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import bda.hslu.ch.betchain.DTO.User;
+import bda.hslu.ch.betchain.Database.DBSessionSingleton;
 import bda.hslu.ch.betchain.Database.SQLWrapper;
 import bda.hslu.ch.betchain.WebFunctions.AuthenticationFunctions;
 import bda.hslu.ch.betchain.WebFunctions.UserFunctions;
@@ -35,7 +36,7 @@ public class LoginFragment extends Fragment {
         final EditText username = (EditText) root.findViewById(R.id.inputUsernameLogin);
         final EditText password = (EditText) root.findViewById(R.id.inputPasswordLogin);
 
-        SQLWrapper db = new SQLWrapper(getActivity());
+        SQLWrapper db = DBSessionSingleton.getInstance().getDbUtil();
 
         if(db.checkIfUserNeedsToBeLoggedIn()){
             String[] userInfo = db.getLoggedInUserInfo();
@@ -63,7 +64,7 @@ public class LoginFragment extends Fragment {
                         if(AuthenticationFunctions.loginUser(username.getText().toString(), hash)){
 
                             User userInfos = UserFunctions.getUserInfo(username.getText().toString());
-                            SQLWrapper db = new SQLWrapper(activity);
+                            SQLWrapper db = DBSessionSingleton.getInstance().getDbUtil();
                             db.addOrUpdateAppUser(userInfos.getUsername(), hash, userInfos.getAddress());
                             activity.setDrawerState(true);
                             activity.changeFragmentNoBackstack(new MyBetsFragment());

@@ -24,6 +24,7 @@ import bda.hslu.ch.betchain.DTO.BetRole;
 import bda.hslu.ch.betchain.DTO.Participant;
 import bda.hslu.ch.betchain.DTO.Friend;
 import bda.hslu.ch.betchain.DTO.User;
+import bda.hslu.ch.betchain.Database.DBSessionSingleton;
 import bda.hslu.ch.betchain.Database.SQLWrapper;
 import bda.hslu.ch.betchain.WebFunctions.FriendFunctions;
 import bda.hslu.ch.betchain.WebFunctions.UserFunctions;
@@ -327,7 +328,7 @@ public class CreateBetStep3Fragment extends Fragment {
     private String[] getUserInfo(){
         String[] returnString;
         MainActivity activity = (MainActivity) getActivity();
-        SQLWrapper db = new SQLWrapper(activity);
+        SQLWrapper db = DBSessionSingleton.getInstance().getDbUtil();
         returnString = db.getLoggedInUserInfo();
         return returnString;
     }

@@ -36,6 +36,8 @@ import java.util.concurrent.Future;
 import bda.hslu.ch.betchain.BetChainBetContract;
 import bda.hslu.ch.betchain.DTO.BetRole;
 import bda.hslu.ch.betchain.DTO.Participant;
+import bda.hslu.ch.betchain.Database.SQLWrapper;
+import bda.hslu.ch.betchain.MainActivity;
 import bda.hslu.ch.betchain.WebFunctions.BetFunctions;
 
 /**
@@ -62,6 +64,7 @@ public class ContractCreationIntentService extends IntentService {
         String betEntryFees = intent.getExtras().getString("betEntryFee");
         String betConditions = intent.getExtras().getString("betConditions");
         String betTitle = intent.getExtras().getString("betTitle");
+        String user_P_Key = intent.getExtras().getString("pKey");
         List<Participant> participants = (List<Participant>) intent.getExtras().getSerializable("participants");
         List<String> participantAddresses = new ArrayList<String>();
         List<BigInteger> particpantRoles = new ArrayList<BigInteger>();
@@ -80,7 +83,7 @@ public class ContractCreationIntentService extends IntentService {
         Web3j web3 = Web3jFactory.build(new HttpService(BLOCKCHAIN_URL));  // defaults to http://localhost:8545/
 
         //REPLACE WITH CREDENTIALS FROM DATABASE!
-        Credentials credentials = Credentials.create(BRUNO_P_KEY);
+        Credentials credentials = Credentials.create(user_P_Key);
 
         try {
 
@@ -139,6 +142,9 @@ public class ContractCreationIntentService extends IntentService {
             ex.printStackTrace();
         }
     }
+
+
+
 
     private static byte[] stringToBytes32(String string) {
         byte[] byteValue = string.getBytes();

@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+import bda.hslu.ch.betchain.Database.DBSessionSingleton;
 import bda.hslu.ch.betchain.Database.SQLWrapper;
 
 
@@ -116,7 +117,7 @@ public class InsertPrivateKeyFragment extends Fragment {
     private void savePrivateKey(String privateKey){
         String[] userInfo;
         MainActivity activity = (MainActivity) getActivity();
-        SQLWrapper db = new SQLWrapper(activity);
+        SQLWrapper db = DBSessionSingleton.getInstance().getDbUtil();
         userInfo = db.getLoggedInUserInfo();
         try {
             db.changeUserPrivateKey(userInfo[0], privateKey);

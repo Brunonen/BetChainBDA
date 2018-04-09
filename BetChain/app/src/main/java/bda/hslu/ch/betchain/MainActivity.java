@@ -27,6 +27,7 @@ import java.util.List;
 
 import bda.hslu.ch.betchain.DTO.Bet;
 import bda.hslu.ch.betchain.DTO.Participant;
+import bda.hslu.ch.betchain.Database.DBSessionSingleton;
 import bda.hslu.ch.betchain.Database.SQLWrapper;
 
 public class MainActivity extends AppCompatActivity
@@ -43,6 +44,8 @@ public class MainActivity extends AppCompatActivity
     private ActionBarDrawerToggle toggle;
     private Bet selectedBet = null;
 
+    private Receiver myReceiver;
+
 
 
     @Override
@@ -52,7 +55,7 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        SQLWrapper sqlWrapper = new SQLWrapper(this);
+        DBSessionSingleton.getInstance().initDBSession(this);
 
         /*FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -70,7 +73,8 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
 
         IntentFilter filter = new IntentFilter("bda.hslu.ch.betchain.BlockChainFunctions.ContractCreationIntentService");
-        this.registerReceiver(new Receiver(), filter);
+        myReceiver = new Receiver();
+        this.registerReceiver(myReceiver, filter);
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -133,7 +137,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.menu_settings) {
             fragment = new SettingsFragment();
         } else if (id == R.id.menu_logout) {
-            SQLWrapper db = new SQLWrapper(this);
+            SQLWrapper db = DBSessionSingleton.getInstance().getDbUtil();
             try {
                 db.logoutUser();
                 deleteFragmentBackstack();
@@ -273,5 +277,19 @@ public class MainActivity extends AppCompatActivity
 
     public void setSelectedBet(Bet selectedBet) {
         this.selectedBet = selectedBet;
+    }
+
+    public void resetBetCreationInfo(){
+        this.betCreationParticipants = new ArrayList<>();
+        this.betCreationBetEntryFee = 0.0f;
+        this.betCreationBetConditions = "";
+        this.betCreationBetTitle = "";
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        unregisterReceiver(myReceiver);
     }
 }

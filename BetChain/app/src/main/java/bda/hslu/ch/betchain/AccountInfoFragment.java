@@ -14,6 +14,7 @@ import com.google.zxing.BarcodeFormat;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import bda.hslu.ch.betchain.DTO.User;
+import bda.hslu.ch.betchain.Database.DBSessionSingleton;
 import bda.hslu.ch.betchain.Database.SQLWrapper;
 import bda.hslu.ch.betchain.WebFunctions.UserFunctions;
 import bda.hslu.ch.betchain.BlockChainFunctions.AcccountBalance;
@@ -86,7 +87,7 @@ public class AccountInfoFragment extends Fragment {
     private String[] getUserInfo(){
         String[] returnString;
         MainActivity activity = (MainActivity) getActivity();
-        SQLWrapper db = new SQLWrapper(activity);
+        SQLWrapper db = DBSessionSingleton.getInstance().getDbUtil();
         returnString = db.getLoggedInUserInfo();
         return returnString;
     }

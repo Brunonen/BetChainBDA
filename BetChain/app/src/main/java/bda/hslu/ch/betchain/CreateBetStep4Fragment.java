@@ -27,6 +27,7 @@ import bda.hslu.ch.betchain.BlockChainFunctions.BlockChainFunctions;
 import bda.hslu.ch.betchain.BlockChainFunctions.ContractCreationIntentService;
 import bda.hslu.ch.betchain.DTO.BetRole;
 import bda.hslu.ch.betchain.DTO.Participant;
+import bda.hslu.ch.betchain.Database.DBSessionSingleton;
 import bda.hslu.ch.betchain.Database.SQLWrapper;
 import bda.hslu.ch.betchain.WebFunctions.BetFunctions;
 
@@ -77,11 +78,13 @@ public class CreateBetStep4Fragment extends Fragment {
                                     betCreation.putExtra("betEntryFee", betEntryFees.getText().toString());
                                     betCreation.putExtra("participants", (Serializable) participantList);
                                     betCreation.putExtra("betTitle", betTitle.getText().toString());
+                                    betCreation.putExtra("pKey", getUserInfo()[2]);
                                     betCreation.setAction("bda.hslu.ch.betchain.BlockChainFunctions.ContractCreationIntentService");
 
                                     activity.sendBroadcast(betCreation);
                                     activity.startService(betCreation);
 
+                                    activity.resetBetCreationInfo();
 
                                 }else{
                                    Toast.makeText(activity, "Your account has no private key set! The app needs this information in order to deploy a contract onto the blockchain!" , Toast.LENGTH_SHORT).show();
@@ -136,7 +139,7 @@ public class CreateBetStep4Fragment extends Fragment {
     private String[] getUserInfo(){
         String[] returnString;
         MainActivity activity = (MainActivity) getActivity();
-        SQLWrapper db = new SQLWrapper(activity);
+        SQLWrapper db = DBSessionSingleton.getInstance().getDbUtil();
         returnString = db.getLoggedInUserInfo();
         return returnString;
     }

@@ -10,6 +10,7 @@ import android.widget.Switch;
 import android.widget.Toast;
 
 import bda.hslu.ch.betchain.DTO.User;
+import bda.hslu.ch.betchain.Database.DBSessionSingleton;
 import bda.hslu.ch.betchain.Database.SQLWrapper;
 import bda.hslu.ch.betchain.WebFunctions.SettingsFunctions;
 import bda.hslu.ch.betchain.WebFunctions.UserFunctions;
@@ -56,7 +57,7 @@ public class SettingsFragment extends Fragment {
     private String[] getLoggedInUserInfo(){
         String[] returnString;
         MainActivity activity = (MainActivity) getActivity();
-        SQLWrapper db = new SQLWrapper(activity);
+        SQLWrapper db = DBSessionSingleton.getInstance().getDbUtil();
         returnString = db.getLoggedInUserInfo();
         return returnString;
     }

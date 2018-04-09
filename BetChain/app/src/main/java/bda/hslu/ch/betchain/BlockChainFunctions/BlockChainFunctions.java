@@ -6,75 +6,95 @@ import org.web3j.crypto.Credentials;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.Web3jFactory;
 import org.web3j.protocol.http.HttpService;
+import org.web3j.tuples.generated.Tuple4;
 import org.web3j.utils.Convert;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 
 import bda.hslu.ch.betchain.BetChainBetContract;
+import bda.hslu.ch.betchain.DTO.Bet;
+import bda.hslu.ch.betchain.DTO.BetRole;
+import bda.hslu.ch.betchain.DTO.BetState;
 import bda.hslu.ch.betchain.DTO.Participant;
+import bda.hslu.ch.betchain.WebFunctions.UserFunctions;
 import bda.hslu.ch.betchain.WebRequestException;
 
 /**
  * Created by ssj10 on 28/03/2018.
  */
 
-public abstract class BlockChainFunctions extends AsyncTask<Object, Void, Object>  {
+public class BlockChainFunctions {
 
     private static final String BLOCKCHAIN_URL = "http://10.0.2.2:7545";
     private static BigInteger GAS_PRICE = new BigInteger("100000");
     private static BigInteger GAS_LIMIT = new BigInteger("4000000");
 
-    private static final String BRUNO_P_KEY = "c87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3";
-    //private static final String BRUNO_P_KEY = "cdfccc4c39b60a7b591eac331dc9860a5ba643ef5d7e09cdfb86a91e7c14464c";
-
-    public static Exception mException;
-    public abstract void onSuccess(Object result);
-    public abstract void onFailure(Object result);
-
-    public BlockChainFunctions(){
-
-    }
-
-    @Override
-    protected Object doInBackground(Object... params) {
+    public static Bet getBetInfoFromBlockchain(Bet betInfoWeb, String user_P_Key) throws Exception{
         try {
-            String method = (String) params[0];
-            switch (method) {
-                    //return getUserFriendList();
+            Web3j web3 = Web3jFactory.build(new HttpService(BLOCKCHAIN_URL));  // defaults to http://localhost:8545/
+
+            //REPLACE WITH CREDENTIALS FROM DATABASE!
+            Credentials credentials = Credentials.create(user_P_Key);
 
 
-                case "getContractInfo":
-                    getSmartContractInfo((String) params[1]);
-                    break;
 
+            BetChainBetContract contract = BetChainBetContract.load(betInfoWeb.getBetAddress(), web3, credentials, GAS_PRICE, GAS_LIMIT);
+
+            betInfoWeb.setBetConditions(new String(contract.getBetConditions().send(), "UTF-8"));
+            betInfoWeb.setBetEntryFee(Convert.fromWei(Float.valueOf(contract.getBetEntryFee().send().floatValue()).toString(), Convert.Unit.ETHER).floatValue());
+            int numberOfParticipants = contract.getNumberOfParticipants().send().intValue();
+            List<Participant> betParticipants = new ArrayList<Participant>();
+            for(int i = 0; i < numberOfParticipants; i++){
+                Tuple4<String, Boolean, Boolean, BigInteger> partInfo = contract.getParticipantInfo(BigInteger.valueOf(i)).send();
+                Participant tmpPart = new Participant();
+                tmpPart.setAddress(partInfo.getValue1());
+                tmpPart.setBetAccept(partInfo.getValue2());
+                tmpPart.setBetVoted(partInfo.getValue3());
+                tmpPart.setBetRole(BetRole.valueOfInt(partInfo.getValue4().intValue()));
+
+                try {
+                    tmpPart.setUsername(UserFunctions.getUserByQR(tmpPart.getAddress()).getUsername());
+                }catch(WebRequestException e){
+                    tmpPart.setUsername(partInfo.getValue1());
+                }
+
+                betParticipants.add(tmpPart);
             }
+
+            betInfoWeb.setParticipants(betParticipants);
+
+            return betInfoWeb;
+
         }catch(Exception e){
-            mException = e;
+            e.printStackTrace();
+            throw new Exception("Error while loading Bet information from Blockchain. Please try again later");
         }
-        return null;
+
     }
 
-    private static void getSmartContractInfo(String contractAddress) throws Exception{
-        Web3j web3 = Web3jFactory.build(new HttpService(BLOCKCHAIN_URL));  // defaults to http://localhost:8545/
-        Credentials credentials = Credentials.create(BRUNO_P_KEY);
+    public static Bet getContractMetaInfoFromBlockchain(Bet betInfo, String user_P_Key){
+        try {
+            Web3j web3 = Web3jFactory.build(new HttpService(BLOCKCHAIN_URL));  // defaults to http://localhost:8545/
 
+            //REPLACE WITH CREDENTIALS FROM DATABASE!
+            Credentials credentials = Credentials.create(user_P_Key);
 
-        BetChainBetContract contract = BetChainBetContract.load(
-                contractAddress, web3, credentials, GAS_PRICE, GAS_LIMIT);
+            BetChainBetContract contract = BetChainBetContract.load(betInfo.getBetAddress(), web3, credentials, GAS_PRICE, GAS_LIMIT);
 
-        System.out.println(contract.getBetPrizePool().send());
-        System.out.println(contract.getBetEntryFee().send());
-        System.out.println(contract.getBetConditions().send());
-        int numberOfParts = contract.getNumberOfParticipants().send().intValue();
-        System.out.println(numberOfParts);
+            BigInteger prizePool = contract.getBetPrizePool().send();
+            BigInteger betState = contract.getBetState().send();
 
-        for(int i = 0; i < numberOfParts; i++){
-            System.out.println(contract.getParticipantInfo(BigInteger.valueOf(i)).send());
+            BigDecimal eth = Convert.fromWei(Float.valueOf(prizePool.floatValue()).toString(), Convert.Unit.ETHER);
+            betInfo.setBetPrizePool(eth.floatValue());
+            betInfo.setBetState(BetState.valueOfInt(betState.intValue()));
+
+            return betInfo;
+        }catch(Exception e){
+            return betInfo;
         }
-
-
     }
 
 
@@ -86,12 +106,5 @@ public abstract class BlockChainFunctions extends AsyncTask<Object, Void, Object
         return byteValueLen32;
     }
 
-    protected void onPostExecute(Object result) {
-        if (mException == null) {
-            onSuccess(result);
-        } else {
-            onFailure(mException);
-        }
 
-    }
 }

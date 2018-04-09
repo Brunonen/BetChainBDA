@@ -235,49 +235,6 @@ public class BetFunctions {
         return "";
     }
 
-    public static Bet getBetInfoFromBlockchain(Bet betInfoWeb) throws Exception{
-        try {
-            Web3j web3 = Web3jFactory.build(new HttpService(BLOCKCHAIN_URL));  // defaults to http://localhost:8545/
-
-            //REPLACE WITH CREDENTIALS FROM DATABASE!
-            Credentials credentials = Credentials.create(BRUNO_P_KEY);
-
-
-
-            BetChainBetContract contract = BetChainBetContract.load(betInfoWeb.getBetAddress(), web3, credentials, GAS_PRICE, GAS_LIMIT);
-
-            betInfoWeb.setBetConditions(new String(contract.getBetConditions().send(), "UTF-8"));
-            betInfoWeb.setBetEntryFee(Convert.fromWei(Float.valueOf(contract.getBetEntryFee().send().floatValue()).toString(), Convert.Unit.ETHER).floatValue());
-            int numberOfParticipants = contract.getNumberOfParticipants().send().intValue();
-            List<Participant> betParticipants = new ArrayList<Participant>();
-            for(int i = 0; i < numberOfParticipants; i++){
-                Tuple4<String, Boolean, Boolean, BigInteger> partInfo = contract.getParticipantInfo(BigInteger.valueOf(i)).send();
-                Participant tmpPart = new Participant();
-                tmpPart.setAddress(partInfo.getValue1());
-                tmpPart.setBetAccept(partInfo.getValue2());
-                tmpPart.setBetVoted(partInfo.getValue3());
-                tmpPart.setBetRole(BetRole.valueOfInt(partInfo.getValue4().intValue()));
-
-                try {
-                    tmpPart.setUsername(UserFunctions.getUserByQR(tmpPart.getAddress()).getUsername());
-                }catch(WebRequestException e){
-                    tmpPart.setUsername(partInfo.getValue1());
-                }
-
-                betParticipants.add(tmpPart);
-            }
-
-            betInfoWeb.setParticipants(betParticipants);
-
-            return betInfoWeb;
-
-        }catch(Exception e){
-            e.printStackTrace();
-            throw new Exception("Error while loading Bet information from Blockchain. Please try again later");
-        }
-
-    }
-
     private static Bet getContractMetaInfoFromBlockchain(Bet betInfo, Web3j web3, Credentials credentials){
         try {
             BetChainBetContract contract = BetChainBetContract.load(betInfo.getBetAddress(), web3, credentials, GAS_PRICE, GAS_LIMIT);

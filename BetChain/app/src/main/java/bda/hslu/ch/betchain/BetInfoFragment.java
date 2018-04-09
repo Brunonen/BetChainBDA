@@ -18,10 +18,12 @@ import android.widget.Toast;
 import java.util.List;
 
 import bda.hslu.ch.betchain.Adapters.CustomAdapterParticipantInfo;
+import bda.hslu.ch.betchain.BlockChainFunctions.BlockChainFunctions;
 import bda.hslu.ch.betchain.DTO.Bet;
 import bda.hslu.ch.betchain.DTO.BetRole;
 import bda.hslu.ch.betchain.DTO.BetState;
 import bda.hslu.ch.betchain.DTO.Participant;
+import bda.hslu.ch.betchain.Database.DBSessionSingleton;
 import bda.hslu.ch.betchain.Database.SQLWrapper;
 import bda.hslu.ch.betchain.WebFunctions.BetFunctions;
 
@@ -29,6 +31,8 @@ import bda.hslu.ch.betchain.WebFunctions.BetFunctions;
 public class BetInfoFragment extends Fragment {
 
     private View rootView;
+    private Participant loggedInUser;
+    private Participant betOwner;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -37,7 +41,7 @@ public class BetInfoFragment extends Fragment {
         MainActivity activity = (MainActivity) getActivity();
         Bet selectedBetInfo;
         try {
-            selectedBetInfo = BetFunctions.getBetInfoFromBlockchain(activity.getSelectedBet());
+            selectedBetInfo = BlockChainFunctions.getBetInfoFromBlockchain(activity.getSelectedBet(), getUserInfo()[3]);
 
             TextView betTitle = (TextView) rootView.findViewById(R.id.betInfoBetTitle);
             betTitle.setText(selectedBetInfo.getBetTitle());
@@ -61,9 +65,9 @@ public class BetInfoFragment extends Fragment {
             Button betSuccessButton = (Button) rootView.findViewById(R.id.buttonBetInfoBetSuccess);
             Button betFailureButton = (Button) rootView.findViewById(R.id.buttonBetInfoBetFailure);
 
-            Participant betOwner = new Participant();
+            betOwner = new Participant();
             String[] loggedInUserInfo = getUserInfo();
-            Participant loggedInUser = new Participant();
+            loggedInUser = new Participant();
 
             loggedInUser.setUsername(loggedInUserInfo[0]);
             loggedInUser.setAddress(loggedInUserInfo[3]);
@@ -154,6 +158,48 @@ public class BetInfoFragment extends Fragment {
             CustomAdapterParticipantInfo adapter = new CustomAdapterParticipantInfo (activity, selectedBetInfo.getParticipants());
             betParticipantListView.setAdapter(adapter);
 
+            acceptBetButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(final View v) {
+
+                }
+            });
+
+            retreatFromBetButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(final View v) {
+
+                }
+            });
+
+            startBetButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(final View v) {
+
+                }
+            });
+
+            startVoteButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(final View v) {
+
+                }
+            });
+
+            betSuccessButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(final View v) {
+
+                }
+            });
+
+            betFailureButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(final View v) {
+
+                }
+            });
+
         } catch (Exception e) {
             Toast.makeText(activity, e.getMessage() , Toast.LENGTH_SHORT).show();
         }
@@ -209,7 +255,7 @@ public class BetInfoFragment extends Fragment {
     private String[] getUserInfo(){
         String[] returnString;
         MainActivity activity = (MainActivity) getActivity();
-        SQLWrapper db = new SQLWrapper(activity);
+        SQLWrapper db = DBSessionSingleton.getInstance().getDbUtil();
         returnString = db.getLoggedInUserInfo();
         return returnString;
     }
