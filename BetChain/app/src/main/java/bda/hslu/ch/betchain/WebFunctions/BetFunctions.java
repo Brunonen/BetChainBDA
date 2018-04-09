@@ -125,8 +125,6 @@ public class BetFunctions {
 
             for (int i = 0; i < betList.size(); i++) {
                 //Check if a Contract address has been added to the Database yet. If not try to synchronize!
-                System.out.println("Bet Address: " + betList.get(i).getBetAddress());
-                System.out.println("Bet TxHash: " + betList.get(i).getBetTransactionHash());
 
                 if(betList.get(i).getBetAddress().length() > 0) {
                     //GEt Meta info from Blockchain

@@ -81,6 +81,8 @@ public class CreateBetStep4Fragment extends Fragment {
 
                                     activity.sendBroadcast(betCreation);
                                     activity.startService(betCreation);
+
+
                                 }else{
                                    Toast.makeText(activity, "Your account has no private key set! The app needs this information in order to deploy a contract onto the blockchain!" , Toast.LENGTH_SHORT).show();
                                }

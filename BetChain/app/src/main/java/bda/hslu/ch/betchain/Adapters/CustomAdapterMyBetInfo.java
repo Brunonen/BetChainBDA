@@ -28,6 +28,8 @@ public class CustomAdapterMyBetInfo extends ArrayAdapter<Bet>{
     private final Activity context;
     private final List<Bet> items;
 
+    private static int NOT_DEPLOYED_COLOR = Color.parseColor("#f8a744");
+
     public CustomAdapterMyBetInfo(Activity context, List<Bet> items) {
 
         super(context, R.layout.list_info_mybets, items);
@@ -51,7 +53,11 @@ public class CustomAdapterMyBetInfo extends ArrayAdapter<Bet>{
 
         //Set Text of Bet to YELLOW if it has not been Deployed yet!
         if(tmp.getBetState() == BetState.NOTDEPLOYED){
-            betTitle.setTextColor(Color.MAGENTA);
+            betTitle.setTextColor(NOT_DEPLOYED_COLOR);
+        }
+
+        if(tmp.getBetState() == BetState.ABORTED){
+            betTitle.setTextColor(Color.RED);
         }
 
         betStatus.setText(tmp.getBetState().toString());
