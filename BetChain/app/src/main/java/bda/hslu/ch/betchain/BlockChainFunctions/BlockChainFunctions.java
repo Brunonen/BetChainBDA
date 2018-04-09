@@ -1,14 +1,18 @@
 package bda.hslu.ch.betchain.BlockChainFunctions;
 
+import android.content.Context;
 import android.os.AsyncTask;
 
 import org.web3j.crypto.Credentials;
+import org.web3j.crypto.ECKeyPair;
+import org.web3j.crypto.WalletUtils;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.Web3jFactory;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.tuples.generated.Tuple4;
 import org.web3j.utils.Convert;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -164,8 +168,27 @@ public class BlockChainFunctions {
 
     }
 
+    public void createNewEthereumWallet(Context context, String password) {
+        File file = context.getFilesDir();
+        BigInteger privateKey;
+        try {
+            Web3j web3 = Web3jFactory.build(new HttpService(BLOCKCHAIN_URL));  // defaults to http://localhost:8545/
+            String walletFileName = WalletUtils.generateLightNewWalletFile(password, file);
+            File testFile = new File(file + "/" + walletFileName);
+            Credentials credentials = WalletUtils.loadCredentials(password, testFile);
+            ECKeyPair ecKeyPair = credentials.getEcKeyPair();
+            privateKey = ecKeyPair.getPrivateKey();
 
-    private static byte[] stringToBytes32(String string) {
+            System.out.println("Private Key: " + privateKey.toString(16));
+            System.out.println("Public Address: " + credentials.getAddress());
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+
+        private static byte[] stringToBytes32(String string) {
         byte[] byteValue = string.getBytes();
         byte[] byteValueLen32 = new byte[32];
         System.arraycopy(byteValue, 0, byteValueLen32, 0, byteValue.length);
