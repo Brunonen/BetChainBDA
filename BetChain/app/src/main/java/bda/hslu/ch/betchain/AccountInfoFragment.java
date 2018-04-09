@@ -56,7 +56,11 @@ public class AccountInfoFragment extends Fragment {
         addressString = userInfoString[3];
 
         username.setText(usernameString);
-        privateKey.setText(privateKeyString);
+
+        if(privateKeyString != ""){
+            privateKey.setText("A Private Key ist Set");
+        }
+
 
         privateKey.setOnClickListener(new View.OnClickListener() {
             @Override

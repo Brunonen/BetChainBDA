@@ -1,5 +1,6 @@
 package bda.hslu.ch.betchain;
 
+import android.app.Activity;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +15,7 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import bda.hslu.ch.betchain.BlockChainFunctions.BlockChainFunctions;
 import bda.hslu.ch.betchain.DTO.User;
 import bda.hslu.ch.betchain.Database.DBSessionSingleton;
 import bda.hslu.ch.betchain.Database.SQLWrapper;
@@ -28,7 +30,7 @@ public class LoginFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View root = inflater.inflate(R.layout.fragment_login, container, false);
+        final View root = inflater.inflate(R.layout.fragment_login, container, false);
 
 
         Button registerButton = (Button) root.findViewById(R.id.registerButton);
@@ -85,6 +87,9 @@ public class LoginFragment extends Fragment {
                 Fragment registerUserFragment = new RegisterUserFragment();
                 MainActivity activity = (MainActivity) getActivity();
                 activity.changeFragment(registerUserFragment);
+                /*
+                BlockChainFunctions bc = new BlockChainFunctions();
+                bc.createNewEthereumWallet(activity, "TestPw");*/
 
             }
         });
