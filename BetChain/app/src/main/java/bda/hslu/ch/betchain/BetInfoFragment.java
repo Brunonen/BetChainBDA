@@ -33,15 +33,16 @@ public class BetInfoFragment extends Fragment {
     private View rootView;
     private Participant loggedInUser;
     private Participant betOwner;
+    private int opposerCount;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_bet_info, container, false);
-        MainActivity activity = (MainActivity) getActivity();
-        Bet selectedBetInfo;
+        final MainActivity activity = (MainActivity) getActivity();
+        final Bet selectedBetInfo;
         try {
-            selectedBetInfo = BlockChainFunctions.getBetInfoFromBlockchain(activity.getSelectedBet(), getUserInfo()[3]);
+            selectedBetInfo = BlockChainFunctions.getBetInfoFromBlockchain(activity.getSelectedBet());
 
             TextView betTitle = (TextView) rootView.findViewById(R.id.betInfoBetTitle);
             betTitle.setText(selectedBetInfo.getBetTitle());
@@ -66,16 +67,21 @@ public class BetInfoFragment extends Fragment {
             Button betFailureButton = (Button) rootView.findViewById(R.id.buttonBetInfoBetFailure);
 
             betOwner = new Participant();
-            String[] loggedInUserInfo = getUserInfo();
+            final String[] loggedInUserInfo = getUserInfo();
             loggedInUser = new Participant();
 
             loggedInUser.setUsername(loggedInUserInfo[0]);
             loggedInUser.setAddress(loggedInUserInfo[3]);
+            opposerCount = 0;
 
             //Loop through all participants to find the user and which of those is the logged in User.
             for(Participant p : selectedBetInfo.getParticipants()){
                 if(p.getBetRole() == BetRole.OWNER){
                     betOwner = p;
+                }
+
+                if(p.getBetRole() == BetRole.OPPOSER && p.hasBetAccepted()){
+                    opposerCount++;
                 }
 
                 if(p.getUsername().equals(loggedInUser.getUsername())){
@@ -98,17 +104,11 @@ public class BetInfoFragment extends Fragment {
                     startBetButton.setVisibility(View.VISIBLE);
                     startBetButton.setEnabled(true);
                 }else{
-                    if(!loggedInUser.hasBetAccepted()){
-                        acceptBetButton.setEnabled(true);
-                        acceptBetButton.setVisibility(View.VISIBLE);
-                        retreatFromBetButton.setEnabled(false);
-                        retreatFromBetButton.setVisibility(View.VISIBLE);
-                    }else{
-                        retreatFromBetButton.setEnabled(true);
-                        retreatFromBetButton.setVisibility(View.VISIBLE);
-                        acceptBetButton.setEnabled(false);
-                        acceptBetButton.setVisibility(View.VISIBLE);
-                    }
+                    acceptBetButton.setEnabled(true);
+                    acceptBetButton.setVisibility(View.VISIBLE);
+                    retreatFromBetButton.setEnabled(true);
+                    retreatFromBetButton.setVisibility(View.VISIBLE);
+
                 }
             }
 
@@ -161,21 +161,40 @@ public class BetInfoFragment extends Fragment {
             acceptBetButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View v) {
-
+                    if(!loggedInUser.hasBetAccepted()) {
+                        Toast.makeText(activity, "Request submitted! Please keep in mind that changes might take a few minutes to take effect on the Blockchain" , Toast.LENGTH_LONG).show();
+                        BlockChainFunctions.acceptBet(selectedBetInfo.getBetAddress(), loggedInUser.getBetRole(), selectedBetInfo.getBetEntryFee());
+                    }else{
+                        Toast.makeText(activity, "You have already Accepted this bet!" , Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
 
             retreatFromBetButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View v) {
-
+                    if(loggedInUser.getBetRole() != BetRole.NOTAR){
+                        if(loggedInUser.hasBetAccepted()) {
+                            Toast.makeText(activity, "Request submitted! Please keep in mind that changes might take a few minutes to take effect on the Blockchain!" , Toast.LENGTH_LONG).show();
+                            BlockChainFunctions.retreatFromBet(selectedBetInfo.getBetAddress());
+                        }else{
+                            Toast.makeText(activity, "You can not retreat from a bet you haven't accepted!" , Toast.LENGTH_SHORT).show();
+                        }
+                    }else{
+                        Toast.makeText(activity, "Notars can not retreat from a bet, seeing as they do not have to pay any fees." , Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
 
             startBetButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View v) {
-
+                    if(opposerCount > 0){
+                        Toast.makeText(activity, "Request submitted! Please keep in mind that changes might take a few minutes to take effect on the Blockchain!" , Toast.LENGTH_LONG).show();
+                        BlockChainFunctions.startBet(selectedBetInfo.getBetAddress());
+                    }else{
+                        Toast.makeText(activity, "Atleast one Opposer must accept the Bet, in Order for it to be startet!" , Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
 

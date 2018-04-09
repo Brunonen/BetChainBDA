@@ -169,4 +169,6 @@ public class ContractCreationIntentService extends IntentService {
         return RawTransaction.createContractTransaction(nonce, GAS_PRICE, GAS_LIMIT, initialWeiValue, BetChainBetContract.getBinary() + encodedConstructor );
 
     }
+
+
 }

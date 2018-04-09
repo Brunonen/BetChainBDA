@@ -2,10 +2,6 @@ package bda.hslu.ch.betchain.Database;
 
 import android.content.Context;
 
-/**
- * Created by ssj10 on 09/04/2018.
- */
-
 public class DBSessionSingleton {
 
 

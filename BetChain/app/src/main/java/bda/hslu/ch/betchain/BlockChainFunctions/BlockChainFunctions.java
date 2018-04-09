@@ -19,6 +19,9 @@ import bda.hslu.ch.betchain.DTO.Bet;
 import bda.hslu.ch.betchain.DTO.BetRole;
 import bda.hslu.ch.betchain.DTO.BetState;
 import bda.hslu.ch.betchain.DTO.Participant;
+import bda.hslu.ch.betchain.Database.DBSessionSingleton;
+import bda.hslu.ch.betchain.Database.SQLWrapper;
+import bda.hslu.ch.betchain.MainActivity;
 import bda.hslu.ch.betchain.WebFunctions.UserFunctions;
 import bda.hslu.ch.betchain.WebRequestException;
 
@@ -32,12 +35,13 @@ public class BlockChainFunctions {
     private static BigInteger GAS_PRICE = new BigInteger("100000");
     private static BigInteger GAS_LIMIT = new BigInteger("4000000");
 
-    public static Bet getBetInfoFromBlockchain(Bet betInfoWeb, String user_P_Key) throws Exception{
+    public static Bet getBetInfoFromBlockchain(Bet betInfoWeb) throws Exception{
         try {
             Web3j web3 = Web3jFactory.build(new HttpService(BLOCKCHAIN_URL));  // defaults to http://localhost:8545/
 
             //REPLACE WITH CREDENTIALS FROM DATABASE!
-            Credentials credentials = Credentials.create(user_P_Key);
+
+            Credentials credentials = Credentials.create(getUserInfo()[2]);
 
 
 
@@ -75,12 +79,12 @@ public class BlockChainFunctions {
 
     }
 
-    public static Bet getContractMetaInfoFromBlockchain(Bet betInfo, String user_P_Key){
+    public static Bet getContractMetaInfoFromBlockchain(Bet betInfo){
         try {
             Web3j web3 = Web3jFactory.build(new HttpService(BLOCKCHAIN_URL));  // defaults to http://localhost:8545/
 
             //REPLACE WITH CREDENTIALS FROM DATABASE!
-            Credentials credentials = Credentials.create(user_P_Key);
+            Credentials credentials = Credentials.create(getUserInfo()[2]);
 
             BetChainBetContract contract = BetChainBetContract.load(betInfo.getBetAddress(), web3, credentials, GAS_PRICE, GAS_LIMIT);
 
@@ -97,6 +101,68 @@ public class BlockChainFunctions {
         }
     }
 
+    public static boolean acceptBet(String betAddress, BetRole participantRole, float entryFee)  {
+        Web3j web3 = Web3jFactory.build(new HttpService(BLOCKCHAIN_URL));  // defaults to http://localhost:8545/
+
+        //REPLACE WITH CREDENTIALS FROM DATABASE!
+        Credentials credentials = Credentials.create(getUserInfo()[2]);
+
+        BetChainBetContract contract = BetChainBetContract.load(betAddress, web3, credentials, GAS_PRICE, GAS_LIMIT);
+        BigDecimal eth;
+
+        if(participantRole != BetRole.NOTAR) {
+            //BET ENTRY FEE! (Some stupid things with rounding doesn't work properly
+            eth = Convert.toWei(Float.valueOf(0.02f).toString(), Convert.Unit.ETHER);
+        }else{
+            eth = Convert.toWei(Float.valueOf(0.0f).toString(), Convert.Unit.ETHER);
+        }
+
+        try {
+            contract.acceptBet(eth.toBigInteger()).sendAsync();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+        return true;
+
+    }
+
+
+    public static boolean retreatFromBet(String betAddress)  {
+        Web3j web3 = Web3jFactory.build(new HttpService(BLOCKCHAIN_URL));  // defaults to http://localhost:8545/
+
+        //REPLACE WITH CREDENTIALS FROM DATABASE!
+        Credentials credentials = Credentials.create(getUserInfo()[2]);
+
+        BetChainBetContract contract = BetChainBetContract.load(betAddress, web3, credentials, GAS_PRICE, GAS_LIMIT);
+
+        try {
+            contract.retreatFromBet().sendAsync();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+        return true;
+
+    }
+
+    public static boolean startBet(String betAddress)  {
+        Web3j web3 = Web3jFactory.build(new HttpService(BLOCKCHAIN_URL));  // defaults to http://localhost:8545/
+
+        //REPLACE WITH CREDENTIALS FROM DATABASE!
+        Credentials credentials = Credentials.create(getUserInfo()[2]);
+
+        BetChainBetContract contract = BetChainBetContract.load(betAddress, web3, credentials, GAS_PRICE, GAS_LIMIT);
+
+        try {
+            contract.startBet().sendAsync();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+        return true;
+
+    }
 
 
     private static byte[] stringToBytes32(String string) {
@@ -104,6 +170,13 @@ public class BlockChainFunctions {
         byte[] byteValueLen32 = new byte[32];
         System.arraycopy(byteValue, 0, byteValueLen32, 0, byteValue.length);
         return byteValueLen32;
+    }
+
+    private static String[] getUserInfo(){
+        String[] returnString;
+        SQLWrapper db = DBSessionSingleton.getInstance().getDbUtil();
+        returnString = db.getLoggedInUserInfo();
+        return returnString;
     }
 
 

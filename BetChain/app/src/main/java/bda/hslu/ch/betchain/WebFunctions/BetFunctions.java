@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import bda.hslu.ch.betchain.BetChainBetContract;
+import bda.hslu.ch.betchain.BlockChainFunctions.BlockChainFunctions;
 import bda.hslu.ch.betchain.CallAPI;
 import bda.hslu.ch.betchain.DTO.Bet;
 import bda.hslu.ch.betchain.DTO.BetRole;
@@ -117,7 +118,7 @@ public class BetFunctions {
         betList = getUserBetsFromWebServer();
 
         try {
-            Web3j web3 = Web3jFactory.build(new HttpService(BLOCKCHAIN_URL));  // defaults to http://localhost:8545/
+            Web3j web3 = Web3jFactory.build(new HttpService());  // defaults to http://localhost:8545/
 
             //REPLACE WITH CREDENTIALS FROM DATABASE!
             Credentials credentials = Credentials.create(BRUNO_P_KEY);
@@ -128,7 +129,7 @@ public class BetFunctions {
 
                 if(betList.get(i).getBetAddress().length() > 0) {
                     //GEt Meta info from Blockchain
-                    betList.set(i, getContractMetaInfoFromBlockchain(betList.get(i), web3, credentials));
+                    betList.set(i, BlockChainFunctions.getContractMetaInfoFromBlockchain(betList.get(i)));
                 }else{
                     //Synchronize Bet information from Blockchain to Database.
                     EthGetTransactionReceipt receipt = web3.ethGetTransactionReceipt(betList.get(i).getBetTransactionHash()).send();
@@ -140,7 +141,7 @@ public class BetFunctions {
                         if (!betAddress.equals("")) {
                             updateBetContractAddress(betList.get(i).getBetID(), betAddress);
                             betList.get(i).setBetAddress(betAddress);
-                            betList.set(i, getContractMetaInfoFromBlockchain(betList.get(i), web3, credentials));
+                            betList.set(i, BlockChainFunctions.getContractMetaInfoFromBlockchain(betList.get(i)));
                         } else {
                             betList.get(i).setBetState(BetState.NOTDEPLOYED);
                         }
@@ -233,22 +234,5 @@ public class BetFunctions {
         if(entryFee < 0) return "Bet Entry fee must be bigger or equal to 0";
 
         return "";
-    }
-
-    private static Bet getContractMetaInfoFromBlockchain(Bet betInfo, Web3j web3, Credentials credentials){
-        try {
-            BetChainBetContract contract = BetChainBetContract.load(betInfo.getBetAddress(), web3, credentials, GAS_PRICE, GAS_LIMIT);
-
-            BigInteger prizePool = contract.getBetPrizePool().send();
-            BigInteger betState = contract.getBetState().send();
-
-            BigDecimal eth = Convert.fromWei(Float.valueOf(prizePool.floatValue()).toString(), Convert.Unit.ETHER);
-            betInfo.setBetPrizePool(eth.floatValue());
-            betInfo.setBetState(BetState.valueOfInt(betState.intValue()));
-
-            return betInfo;
-        }catch(Exception e){
-            return betInfo;
-        }
     }
 }
