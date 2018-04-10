@@ -68,7 +68,7 @@ public class LoginFragment extends Fragment {
                             SQLWrapper db = DBSessionSingleton.getInstance().getDbUtil();
                             db.addOrUpdateAppUser(userInfos.getUsername(), hash, userInfos.getAddress());
                             String[] loggedInUser = db.getLoggedInUserInfo();
-                            if(loggedInUser[2] == "" && loggedInUser[3] == ""){
+                            if(loggedInUser[2].length() != 64 && loggedInUser[3].length() != 42){
                                 NoUserAddressDialog noUserAddressDialog = new NoUserAddressDialog();
                                 noUserAddressDialog.show(activity.getSupportFragmentManager(), "No Ethereum Wallet found");
                             }

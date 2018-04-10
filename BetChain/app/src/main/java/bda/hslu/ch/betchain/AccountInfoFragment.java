@@ -60,7 +60,10 @@ public class AccountInfoFragment extends Fragment {
 
         username.setText(usernameString);
 
-        if(privateKeyString != ""){
+        System.out.println("Private Key: "+ privateKeyString);
+        System.out.println("Public Address: " + addressString);
+
+        if(privateKeyString.length() == 64){
             privateKey.setText("A Private Key ist Set");
         }
 
@@ -94,9 +97,7 @@ public class AccountInfoFragment extends Fragment {
         AccountBalance balance = new AccountBalance();
         try {
             ethValue.setText(balance.getAccountBalance().toString());
-        } catch (ExecutionException e) {
-            Toast.makeText(activity,"No Public-Address found" , Toast.LENGTH_SHORT).show();
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             Toast.makeText(activity,"No Public-Address found" , Toast.LENGTH_SHORT).show();
         }
 

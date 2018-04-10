@@ -14,6 +14,7 @@ import android.widget.Toast;
 import bda.hslu.ch.betchain.BlockChainFunctions.BlockChainFunctions;
 import bda.hslu.ch.betchain.Database.DBSessionSingleton;
 import bda.hslu.ch.betchain.Database.SQLWrapper;
+import bda.hslu.ch.betchain.WebFunctions.SettingsFunctions;
 
 
 public class CreateEthereumWalletFragment extends Fragment {
@@ -37,22 +38,24 @@ public class CreateEthereumWalletFragment extends Fragment {
                 MainActivity activity = (MainActivity) getActivity();
                 String pwd = password.getText().toString();
                 String confPwd = passwordConfirm.getText().toString();
-                String[] adresses = new String[2];
+                String[] addresses = new String[2];
 
                 if(pwd.equals(confPwd)){
                     if(pwd.length() > 0){
                         //Create new Wallet and write Addresses to Database
                         SQLWrapper db = DBSessionSingleton.getInstance().getDbUtil();
                         BlockChainFunctions bc = new BlockChainFunctions();
-                        adresses = bc.createNewEthereumWallet(activity, pwd);
+                        addresses = bc.createNewEthereumWallet(activity, pwd);
                         try {
-                            db.changeUserPublicKey(db.getLoggedInUserInfo()[0], adresses[1]);
+                            db.changeUserPublicKey(db.getLoggedInUserInfo()[0], addresses[1]);
+                            db.changeUserPrivateKey(db.getLoggedInUserInfo()[0], addresses[0]);
                         } catch (LocalDBException e) {
                             e.printStackTrace();
                         }
-                        try {
-                            db.changeUserPrivateKey(db.getLoggedInUserInfo()[0], adresses[0]);
-                        } catch (LocalDBException e) {
+                        //Update address on Webserver
+                        try{
+                            SettingsFunctions.changeUserSetting("address", addresses[1]);
+                        }catch (WebRequestException e){
                             e.printStackTrace();
                         }
                     }else {

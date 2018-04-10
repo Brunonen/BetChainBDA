@@ -41,7 +41,7 @@ public class AccountBalance {
 
     }
 
-    public BigDecimal getAccountBalance() throws ExecutionException, InterruptedException {
+    public BigDecimal getAccountBalance() throws Exception {
         Web3j web3 = Web3jFactory.build(new HttpService(testnet));
 
         EthGetBalance ethGetBalance = web3.ethGetBalance(DBSessionSingleton.getInstance().getDbUtil().getLoggedInUserInfo()[3], DefaultBlockParameterName.LATEST).sendAsync().get();

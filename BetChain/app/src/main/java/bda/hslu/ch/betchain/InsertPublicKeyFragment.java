@@ -18,6 +18,7 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
 import bda.hslu.ch.betchain.Database.SQLWrapper;
+import bda.hslu.ch.betchain.WebFunctions.SettingsFunctions;
 
 
 public class InsertPublicKeyFragment extends Fragment {
@@ -114,13 +115,21 @@ public class InsertPublicKeyFragment extends Fragment {
 
     private void savePublicKey(String publicKey){
         String[] userInfo;
+        System.out.println("Change Address TO: " + publicKey);
         MainActivity activity = (MainActivity) getActivity();
         SQLWrapper db = new SQLWrapper(activity);
         userInfo = db.getLoggedInUserInfo();
         try {
             db.changeUserPublicKey(userInfo[0], publicKey);
         }catch (LocalDBException e){
-            Toast.makeText(activity,e.getMessage() , Toast.LENGTH_SHORT).show();
+            System.out.print(e.getMessage());
+        }
+        //Update address on Webserver
+        try{
+            SettingsFunctions.changeUserSetting("address", publicKey);
+        }catch (WebRequestException e){
+            System.out.print(e.getMessage());
+            e.printStackTrace();
         }
     }
 }

@@ -93,10 +93,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:inputType="none"
-            android:password="true"
             android:focusable="false"
-            android:text="xkvxkjvxkvljxckl" />
+            android:inputType="none"
+            android:password="true" />
 
         <TextView
             android:id="@+id/textView22"

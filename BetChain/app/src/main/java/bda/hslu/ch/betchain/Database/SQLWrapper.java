@@ -45,7 +45,7 @@ public class SQLWrapper extends SQLiteOpenHelper {
                 +"'"+ APP_USERS_USERNAME +"' varchar(45) NOT NULL UNIQUE,"
                 +"'"+ APP_USERS_PWD +"' varchar(250) NOT NULL,"
                 +"'"+ APP_USERS_STAY_LOGGED_IN +"' tinyint(4) NOT NULL DEFAULT '1',"
-                +"'"+ APP_USERS_ADDRESS +"' varchar(250) NOT NULL,"
+                +"'"+ APP_USERS_ADDRESS +"' varchar(250),"
                 +"'"+ APP_USERS_P_KEY +"' varchar(250)"
                 +")";
 
@@ -205,7 +205,7 @@ public class SQLWrapper extends SQLiteOpenHelper {
     /***
      * Updates the Public key of the submitted user in the local DB
      * @param username          : The username of the user
-     * @param address           : The  private key to be updated.
+     * @param address           : The  public key to be updated.
      * @throws LocalDBException : If something goes wrong a LocalDbException is thrown
      */
     public void changeUserPublicKey(String username, String address) throws LocalDBException{
