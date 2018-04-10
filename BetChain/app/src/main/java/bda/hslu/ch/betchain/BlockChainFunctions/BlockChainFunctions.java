@@ -168,9 +168,10 @@ public class BlockChainFunctions {
 
     }
 
-    public void createNewEthereumWallet(Context context, String password) {
+    public String[] createNewEthereumWallet(Context context, String password) {
         File file = context.getFilesDir();
         BigInteger privateKey;
+        String[] adresses = new String[2];
         try {
             Web3j web3 = Web3jFactory.build(new HttpService(BLOCKCHAIN_URL));  // defaults to http://localhost:8545/
             String walletFileName = WalletUtils.generateLightNewWalletFile(password, file);
@@ -179,12 +180,13 @@ public class BlockChainFunctions {
             ECKeyPair ecKeyPair = credentials.getEcKeyPair();
             privateKey = ecKeyPair.getPrivateKey();
 
-            System.out.println("Private Key: " + privateKey.toString(16));
-            System.out.println("Public Address: " + credentials.getAddress());
+            adresses[0] = privateKey.toString(16);
+            adresses[1] = credentials.getAddress();
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
+        return adresses;
     }
 
 

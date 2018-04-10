@@ -1,9 +1,8 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="bda.hslu.ch.betchain.RegisterUserFragment">
+    tools:context="bda.hslu.ch.betchain.CreateEthereumWalletFragment">
 
     <!-- TODO: Update blank fragment layout -->
 
@@ -26,58 +25,32 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="REGISTER USER"
+            android:text="CREATE NEW WALLET"
             android:textAlignment="center"
             android:textColor="@android:color/black"
             android:textSize="30sp"
             android:textStyle="bold" />
 
         <EditText
-            android:id="@+id/registerUserUsername"
+            android:id="@+id/createEthereumWalletPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:ems="10"
-            android:hint="Username"
-            android:inputType="textPersonName" />
-
-        <EditText
-            android:id="@+id/registerUserPassword"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
             android:ems="10"
             android:hint="Password"
             android:inputType="textPassword" />
 
 
         <EditText
-            android:id="@+id/registerUserPasswordConfirm"
+            android:id="@+id/createEthereumWalletPasswordConfirm"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="Confirm Password"
             android:inputType="textPassword" />
 
-        <EditText
-            android:id="@+id/ethereumAddressTextField"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="Ethereum Public Address (Optional)"
-            android:inputType="textPersonName" />
-
         <Button
-            android:id="@+id/scanQrButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:background="@android:color/transparent"
-            android:text="SCAN QR"
-            android:textAlignment="center"
-            android:textColor="@color/colorPrimary" />
-
-        <Button
-            android:id="@+id/buttonRegisterUser"
+            android:id="@+id/buttonCreateEthereumWallet"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
@@ -87,7 +60,8 @@
             android:shadowDx="0"
             android:shadowDy="0"
             android:shadowRadius="5"
-            android:text="REGISTER"
+            android:text="CREATE"
             android:textColor="#FFFFFF" />
     </LinearLayout>
+
 </FrameLayout>

@@ -64,10 +64,14 @@ public class LoginFragment extends Fragment {
                         String hash = HashClass.bin2hex(HashClass.getHash(password.getText().toString() + userSaltResponse));
 
                         if(AuthenticationFunctions.loginUser(username.getText().toString(), hash)){
-
                             User userInfos = UserFunctions.getUserInfo(username.getText().toString());
                             SQLWrapper db = DBSessionSingleton.getInstance().getDbUtil();
                             db.addOrUpdateAppUser(userInfos.getUsername(), hash, userInfos.getAddress());
+                            String[] loggedInUser = db.getLoggedInUserInfo();
+                            if(loggedInUser[2] == "" && loggedInUser[3] == ""){
+                                NoUserAddressDialog noUserAddressDialog = new NoUserAddressDialog();
+                                noUserAddressDialog.show(activity.getSupportFragmentManager(), "No Ethereum Wallet found");
+                            }
                             activity.setDrawerState(true);
                             activity.changeFragmentNoBackstack(new MyBetsFragment());
                         }
@@ -87,10 +91,6 @@ public class LoginFragment extends Fragment {
                 Fragment registerUserFragment = new RegisterUserFragment();
                 MainActivity activity = (MainActivity) getActivity();
                 activity.changeFragment(registerUserFragment);
-                /*
-                BlockChainFunctions bc = new BlockChainFunctions();
-                bc.createNewEthereumWallet(activity, "TestPw");*/
-
             }
         });
 

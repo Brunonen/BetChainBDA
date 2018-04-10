@@ -13,6 +13,8 @@ import android.widget.Toast;
 import com.google.zxing.BarcodeFormat;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
+import java.util.concurrent.ExecutionException;
+
 import bda.hslu.ch.betchain.DTO.User;
 import bda.hslu.ch.betchain.Database.DBSessionSingleton;
 import bda.hslu.ch.betchain.Database.SQLWrapper;
@@ -29,6 +31,7 @@ public class AccountInfoFragment extends Fragment {
         String usernameString = "";
         String addressString = "";
         String privateKeyString = "";
+        final MainActivity activity = (MainActivity) getActivity();
 
 
         EditText privateKey = (EditText) root.findViewById(R.id.privateKey);
@@ -77,20 +80,25 @@ public class AccountInfoFragment extends Fragment {
             ImageView imageViewQrCode = (ImageView) root.findViewById(R.id.qrFriendCode);
             imageViewQrCode.setImageBitmap(bitmap);
         } catch(Exception e) {
-            MainActivity activity = (MainActivity) getActivity();
             Toast.makeText(activity,"No Public-Address found" , Toast.LENGTH_SHORT).show();
         }
 
         qrFriendCode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final MainActivity activity = (MainActivity) getActivity();
+
                 activity.changeFragment(new InsertPublicKeyFragment());
             }
         });
 
         AccountBalance balance = new AccountBalance();
-        ethValue.setText(balance.getAccountBalance().toString());
+        try {
+            ethValue.setText(balance.getAccountBalance().toString());
+        } catch (ExecutionException e) {
+            Toast.makeText(activity,"No Public-Address found" , Toast.LENGTH_SHORT).show();
+        } catch (InterruptedException e) {
+            Toast.makeText(activity,"No Public-Address found" , Toast.LENGTH_SHORT).show();
+        }
 
         return root;
     }

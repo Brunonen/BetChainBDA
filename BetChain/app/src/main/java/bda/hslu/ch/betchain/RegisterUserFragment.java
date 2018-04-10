@@ -74,19 +74,16 @@ public class RegisterUserFragment extends Fragment implements ActivityCompat.OnR
                 String usr = username.getText().toString();
                 if(usr.length() > 0){
                     if (pwd.equals(confPwd.toString())) {
-                        if (addr.length() == 42) {
-                            try {
-                                if(AuthenticationFunctions.registerUser(usr, pwd, addr)){
-                                    Toast.makeText(activity, "User Successfully Registered!", Toast.LENGTH_SHORT).show();
-                                    activity.changeFragmentNoBackstack(new LoginFragment());
-                                }
-                            } catch (WebRequestException e) {
-                                Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
-                            }
 
-                        } else {
-                            Toast.makeText(activity, "Invalid Address", Toast.LENGTH_SHORT).show();
+                        try {
+                            if(AuthenticationFunctions.registerUser(usr, pwd, addr)){
+                                Toast.makeText(activity, "User Successfully Registered!", Toast.LENGTH_SHORT).show();
+                                activity.changeFragmentNoBackstack(new LoginFragment());
+                            }
+                        } catch (WebRequestException e) {
+                            Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
+
                     } else {
                         Toast.makeText(activity, "Password and Confirmation do not match!", Toast.LENGTH_SHORT).show();
                     }
