@@ -60,9 +60,7 @@ public class AccountInfoFragment extends Fragment {
         addressString = userInfoString[3];
 
         username.setText(usernameString);
-
-        System.out.println("Private Key: "+ privateKeyString);
-        System.out.println("Public Address: " + addressString);
+        
 
         if(privateKeyString.length() == 64){
             privateKey.setText("A Private Key ist Set");
