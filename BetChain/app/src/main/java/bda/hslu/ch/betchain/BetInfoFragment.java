@@ -154,12 +154,30 @@ public class BetInfoFragment extends Fragment {
             }
 
 
-
-
-
             ListView betParticipantListView = (ListView) rootView.findViewById(R.id.betInfoBetParticpantsList);
+
+            if(selectedBetInfo.getBetState() != BetState.PENDING){
+                List<Participant> acceptedParticipants = selectedBetInfo.getParticipants();
+
+                //Remove participants which haven't accepted the bet
+                for(int i = 0; i < acceptedParticipants.size(); i++){
+                    if(!acceptedParticipants.get(i).hasBetAccepted()){
+                        acceptedParticipants.remove(i);
+                        i = 0;
+                    }
+                }
+
+                selectedBetInfo.setParticipants(acceptedParticipants);
+            }
+
             CustomAdapterParticipantInfo adapter = new CustomAdapterParticipantInfo (activity, selectedBetInfo.getParticipants());
             betParticipantListView.setAdapter(adapter);
+
+            if(selectedBetInfo.getBetState() != BetState.PENDING) {
+                if (!loggedInUser.hasBetAccepted()) {
+                    disableAllButtons();
+                }
+            }
 
             acceptBetButton.setOnClickListener(new View.OnClickListener() {
                 @Override

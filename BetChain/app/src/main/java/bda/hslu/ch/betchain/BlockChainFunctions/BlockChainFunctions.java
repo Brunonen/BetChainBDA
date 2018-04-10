@@ -8,6 +8,8 @@ import org.web3j.crypto.ECKeyPair;
 import org.web3j.crypto.WalletUtils;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.Web3jFactory;
+import org.web3j.protocol.core.DefaultBlockParameterName;
+import org.web3j.protocol.core.methods.response.EthGetBalance;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.tuples.generated.Tuple4;
 import org.web3j.tuples.generated.Tuple5;
@@ -203,6 +205,17 @@ public class BlockChainFunctions {
         }
 
         return true;
+    }
+
+    public static BigDecimal getAccountBalance() throws Exception {
+        Web3j web3 = Web3jFactory.build(new HttpService(BLOCKCHAIN_URL));
+
+        EthGetBalance ethGetBalance = web3.ethGetBalance(getUserInfo()[3], DefaultBlockParameterName.LATEST).sendAsync().get();
+        BigInteger wei = ethGetBalance.getBalance();
+        BigDecimal eth = Convert.fromWei(wei.toString(), Convert.Unit.ETHER);
+
+        return eth;
+
     }
 
     public String[] createNewEthereumWallet(Context context, String password) {

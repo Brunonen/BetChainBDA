@@ -15,6 +15,7 @@ import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import java.util.concurrent.ExecutionException;
 
+import bda.hslu.ch.betchain.BlockChainFunctions.BlockChainFunctions;
 import bda.hslu.ch.betchain.DTO.User;
 import bda.hslu.ch.betchain.Database.DBSessionSingleton;
 import bda.hslu.ch.betchain.Database.SQLWrapper;
@@ -94,9 +95,8 @@ public class AccountInfoFragment extends Fragment {
             }
         });
 
-        AccountBalance balance = new AccountBalance();
         try {
-            ethValue.setText(balance.getAccountBalance().toString());
+            ethValue.setText(BlockChainFunctions.getAccountBalance().toString());
         } catch (Exception e) {
             Toast.makeText(activity,"No Public-Address found" , Toast.LENGTH_SHORT).show();
         }
