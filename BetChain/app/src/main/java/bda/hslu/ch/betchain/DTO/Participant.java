@@ -11,6 +11,7 @@ public class Participant implements Serializable {
     private String address = "";
     private boolean betAccepted = false;
     private boolean voted = false;
+    private boolean abortVoted = false;
 
     private BetRole betRole = null;
 
@@ -85,4 +86,11 @@ public class Participant implements Serializable {
         return this.profilePicture;
     }
 
+    public boolean isAbortVoted() {
+        return abortVoted;
+    }
+
+    public void setAbortVoted(boolean abortVoted) {
+        this.abortVoted = abortVoted;
+    }
 }

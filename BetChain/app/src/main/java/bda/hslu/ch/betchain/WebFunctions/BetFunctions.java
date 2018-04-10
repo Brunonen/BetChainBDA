@@ -118,7 +118,7 @@ public class BetFunctions {
         betList = getUserBetsFromWebServer();
 
         try {
-            Web3j web3 = Web3jFactory.build(new HttpService());  // defaults to http://localhost:8545/
+            Web3j web3 = Web3jFactory.build(new HttpService(BLOCKCHAIN_URL));  // defaults to http://localhost:8545/
 
             //REPLACE WITH CREDENTIALS FROM DATABASE!
             Credentials credentials = Credentials.create(BRUNO_P_KEY);

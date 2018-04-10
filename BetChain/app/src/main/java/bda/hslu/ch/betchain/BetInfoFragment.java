@@ -1,5 +1,7 @@
 package bda.hslu.ch.betchain;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.provider.Telephony;
 import android.support.v4.app.Fragment;
@@ -138,7 +140,7 @@ public class BetInfoFragment extends Fragment {
 
             if(selectedBetInfo.getBetState() == BetState.CONCLUDED){
                 for(int i = 0; i < selectedBetInfo.getParticipants().size(); i++){
-                    if(selectedBetInfo.isBetSuccessful() && selectedBetInfo.getParticipants().get(i).getBetRole() == BetRole.SUPPORTER){
+                    if(selectedBetInfo.isBetSuccessful() && (selectedBetInfo.getParticipants().get(i).getBetRole() == BetRole.SUPPORTER || selectedBetInfo.getParticipants().get(i).getBetRole() == BetRole.OWNER)){
                         selectedBetInfo.getParticipants().get(i).setInfoIcon(R.drawable.ic_menu_createbet);
                     }
                     else if(!selectedBetInfo.isBetSuccessful() && selectedBetInfo.getParticipants().get(i).getBetRole() == BetRole.OPPOSER){
@@ -203,20 +205,39 @@ public class BetInfoFragment extends Fragment {
                 @Override
                 public void onClick(final View v) {
 
+                    AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+
+                    builder.setPositiveButton("Bet Success", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            BlockChainFunctions.startVoting(selectedBetInfo.getBetAddress(), true);
+                        }
+                    });
+                    builder.setNegativeButton("Bet Failure", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            BlockChainFunctions.startVoting(selectedBetInfo.getBetAddress(), false);
+                        }
+                    });
+
+                    builder.setMessage("Please Select how the bet concluded")
+                            .setTitle("Vote Confirmation");
+
+
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
                 }
             });
 
             betSuccessButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View v) {
-
+                    BlockChainFunctions.vote(selectedBetInfo.getBetAddress(), true);
                 }
             });
 
             betFailureButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View v) {
-
+                    BlockChainFunctions.vote(selectedBetInfo.getBetAddress(), false);
                 }
             });
 

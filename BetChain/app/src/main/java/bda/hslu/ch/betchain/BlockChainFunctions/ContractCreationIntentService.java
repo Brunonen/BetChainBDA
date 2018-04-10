@@ -50,8 +50,8 @@ public class ContractCreationIntentService extends IntentService {
     //private static final String BLOCKCHAIN_URL = "https://ropsten.infura.io/";
     private static final String BRUNO_P_KEY = "c87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3";
     //private static final String BRUNO_P_KEY = "cdfccc4c39b60a7b591eac331dc9860a5ba643ef5d7e09cdfb86a91e7c14464c";
-    private static BigInteger GAS_PRICE = new BigInteger("320000");
-    private static BigInteger GAS_LIMIT = new BigInteger("4100000");
+    private static BigInteger GAS_PRICE = new BigInteger("200000");
+    private static BigInteger GAS_LIMIT = new BigInteger("50000000");
     private static int POLL_TIME = 5000; //5 seconds
     private static int MAXIMUM_CREATION_TIMEOUT = 600000; //10 Minutes
 
@@ -92,6 +92,8 @@ public class ContractCreationIntentService extends IntentService {
                     GAS_PRICE, GAS_LIMIT, eth.toBigInteger(),
                     stringToBytes32(betConditions), eth.toBigInteger(), participantAddresses, particpantRoles).send();  // constructor params
             */
+
+
             RawTransaction raw = getContractTransaction( web3, credentials,
                     GAS_PRICE, GAS_LIMIT, eth.toBigInteger(),
                     stringToBytes32(betConditions), eth.toBigInteger(), participantAddresses, particpantRoles);

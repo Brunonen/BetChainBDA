@@ -10,6 +10,7 @@ import org.web3j.protocol.Web3j;
 import org.web3j.protocol.Web3jFactory;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.tuples.generated.Tuple4;
+import org.web3j.tuples.generated.Tuple5;
 import org.web3j.utils.Convert;
 
 import java.io.File;
@@ -38,30 +39,28 @@ public class BlockChainFunctions {
     private static final String BLOCKCHAIN_URL = "http://10.0.2.2:7545";
     private static BigInteger GAS_PRICE = new BigInteger("100000");
     private static BigInteger GAS_LIMIT = new BigInteger("4000000");
+    private static Web3j web3 = Web3jFactory.build(new HttpService(BLOCKCHAIN_URL));
 
     public static Bet getBetInfoFromBlockchain(Bet betInfoWeb) throws Exception{
         try {
-            Web3j web3 = Web3jFactory.build(new HttpService(BLOCKCHAIN_URL));  // defaults to http://localhost:8545/
-
-            //REPLACE WITH CREDENTIALS FROM DATABASE!
 
             Credentials credentials = Credentials.create(getUserInfo()[2]);
-
-
 
             BetChainBetContract contract = BetChainBetContract.load(betInfoWeb.getBetAddress(), web3, credentials, GAS_PRICE, GAS_LIMIT);
 
             betInfoWeb.setBetConditions(new String(contract.getBetConditions().send(), "UTF-8"));
             betInfoWeb.setBetEntryFee(Convert.fromWei(Float.valueOf(contract.getBetEntryFee().send().floatValue()).toString(), Convert.Unit.ETHER).floatValue());
+            betInfoWeb.setBetSuccessful(contract.isBetSuccessfull().send());
             int numberOfParticipants = contract.getNumberOfParticipants().send().intValue();
             List<Participant> betParticipants = new ArrayList<Participant>();
             for(int i = 0; i < numberOfParticipants; i++){
-                Tuple4<String, Boolean, Boolean, BigInteger> partInfo = contract.getParticipantInfo(BigInteger.valueOf(i)).send();
+                Tuple5<String, Boolean, Boolean, Boolean, BigInteger> partInfo = contract.getParticipantInfo(BigInteger.valueOf(i)).send();
                 Participant tmpPart = new Participant();
                 tmpPart.setAddress(partInfo.getValue1());
                 tmpPart.setBetAccept(partInfo.getValue2());
                 tmpPart.setBetVoted(partInfo.getValue3());
-                tmpPart.setBetRole(BetRole.valueOfInt(partInfo.getValue4().intValue()));
+                tmpPart.setAbortVoted(partInfo.getValue4());
+                tmpPart.setBetRole(BetRole.valueOfInt(partInfo.getValue5().intValue()));
 
                 try {
                     tmpPart.setUsername(UserFunctions.getUserByQR(tmpPart.getAddress()).getUsername());
@@ -85,7 +84,6 @@ public class BlockChainFunctions {
 
     public static Bet getContractMetaInfoFromBlockchain(Bet betInfo){
         try {
-            Web3j web3 = Web3jFactory.build(new HttpService(BLOCKCHAIN_URL));  // defaults to http://localhost:8545/
 
             //REPLACE WITH CREDENTIALS FROM DATABASE!
             Credentials credentials = Credentials.create(getUserInfo()[2]);
@@ -106,8 +104,6 @@ public class BlockChainFunctions {
     }
 
     public static boolean acceptBet(String betAddress, BetRole participantRole, float entryFee)  {
-        Web3j web3 = Web3jFactory.build(new HttpService(BLOCKCHAIN_URL));  // defaults to http://localhost:8545/
-
         //REPLACE WITH CREDENTIALS FROM DATABASE!
         Credentials credentials = Credentials.create(getUserInfo()[2]);
 
@@ -131,9 +127,7 @@ public class BlockChainFunctions {
 
     }
 
-
     public static boolean retreatFromBet(String betAddress)  {
-        Web3j web3 = Web3jFactory.build(new HttpService(BLOCKCHAIN_URL));  // defaults to http://localhost:8545/
 
         //REPLACE WITH CREDENTIALS FROM DATABASE!
         Credentials credentials = Credentials.create(getUserInfo()[2]);
@@ -151,9 +145,7 @@ public class BlockChainFunctions {
     }
 
     public static boolean startBet(String betAddress)  {
-        Web3j web3 = Web3jFactory.build(new HttpService(BLOCKCHAIN_URL));  // defaults to http://localhost:8545/
 
-        //REPLACE WITH CREDENTIALS FROM DATABASE!
         Credentials credentials = Credentials.create(getUserInfo()[2]);
 
         BetChainBetContract contract = BetChainBetContract.load(betAddress, web3, credentials, GAS_PRICE, GAS_LIMIT);
@@ -168,12 +160,56 @@ public class BlockChainFunctions {
 
     }
 
+    public static boolean startVoting(String betAddress, boolean wasBetSuccessfull){
+
+        Credentials credentials = Credentials.create(getUserInfo()[2]);
+
+        BetChainBetContract contract = BetChainBetContract.load(betAddress, web3, credentials, GAS_PRICE, GAS_LIMIT);
+
+        try {
+            contract.startVote(wasBetSuccessfull).sendAsync();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+        return true;
+    }
+
+    public static boolean vote(String betAddress, boolean wasBetSuccessfull){
+
+        Credentials credentials = Credentials.create(getUserInfo()[2]);
+
+        BetChainBetContract contract = BetChainBetContract.load(betAddress, web3, credentials, GAS_PRICE, GAS_LIMIT);
+
+        try {
+            contract.vote(wasBetSuccessfull).sendAsync();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+        return true;
+    }
+
+    public static boolean abort(String betAddress){
+
+        Credentials credentials = Credentials.create(getUserInfo()[2]);
+
+        BetChainBetContract contract = BetChainBetContract.load(betAddress, web3, credentials, GAS_PRICE, GAS_LIMIT);
+
+        try {
+            contract.abortBet().sendAsync();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+        return true;
+    }
+
     public String[] createNewEthereumWallet(Context context, String password) {
         File file = context.getFilesDir();
         BigInteger privateKey;
         String[] adresses = new String[2];
         try {
-            Web3j web3 = Web3jFactory.build(new HttpService(BLOCKCHAIN_URL));  // defaults to http://localhost:8545/
             String walletFileName = WalletUtils.generateLightNewWalletFile(password, file);
             File testFile = new File(file + "/" + walletFileName);
             Credentials credentials = WalletUtils.loadCredentials(password, testFile);
