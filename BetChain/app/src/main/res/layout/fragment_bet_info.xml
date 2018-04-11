@@ -102,34 +102,60 @@
             android:text="Status"
             android:textStyle="italic" />
 
-        <EditText
-            android:id="@+id/betInfoBetStatus"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="none"
-            android:singleLine="true"
-            android:text="Name"
-            android:focusable="false"/>
+            android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/textView34"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:text="Participants"
-            android:textStyle="italic" />
+            <EditText
+                android:id="@+id/betInfoBetStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/buttonAbortBet"
+                android:layout_alignBottom="@+id/buttonAbortBet"
+                android:layout_weight="1"
+                android:ems="10"
+                android:focusable="false"
+                android:inputType="none"
+                android:singleLine="true"
+                android:text="Name" />
+
+            <Button
+                android:id="@+id/buttonAbortBet"
+                android:layout_width="220dp"
+                android:layout_height="50dp"
+                android:layout_alignEnd="@+id/buttonBetInfoBetFailure"
+                android:layout_alignParentTop="true"
+                android:layout_weight="1"
+                android:background="@drawable/bet_failure_button"
+                android:shadowColor="#A8A8A8"
+                android:shadowDx="0"
+                android:shadowDy="0"
+                android:shadowRadius="5"
+                android:text="Abort Bet"
+                android:textColor="#000000" />
+
+        </LinearLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/textView34"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/betInfoBetStatus"
+                android:text="Participants"
+                android:textStyle="italic" />
 
             <ListView
                 android:id="@+id/betInfoBetParticpantsList"
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
                 android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true" />
+                android:layout_below="@+id/textView34" />
 
             <Button
                 android:id="@+id/buttonBetInfoStartVote"

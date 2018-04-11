@@ -263,8 +263,8 @@ public class MainActivity extends AppCompatActivity
         public void onReceive(Context arg0, Intent arg1) {
             NotificationManager notif=(NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
             Notification notify=new Notification.Builder
-                    (getApplicationContext()).setContentTitle("BetChain").setContentText("Your Contract was deployed!").
-                    setContentTitle("Contract Deployed").setSmallIcon(R.mipmap.logo).build();
+                    (getApplicationContext()).setContentTitle("BetChain").setContentText("Your Bet was deployed!").
+                    setContentTitle("Bet Deployed").setSmallIcon(R.mipmap.logo).build();
 
             notify.flags |= Notification.FLAG_AUTO_CANCEL;
             notif.notify(0, notify);

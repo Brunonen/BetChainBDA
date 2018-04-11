@@ -36,6 +36,7 @@ public class BetInfoFragment extends Fragment {
     private Participant loggedInUser;
     private Participant betOwner;
     private int opposerCount;
+    private int abortCount;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -67,6 +68,7 @@ public class BetInfoFragment extends Fragment {
             Button startVoteButton = (Button) rootView.findViewById(R.id.buttonBetInfoStartVote);
             Button betSuccessButton = (Button) rootView.findViewById(R.id.buttonBetInfoBetSuccess);
             Button betFailureButton = (Button) rootView.findViewById(R.id.buttonBetInfoBetFailure);
+            Button abortBetButton = (Button) rootView.findViewById(R.id.buttonAbortBet);
 
             betOwner = new Participant();
             final String[] loggedInUserInfo = getUserInfo();
@@ -75,6 +77,7 @@ public class BetInfoFragment extends Fragment {
             loggedInUser.setUsername(loggedInUserInfo[0]);
             loggedInUser.setAddress(loggedInUserInfo[3]);
             opposerCount = 0;
+            abortCount = 0;
 
             //Loop through all participants to find the user and which of those is the logged in User.
             for(Participant p : selectedBetInfo.getParticipants()){
@@ -88,6 +91,10 @@ public class BetInfoFragment extends Fragment {
 
                 if(p.getUsername().equals(loggedInUser.getUsername())){
                     loggedInUser = p;
+                }
+
+                if(p.isAbortVoted()){
+                    abortCount++;
                 }
             }
 
@@ -112,6 +119,9 @@ public class BetInfoFragment extends Fragment {
                     retreatFromBetButton.setVisibility(View.VISIBLE);
 
                 }
+
+                abortBetButton.setVisibility(View.VISIBLE);
+                abortBetButton.setEnabled(true);
             }
 
             if(selectedBetInfo.getBetState() == BetState.LOCKED){
@@ -119,6 +129,9 @@ public class BetInfoFragment extends Fragment {
                     startVoteButton.setVisibility(View.VISIBLE);
                     startVoteButton.setEnabled(true);
                 }
+
+                abortBetButton.setVisibility(View.VISIBLE);
+                abortBetButton.setEnabled(true);
             }
 
             if(selectedBetInfo.getBetState() == BetState.EVALUATION){
@@ -136,6 +149,11 @@ public class BetInfoFragment extends Fragment {
                         betFailureButton.setVisibility(View.VISIBLE);
                     }
                 }
+
+                abortBetButton.setVisibility(View.VISIBLE);
+                abortBetButton.setEnabled(true);
+
+
             }
 
             if(selectedBetInfo.getBetState() == BetState.CONCLUDED){
@@ -170,6 +188,11 @@ public class BetInfoFragment extends Fragment {
                 selectedBetInfo.setParticipants(acceptedParticipants);
             }
 
+            if(loggedInUser.isAbortVoted()) {
+                abortBetButton.setText(abortCount + "/" + selectedBetInfo.getParticipants().size() + " aborted");
+                abortBetButton.setEnabled(false);
+            }
+
             CustomAdapterParticipantInfo adapter = new CustomAdapterParticipantInfo (activity, selectedBetInfo.getParticipants());
             betParticipantListView.setAdapter(adapter);
 
@@ -186,7 +209,7 @@ public class BetInfoFragment extends Fragment {
                         Toast.makeText(activity, "Request submitted! Please keep in mind that changes might take a few minutes to take effect on the Blockchain" , Toast.LENGTH_LONG).show();
                         BlockChainFunctions.acceptBet(selectedBetInfo.getBetAddress(), loggedInUser.getBetRole(), selectedBetInfo.getBetEntryFee());
                     }else{
-                        Toast.makeText(activity, "You have already Accepted this bet!" , Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, "You have already accepted this bet!" , Toast.LENGTH_SHORT).show();
                     }
                 }
             });
@@ -259,6 +282,19 @@ public class BetInfoFragment extends Fragment {
                 }
             });
 
+            abortBetButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(final View v) {
+                    if(!loggedInUser.isAbortVoted()) {
+                        BlockChainFunctions.abort(selectedBetInfo.getBetAddress());
+                        Toast.makeText(activity, "Abort submitted! Bet will be aborted if all accepted Participants agreed to abort this bet" , Toast.LENGTH_LONG).show();
+                    }else{
+                        Toast.makeText(activity, "You have already submitted an abort request!" , Toast.LENGTH_SHORT).show();
+                    }
+
+                }
+            });
+
         } catch (Exception e) {
             Toast.makeText(activity, e.getMessage() , Toast.LENGTH_SHORT).show();
         }
@@ -272,6 +308,7 @@ public class BetInfoFragment extends Fragment {
         Button startVoteButton = (Button) rootView.findViewById(R.id.buttonBetInfoStartVote);
         Button betSuccessButton = (Button) rootView.findViewById(R.id.buttonBetInfoBetSuccess);
         Button betFailureButton = (Button) rootView.findViewById(R.id.buttonBetInfoBetFailure);
+        Button abortBet = (Button) rootView.findViewById(R.id.buttonAbortBet);
 
         acceptBetButton.setVisibility(View.INVISIBLE);
         retreatFromBetButton.setVisibility(View.INVISIBLE);
@@ -279,6 +316,7 @@ public class BetInfoFragment extends Fragment {
         startVoteButton.setVisibility(View.INVISIBLE);
         betSuccessButton.setVisibility(View.INVISIBLE);
         betFailureButton.setVisibility(View.INVISIBLE);
+        abortBet.setVisibility(View.INVISIBLE);
 
         acceptBetButton.setEnabled(false);
         retreatFromBetButton.setEnabled(false);
@@ -286,6 +324,7 @@ public class BetInfoFragment extends Fragment {
         startVoteButton.setEnabled(false);
         betSuccessButton.setEnabled(false);
         betFailureButton.setEnabled(false);
+        abortBet.setEnabled(false);
     }
 
     private List<Participant> addProfilePictures(List<Participant> betParticipants){
