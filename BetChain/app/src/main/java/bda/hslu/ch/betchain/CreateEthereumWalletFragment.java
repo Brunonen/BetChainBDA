@@ -58,6 +58,9 @@ public class CreateEthereumWalletFragment extends Fragment {
                         }catch (WebRequestException e){
                             e.printStackTrace();
                         }
+                        Fragment myBets = new MyBetsFragment();
+                        activity.changeFragmentNoBackstack(myBets);
+
                     }else {
                         Toast.makeText(activity, "Password can not be empty", Toast.LENGTH_SHORT).show();
                     }
@@ -65,6 +68,7 @@ public class CreateEthereumWalletFragment extends Fragment {
                 }else {
                     Toast.makeText(activity, "Password and Confirmation do not match!", Toast.LENGTH_SHORT).show();
                 }
+
 
             }
         });

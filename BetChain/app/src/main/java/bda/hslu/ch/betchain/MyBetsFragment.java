@@ -26,6 +26,10 @@ public class MyBetsFragment extends Fragment {
         rootView = inflater.inflate(R.layout.fragment_my_bets, container, false);
         final MainActivity activity = (MainActivity) getActivity();
 
+        final LoadingScreen loadingScreen = new LoadingScreen();
+        loadingScreen.setCancelable(false);
+        loadingScreen.show(activity.getSupportFragmentManager(), "Loading Screen");
+
         List<Bet> bets = null;
         try {
             bets = BetFunctions.getUserBets();
@@ -33,6 +37,7 @@ public class MyBetsFragment extends Fragment {
             Toast.makeText(activity, "Could not load bets from Server", Toast.LENGTH_SHORT).show();
         }
 
+        loadingScreen.dismiss();
 
         ListView betList = (ListView) rootView.findViewById(R.id.myBetsListViewBox);
         if(bets != null) {

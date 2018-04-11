@@ -30,6 +30,10 @@ public class FriendsFragment extends Fragment {
 
         List<Friend> friends = null;
 
+        final LoadingScreen loadingScreen = new LoadingScreen();
+        loadingScreen.setCancelable(false);
+        loadingScreen.show(activity.getSupportFragmentManager(), "Loading Screen");
+
         @SuppressLint("StaticFieldLeak") FriendFunctions getUserFriends = new FriendFunctions(){
 
 
@@ -41,12 +45,14 @@ public class FriendsFragment extends Fragment {
                     ListView friendsList = (ListView) rootView.findViewById(R.id.friendList);
                     CustomAdapterFriendInfo adapter = new CustomAdapterFriendInfo(activity, friends);
                     friendsList.setAdapter(adapter);
+                    loadingScreen.dismiss();
                 }
             }
 
             @Override
             public void onFailure(Object e) {
                 Exception exec = (Exception) e;
+                loadingScreen.dismiss();
                 Toast.makeText(activity, exec.getMessage() , Toast.LENGTH_SHORT).show();
             }
         };
