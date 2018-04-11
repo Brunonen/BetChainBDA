@@ -1,6 +1,8 @@
 package bda.hslu.ch.betchain;
 
+import android.app.AlertDialog;
 import android.app.IntentService;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.provider.Telephony;
 import android.support.v4.app.Fragment;
@@ -73,18 +75,44 @@ public class CreateBetStep4Fragment extends Fragment {
                            //Check if the logged in user has the required Information provided, in order to create a Bet!
                            if(!loggedInUserInfo[3].equals("")) {
                                if(!loggedInUserInfo[2].equals("")) {
-                                    Intent betCreation = new Intent(activity, ContractCreationIntentService.class);
-                                    betCreation.putExtra("betConditions", betConditions.getText().toString());
-                                    betCreation.putExtra("betEntryFee", betEntryFees.getText().toString());
-                                    betCreation.putExtra("participants", (Serializable) participantList);
-                                    betCreation.putExtra("betTitle", betTitle.getText().toString());
-                                    betCreation.putExtra("pKey", getUserInfo()[2]);
-                                    betCreation.setAction("bda.hslu.ch.betchain.BlockChainFunctions.ContractCreationIntentService");
 
-                                    activity.sendBroadcast(betCreation);
-                                    activity.startService(betCreation);
+                                   AlertDialog.Builder builder = new AlertDialog.Builder(activity);
 
-                                    activity.resetBetCreationInfo();
+                                   builder.setPositiveButton("Continue", new DialogInterface.OnClickListener() {
+                                       public void onClick(DialogInterface dialog, int id) {
+
+                                           try {
+                                               String transactionHash = BlockChainFunctions.createContract(betConditions.getText().toString(), Float.valueOf(betEntryFees.getText().toString()), participantList);
+                                               int betID = BetFunctions.createBet(betTitle.getText().toString(), transactionHash, participantList);
+                                               Intent betCreationIntent = new Intent(activity, ContractCreationIntentService.class);
+                                               betCreationIntent.putExtra("transactionHash", transactionHash);
+                                               betCreationIntent.putExtra("betID", betID);
+
+                                               activity.startService(betCreationIntent);
+                                               activity.resetBetCreationInfo();
+
+                                               Toast.makeText(activity, "Request submitted! Please keep in mind that changes might take a few minutes to take effect on the Blockchain!" , Toast.LENGTH_LONG).show();
+                                               activity.changeFragment(new MyBetsFragment());
+
+                                           } catch (WebRequestException e) {
+                                               Toast.makeText(activity, e.getMessage() , Toast.LENGTH_SHORT).show();
+                                           }
+                                       }
+                                   });
+                                   builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                       public void onClick(DialogInterface dialog, int id) {
+                                           //Do nothing
+                                       }
+                                   });
+
+                                   builder.setMessage("Releasing a contract onto the Blockchain will result in costs on your behalf. Are you sure you want to continue? ")
+                                           .setTitle("Notice");
+
+
+                                   AlertDialog dialog = builder.create();
+                                   dialog.show();
+
+
 
                                 }else{
                                    Toast.makeText(activity, "Your account has no private key set! The app needs this information in order to deploy a contract onto the blockchain!" , Toast.LENGTH_SHORT).show();

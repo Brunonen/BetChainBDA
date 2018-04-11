@@ -290,6 +290,10 @@ public class MainActivity extends AppCompatActivity
     protected void onPause() {
         super.onPause();
 
-        unregisterReceiver(myReceiver);
+        try {
+            unregisterReceiver(myReceiver);
+        }catch(Exception e){
+
+        }
     }
 }

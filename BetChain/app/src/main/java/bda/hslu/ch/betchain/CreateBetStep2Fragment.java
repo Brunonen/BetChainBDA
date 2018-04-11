@@ -12,6 +12,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
+import bda.hslu.ch.betchain.DTO.Participant;
+
 
 public class CreateBetStep2Fragment extends Fragment {
 
@@ -23,6 +27,8 @@ public class CreateBetStep2Fragment extends Fragment {
         rootView = inflater.inflate(R.layout.fragment_create_bet_step2, container, false);
 
         MainActivity activity = (MainActivity) getActivity();
+
+        activity.setBetCreationParticipants(new ArrayList<Participant>());
 
         TextView betConditions = (TextView) rootView.findViewById(R.id.betConditions);
         betConditions.setText(activity.getBetCreationBetConditions());

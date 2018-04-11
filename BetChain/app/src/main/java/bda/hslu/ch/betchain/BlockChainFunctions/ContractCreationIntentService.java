@@ -1,9 +1,12 @@
 package bda.hslu.ch.betchain.BlockChainFunctions;
 
 import android.app.IntentService;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.content.Intent;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
 
 import org.web3j.abi.FunctionEncoder;
 import org.web3j.abi.datatypes.Type;
@@ -54,61 +57,20 @@ public class ContractCreationIntentService extends IntentService {
     private static BigInteger GAS_LIMIT = new BigInteger("50000000");
     private static int POLL_TIME = 5000; //5 seconds
     private static int MAXIMUM_CREATION_TIMEOUT = 600000; //10 Minutes
+    private NotificationManager notificationManager;
 
     public ContractCreationIntentService() {
         super("ContractCreationIntent");
     }
 
+
     @Override
     protected void onHandleIntent(@Nullable Intent intent){
-        String betEntryFees = intent.getExtras().getString("betEntryFee");
-        String betConditions = intent.getExtras().getString("betConditions");
-        String betTitle = intent.getExtras().getString("betTitle");
-        String user_P_Key = intent.getExtras().getString("pKey");
-        List<Participant> participants = (List<Participant>) intent.getExtras().getSerializable("participants");
-        List<String> participantAddresses = new ArrayList<String>();
-        List<BigInteger> particpantRoles = new ArrayList<BigInteger>();
-
-        //The contract needs two arrays, one with the addresses and one with the roles of the Participants, since a contract
-        //can not possibly know our Class participant.
-        for(Participant p : participants){
-            if(p.getBetRole() != BetRole.OWNER){
-                participantAddresses.add(p.getAddress());
-                System.out.println(p.getAddress());
-                particpantRoles.add(BigInteger.valueOf(p.getBetRole().ordinal()));
-            }
-        }
-
-        BigDecimal eth = Convert.toWei(Float.valueOf(betEntryFees).toString(), Convert.Unit.ETHER);
-        Web3j web3 = Web3jFactory.build(new HttpService(BLOCKCHAIN_URL));  // defaults to http://localhost:8545/
-
-        //REPLACE WITH CREDENTIALS FROM DATABASE!
-        Credentials credentials = Credentials.create(user_P_Key);
+        String transactionHash = intent.getExtras().getString("transactionHash");
+        int betID = intent.getExtras().getInt("betID");
 
         try {
-
-            /*BetChainBetContract contract = BetChainBetContract.deploy(
-                    web3, credentials,
-                    GAS_PRICE, GAS_LIMIT, eth.toBigInteger(),
-                    stringToBytes32(betConditions), eth.toBigInteger(), participantAddresses, particpantRoles).send();  // constructor params
-            */
-
-
-            RawTransaction raw = getContractTransaction( web3, credentials,
-                    GAS_PRICE, GAS_LIMIT, eth.toBigInteger(),
-                    stringToBytes32(betConditions), eth.toBigInteger(), participantAddresses, particpantRoles);
-
-            byte[] signedMessage = TransactionEncoder.signMessage(raw, credentials);
-            String hexValue = Numeric.toHexString(signedMessage);
-
-            EthSendTransaction ethSendTransaction =
-                    web3.ethSendRawTransaction(hexValue).sendAsync().get();
-
-            if(ethSendTransaction.getTransactionHash() != null) {
-                String transactionHash = ethSendTransaction.getTransactionHash();
-                System.out.println(transactionHash);
-                int betID = BetFunctions.createBet(betTitle, transactionHash, participants);
-
+                Web3j web3 = Web3jFactory.build(new HttpService(BLOCKCHAIN_URL));
                 int passedTime = 0;
 
                 //Wait for Bet to be deployed in order to get the Contract address! (Wait a maximum of 10 Minutes!
@@ -130,14 +92,13 @@ public class ContractCreationIntentService extends IntentService {
 
                     if(receipt.getTransactionReceipt() != null) {
                         String contractAddress = receipt.getTransactionReceipt().getContractAddress();
-
                         BetFunctions.updateBetContractAddress(betID, contractAddress);
+                        Intent broadcastIntent = new Intent();
+                        broadcastIntent.setAction("bda.hslu.ch.betchain.BlockChainFunctions.ContractCreationIntentService");
+                        sendBroadcast(broadcastIntent);
                     }
                 }
 
-            }else {
-                throw new Exception("Creation was rejected!");
-            }
 
         }catch(Exception ex){
             System.out.println(ex.getMessage() );
@@ -147,29 +108,11 @@ public class ContractCreationIntentService extends IntentService {
 
 
 
-
     private static byte[] stringToBytes32(String string) {
         byte[] byteValue = string.getBytes();
         byte[] byteValueLen32 = new byte[32];
         System.arraycopy(byteValue, 0, byteValueLen32, 0, byteValue.length);
         return byteValueLen32;
-    }
-
-    public static RawTransaction getContractTransaction(Web3j web3j, Credentials credentials, BigInteger gasPrice, BigInteger gasLimit, BigInteger initialWeiValue, byte[] _betConditions, BigInteger _betEntryFee, List<String> _participantAddresses, List<BigInteger> _participantRoles) throws ExecutionException, InterruptedException {
-        String encodedConstructor = FunctionEncoder.encodeConstructor(Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Bytes32(_betConditions),
-                new org.web3j.abi.datatypes.generated.Uint256(_betEntryFee),
-                new org.web3j.abi.datatypes.DynamicArray<org.web3j.abi.datatypes.Address>(
-                        org.web3j.abi.Utils.typeMap(_participantAddresses, org.web3j.abi.datatypes.Address.class)),
-                new org.web3j.abi.datatypes.DynamicArray<org.web3j.abi.datatypes.generated.Uint8>(
-                        org.web3j.abi.Utils.typeMap(_participantRoles, org.web3j.abi.datatypes.generated.Uint8.class))));
-
-        EthGetTransactionCount ethGetTransactionCount = web3j.ethGetTransactionCount( credentials.getAddress()
-                , DefaultBlockParameterName.LATEST).sendAsync().get();
-
-        BigInteger nonce = ethGetTransactionCount.getTransactionCount();
-
-        return RawTransaction.createContractTransaction(nonce, GAS_PRICE, GAS_LIMIT, initialWeiValue, BetChainBetContract.getBinary() + encodedConstructor );
-
     }
 
 

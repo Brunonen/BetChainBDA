@@ -3,23 +3,32 @@ package bda.hslu.ch.betchain.BlockChainFunctions;
 import android.content.Context;
 import android.os.AsyncTask;
 
+import org.web3j.abi.FunctionEncoder;
+import org.web3j.abi.datatypes.Type;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.ECKeyPair;
+import org.web3j.crypto.RawTransaction;
+import org.web3j.crypto.TransactionEncoder;
 import org.web3j.crypto.WalletUtils;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.Web3jFactory;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.methods.response.EthGetBalance;
+import org.web3j.protocol.core.methods.response.EthGetTransactionCount;
+import org.web3j.protocol.core.methods.response.EthSendTransaction;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.tuples.generated.Tuple4;
 import org.web3j.tuples.generated.Tuple5;
 import org.web3j.utils.Convert;
+import org.web3j.utils.Numeric;
 
 import java.io.File;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import bda.hslu.ch.betchain.BetChainBetContract;
 import bda.hslu.ch.betchain.DTO.Bet;
@@ -103,6 +112,48 @@ public class BlockChainFunctions {
         }catch(Exception e){
             return betInfo;
         }
+    }
+
+    public static String createContract(String betConditions, float betEntryFees, List<Participant> participants) throws WebRequestException{
+        List<String> participantAddresses = new ArrayList<String>();
+        List<BigInteger> particpantRoles = new ArrayList<BigInteger>();
+
+        //The contract needs two arrays, one with the addresses and one with the roles of the Participants, since a contract
+        //can not possibly know our Class participant.
+        for(Participant p : participants){
+            if(p.getBetRole() != BetRole.OWNER){
+                participantAddresses.add(p.getAddress());
+                System.out.println(p.getAddress());
+                particpantRoles.add(BigInteger.valueOf(p.getBetRole().ordinal()));
+            }
+        }
+
+        BigDecimal eth = Convert.toWei(Float.valueOf(betEntryFees).toString(), Convert.Unit.ETHER);
+        Web3j web3 = Web3jFactory.build(new HttpService(BLOCKCHAIN_URL));  // defaults to http://localhost:8545/
+
+        //REPLACE WITH CREDENTIALS FROM DATABASE!
+        Credentials credentials = Credentials.create(getUserInfo()[2]);
+
+        try {
+            RawTransaction raw = getContractTransaction( web3, credentials,
+                    GAS_PRICE, GAS_LIMIT, eth.toBigInteger(),
+                    stringToBytes32(betConditions), eth.toBigInteger(), participantAddresses, particpantRoles);
+
+            byte[] signedMessage = TransactionEncoder.signMessage(raw, credentials);
+            String hexValue = Numeric.toHexString(signedMessage);
+
+            EthSendTransaction ethSendTransaction =
+                    web3.ethSendRawTransaction(hexValue).sendAsync().get();
+
+            if(ethSendTransaction.getTransactionHash() != null) {
+                return ethSendTransaction.getTransactionHash();
+            }else{
+                throw new Exception("Contract creation rejected");
+            }
+        }catch(Exception e){
+            throw new WebRequestException(e.getMessage());
+        }
+
     }
 
     public static boolean acceptBet(String betAddress, BetRole participantRole, float entryFee)  {
@@ -251,6 +302,23 @@ public class BlockChainFunctions {
         SQLWrapper db = DBSessionSingleton.getInstance().getDbUtil();
         returnString = db.getLoggedInUserInfo();
         return returnString;
+    }
+
+    public static RawTransaction getContractTransaction(Web3j web3j, Credentials credentials, BigInteger gasPrice, BigInteger gasLimit, BigInteger initialWeiValue, byte[] _betConditions, BigInteger _betEntryFee, List<String> _participantAddresses, List<BigInteger> _participantRoles) throws ExecutionException, InterruptedException {
+        String encodedConstructor = FunctionEncoder.encodeConstructor(Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Bytes32(_betConditions),
+                new org.web3j.abi.datatypes.generated.Uint256(_betEntryFee),
+                new org.web3j.abi.datatypes.DynamicArray<org.web3j.abi.datatypes.Address>(
+                        org.web3j.abi.Utils.typeMap(_participantAddresses, org.web3j.abi.datatypes.Address.class)),
+                new org.web3j.abi.datatypes.DynamicArray<org.web3j.abi.datatypes.generated.Uint8>(
+                        org.web3j.abi.Utils.typeMap(_participantRoles, org.web3j.abi.datatypes.generated.Uint8.class))));
+
+        EthGetTransactionCount ethGetTransactionCount = web3j.ethGetTransactionCount( credentials.getAddress()
+                , DefaultBlockParameterName.LATEST).sendAsync().get();
+
+        BigInteger nonce = ethGetTransactionCount.getTransactionCount();
+
+        return RawTransaction.createContractTransaction(nonce, GAS_PRICE, GAS_LIMIT, initialWeiValue, BetChainBetContract.getBinary() + encodedConstructor );
+
     }
 
 
