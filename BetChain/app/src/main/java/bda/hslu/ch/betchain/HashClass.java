@@ -5,7 +5,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 /**
- * Created by ssj10 on 20/03/2018.
+ * Created by Bruno Fischlin on 20/03/2018.
  */
 
 public class HashClass {

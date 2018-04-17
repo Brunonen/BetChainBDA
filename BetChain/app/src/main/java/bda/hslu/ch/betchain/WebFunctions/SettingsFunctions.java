@@ -8,7 +8,7 @@ import bda.hslu.ch.betchain.DTO.User;
 import bda.hslu.ch.betchain.WebRequestException;
 
 /**
- * Created by ssj10 on 23/03/2018.
+ * Created by Bruno Fischlin on 23/03/2018.
  */
 
 public class SettingsFunctions {

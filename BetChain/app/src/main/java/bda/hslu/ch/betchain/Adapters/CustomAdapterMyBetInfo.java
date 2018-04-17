@@ -21,7 +21,7 @@ import bda.hslu.ch.betchain.MainActivity;
 import bda.hslu.ch.betchain.R;
 
 /**
- * Created by ssj10 on 15/03/2018.
+ * Created by Bruno Fischlin on 15/03/2018.
  */
 
 public class CustomAdapterMyBetInfo extends ArrayAdapter<Bet>{

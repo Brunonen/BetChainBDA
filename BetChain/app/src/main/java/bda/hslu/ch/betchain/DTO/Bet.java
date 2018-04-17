@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by ssj10 on 15/03/2018.
+ * Created by Bruno Fischlin on 15/03/2018.
  */
 
 public class Bet {

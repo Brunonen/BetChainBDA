@@ -44,7 +44,7 @@ import bda.hslu.ch.betchain.MainActivity;
 import bda.hslu.ch.betchain.WebFunctions.BetFunctions;
 
 /**
- * Created by ssj10 on 29/03/2018.
+ * Created by Bruno Fischlin on 29/03/2018.
  */
 
 public class ContractCreationIntentService extends IntentService {

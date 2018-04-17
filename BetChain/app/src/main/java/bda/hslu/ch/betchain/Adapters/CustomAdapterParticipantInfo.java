@@ -14,7 +14,7 @@ import bda.hslu.ch.betchain.R;
 import bda.hslu.ch.betchain.DTO.Participant;
 
 /**
- * Created by ssj10 on 11/03/2018.
+ * Created by Bruno Fischlin on 11/03/2018.
  */
 
 public class CustomAdapterParticipantInfo extends ArrayAdapter<Participant> {

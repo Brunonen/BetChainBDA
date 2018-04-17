@@ -14,7 +14,7 @@ import bda.hslu.ch.betchain.DTO.User;
 import bda.hslu.ch.betchain.WebRequestException;
 
 /**
- * Created by ssj10 on 22/03/2018.
+ * Created by Bruno Fischlin on 22/03/2018.
  */
 
 public class UserFunctions {

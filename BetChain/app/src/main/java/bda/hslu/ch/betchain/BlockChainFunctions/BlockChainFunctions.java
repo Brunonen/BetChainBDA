@@ -42,7 +42,7 @@ import bda.hslu.ch.betchain.WebFunctions.UserFunctions;
 import bda.hslu.ch.betchain.WebRequestException;
 
 /**
- * Created by ssj10 on 28/03/2018.
+ * Created by Bruno Fischlin on 28/03/2018.
  */
 
 public class BlockChainFunctions {
