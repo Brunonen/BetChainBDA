@@ -76,6 +76,8 @@ public class BetFunctions {
 
             JSONObject jsonResponse = new JSONObject(CallAPI.makePOSTRequestToServer(SERVER_URL, requestParams.toString()));
 
+            System.out.println(jsonResponse);
+
             if (jsonResponse.getInt("is_error") == 0) {
                 return jsonResponse.getInt("data");
             }else{

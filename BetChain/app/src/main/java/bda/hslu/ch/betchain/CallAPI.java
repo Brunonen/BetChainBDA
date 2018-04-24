@@ -121,6 +121,7 @@ public class CallAPI  {
             System.out.println("Socket Timeout EXCEPTION: " + error.getMessage());
         }
         catch (IOException error) {
+            error.printStackTrace();
             System.out.println("IO EXCEPTION: " + error.getMessage());
         }
 

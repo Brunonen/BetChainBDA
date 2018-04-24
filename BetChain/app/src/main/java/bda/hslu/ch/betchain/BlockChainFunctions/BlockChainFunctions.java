@@ -151,6 +151,7 @@ public class BlockChainFunctions {
                 throw new Exception("Contract creation rejected");
             }
         }catch(Exception e){
+            e.printStackTrace();
             throw new WebRequestException(e.getMessage());
         }
 

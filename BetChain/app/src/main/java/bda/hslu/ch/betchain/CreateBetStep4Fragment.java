@@ -95,6 +95,7 @@ public class CreateBetStep4Fragment extends Fragment {
                                                activity.changeFragment(new MyBetsFragment());
 
                                            } catch (WebRequestException e) {
+                                               e.printStackTrace();
                                                Toast.makeText(activity, e.getMessage() , Toast.LENGTH_SHORT).show();
                                            }
                                        }
