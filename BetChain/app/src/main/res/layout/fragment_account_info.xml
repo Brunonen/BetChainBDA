@@ -28,7 +28,7 @@
         <ImageView
             android:id="@+id/accountInfoProfilePic"
             android:layout_width="match_parent"
-            android:layout_height="97dp"
+            android:layout_height="72dp"
             android:layout_marginTop="10dp"
             android:src="@drawable/kay" />
 
@@ -98,6 +98,22 @@
             android:password="true" />
 
         <TextView
+            android:id="@+id/textView35"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:text="Public Address" />
+
+        <TextView
+            android:id="@+id/publicAddressText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textColor="@android:color/background_dark"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+
+        <TextView
             android:id="@+id/textView22"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -105,13 +121,14 @@
             android:text="QR-FRIEND CODE"
             android:textAlignment="center"
             android:textColor="@android:color/black"
-            android:textSize="24sp"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
         <ImageView
             android:id="@+id/qrFriendCode"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginTop="10dp" />
+
     </LinearLayout>
 </FrameLayout>

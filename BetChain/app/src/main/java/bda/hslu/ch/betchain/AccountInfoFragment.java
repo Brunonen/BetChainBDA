@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.zxing.BarcodeFormat;
@@ -41,6 +42,7 @@ public class AccountInfoFragment extends Fragment {
         ImageView profilePic = (ImageView) root.findViewById(R.id.accountInfoProfilePic);
         ImageView qrFriendCode = (ImageView) root.findViewById(R.id.qrFriendCode);
         EditText ethValue = (EditText) root.findViewById(R.id.accountInfoETH);
+        TextView publicAdress = (TextView) root.findViewById(R.id.publicAddressText);
 
 
         //Get User unfo from Database
@@ -60,6 +62,7 @@ public class AccountInfoFragment extends Fragment {
 
         privateKeyString = userInfoString[2];
         addressString = userInfoString[3];
+        publicAdress.setText(addressString);
 
         username.setText(usernameString);
 
@@ -79,10 +82,14 @@ public class AccountInfoFragment extends Fragment {
 
         //QR Code generator
         try {
-            BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
-            Bitmap bitmap = barcodeEncoder.encodeBitmap(addressString, BarcodeFormat.QR_CODE, 600, 600);
-            ImageView imageViewQrCode = (ImageView) root.findViewById(R.id.qrFriendCode);
-            imageViewQrCode.setImageBitmap(bitmap);
+            if(!addressString.equals("")) {
+                BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
+                Bitmap bitmap = barcodeEncoder.encodeBitmap(addressString, BarcodeFormat.QR_CODE, 600, 600);
+                ImageView imageViewQrCode = (ImageView) root.findViewById(R.id.qrFriendCode);
+                imageViewQrCode.setImageBitmap(bitmap);
+            }else{
+                Toast.makeText(activity,"No Public-Address found" , Toast.LENGTH_SHORT).show();
+            }
         } catch(Exception e) {
             Toast.makeText(activity,"No Public-Address found" , Toast.LENGTH_SHORT).show();
         }
