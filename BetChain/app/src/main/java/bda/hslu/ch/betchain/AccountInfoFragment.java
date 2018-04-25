@@ -19,6 +19,7 @@ import bda.hslu.ch.betchain.BlockChainFunctions.BlockChainFunctions;
 import bda.hslu.ch.betchain.DTO.User;
 import bda.hslu.ch.betchain.Database.DBSessionSingleton;
 import bda.hslu.ch.betchain.Database.SQLWrapper;
+import bda.hslu.ch.betchain.WebFunctions.CurrencyExchangeAPI;
 import bda.hslu.ch.betchain.WebFunctions.UserFunctions;
 import bda.hslu.ch.betchain.BlockChainFunctions.AccountBalance;
 
@@ -99,6 +100,7 @@ public class AccountInfoFragment extends Fragment {
         } catch (Exception e) {
             Toast.makeText(activity,"No Public-Address found" , Toast.LENGTH_SHORT).show();
         }
+
 
         return root;
     }
