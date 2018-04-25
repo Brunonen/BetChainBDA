@@ -63,6 +63,7 @@ public class BetInfoFragment extends Fragment {
             EditText betStatus = (EditText) rootView.findViewById(R.id.betInfoBetStatus);
             betStatus.setText(selectedBetInfo.getBetState().toString());
 
+            //Bind all  Buttons
             Button acceptBetButton = (Button) rootView.findViewById(R.id.buttonBetInfoAcceptBet);
             Button retreatFromBetButton = (Button) rootView.findViewById(R.id.buttonBetInfoRetreat);
             Button startBetButton = (Button) rootView.findViewById(R.id.buttonBetInfoStartBet);
@@ -71,6 +72,7 @@ public class BetInfoFragment extends Fragment {
             Button betFailureButton = (Button) rootView.findViewById(R.id.buttonBetInfoBetFailure);
             Button abortBetButton = (Button) rootView.findViewById(R.id.buttonAbortBet);
 
+            //Genreate contrainers and get LoggedIn UserInfo
             betOwner = new Participant();
             final String[] loggedInUserInfo = getUserInfo();
             loggedInUser = new Participant();
@@ -100,9 +102,12 @@ public class BetInfoFragment extends Fragment {
                 }
             }
 
+            //Per default disable and Hide all Buttons
             disableAllButtons();
 
+            //Now "Switch" the entire Screen by the State the selected Bet is in
             if(selectedBetInfo.getBetState() == BetState.PENDING){
+                //Set Flags if the Participants has Accepted the Bet or not
                 for(int i = 0; i < selectedBetInfo.getParticipants().size(); i++) {
                     if(selectedBetInfo.getParticipants().get(i).hasBetAccepted()){
                         selectedBetInfo.getParticipants().get(i).setInfoIcon(R.drawable.ic_check_black_24dp);
@@ -111,6 +116,7 @@ public class BetInfoFragment extends Fragment {
                     }
                 }
 
+                //Check if the User calling the Information is also its owner (Different Actions)
                 if(betOwner.getUsername().equals(loggedInUser.getUsername()) || betOwner.getAddress().equals(loggedInUser.getAddress())){
                     startBetButton.setVisibility(View.VISIBLE);
                     startBetButton.setEnabled(true);
@@ -137,12 +143,14 @@ public class BetInfoFragment extends Fragment {
             }
 
             if(selectedBetInfo.getBetState() == BetState.EVALUATION){
+                //Set InfoIcon of Participant so it's visible if they voted or not
                 for(int i = 0; i < selectedBetInfo.getParticipants().size(); i++) {
                     if(selectedBetInfo.getParticipants().get(i).hasVoted()){
                         selectedBetInfo.getParticipants().get(i).setInfoIcon(R.drawable.ic_mode_comment_black_24dp);
                     }
                 }
 
+                //Participants other then the Owner can Vote in this State.
                 if(betOwner.getUsername() != loggedInUser.getUsername()){
                     if(!loggedInUser.hasVoted()){
                         betSuccessButton.setEnabled(true);
@@ -159,6 +167,7 @@ public class BetInfoFragment extends Fragment {
             }
 
             if(selectedBetInfo.getBetState() == BetState.CONCLUDED){
+                //Make Participants who won the Bet visible by an Icon
                 for(int i = 0; i < selectedBetInfo.getParticipants().size(); i++){
                     if(selectedBetInfo.isBetSuccessful() && (selectedBetInfo.getParticipants().get(i).getBetRole() == BetRole.SUPPORTER || selectedBetInfo.getParticipants().get(i).getBetRole() == BetRole.OWNER)){
                         selectedBetInfo.getParticipants().get(i).setInfoIcon(R.drawable.ic_menu_createbet);
@@ -176,6 +185,7 @@ public class BetInfoFragment extends Fragment {
 
             ListView betParticipantListView = (ListView) rootView.findViewById(R.id.betInfoBetParticpantsList);
 
+            //If the Bet has already commenced, filter out Participants that have to accepted the Bet
             if(selectedBetInfo.getBetState() != BetState.PENDING){
                 List<Participant> acceptedParticipants = selectedBetInfo.getParticipants();
 
@@ -198,12 +208,14 @@ public class BetInfoFragment extends Fragment {
             CustomAdapterParticipantInfo adapter = new CustomAdapterParticipantInfo (activity, selectedBetInfo.getParticipants());
             betParticipantListView.setAdapter(adapter);
 
+            //If the Bet has commenced and the Participant which is logged in hasn't accepted the bet, disable all Actions
             if(selectedBetInfo.getBetState() != BetState.PENDING) {
                 if (!loggedInUser.hasBetAccepted()) {
                     disableAllButtons();
                 }
             }
 
+            //Klick Listeners for The Bet Actions
             acceptBetButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View v) {
@@ -319,6 +331,9 @@ public class BetInfoFragment extends Fragment {
         return rootView;
     }
 
+    /***
+     * Disables all Buttons of the Layout and makes them Invisible
+     */
     private void disableAllButtons(){
         Button acceptBetButton = (Button) rootView.findViewById(R.id.buttonBetInfoAcceptBet);
         Button retreatFromBetButton = (Button) rootView.findViewById(R.id.buttonBetInfoRetreat);
@@ -343,29 +358,6 @@ public class BetInfoFragment extends Fragment {
         betSuccessButton.setEnabled(false);
         betFailureButton.setEnabled(false);
         abortBet.setEnabled(false);
-    }
-
-    private List<Participant> addProfilePictures(List<Participant> betParticipants){
-        for(int i = 0; i < betParticipants.size(); i++){
-            if(betParticipants.get(i).getUsername() == "Kay Hartmann"){
-                betParticipants.get(i).setProfilePicture(R.drawable.kay);
-            }
-            if(betParticipants.get(i).getUsername() == "Bruno Fischlin"){
-                betParticipants.get(i).setProfilePicture(R.drawable.bruno);
-            }
-            if(betParticipants.get(i).getUsername() == "Damir Hodzic"){
-                betParticipants.get(i).setProfilePicture(R.drawable.damir);
-            }
-            if(betParticipants.get(i).getUsername() == "Alex Neher"){
-                betParticipants.get(i).setProfilePicture(R.drawable.alex);
-            }
-            if(betParticipants.get(i).getUsername() == "Suki Kasipillai"){
-                betParticipants.get(i).setProfilePicture(R.drawable.suki);
-            }
-        }
-
-        return betParticipants;
-
     }
 
     private String[] getUserInfo(){

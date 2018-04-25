@@ -73,7 +73,7 @@ public class ContractCreationIntentService extends IntentService {
                 Web3j web3 = Web3jFactory.build(new HttpService(BLOCKCHAIN_URL));
                 int passedTime = 0;
 
-                //Wait for Bet to be deployed in order to get the Contract address! (Wait a maximum of 10 Minutes!
+                //Wait for Bet to be deployed in order to get the Contract address! (Wait a maximum of 10 Minutes!)
                 EthGetTransactionReceipt receipt = web3.ethGetTransactionReceipt(transactionHash).send();
                 System.out.println(receipt.getTransactionReceipt());
                 if(receipt.getTransactionReceipt() == null) {

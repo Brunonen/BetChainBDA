@@ -68,6 +68,8 @@ public class CreateBetStep4Fragment extends Fragment {
 
                    try{
                        float betEntryFee = Float.valueOf(betEntryFees.getText().toString());
+
+                       //Check if all inputs are valid
                        String inputError = BetFunctions.checkIfBetInputsAreValid(betTitle.getText().toString(), betConditions.getText().toString(), participantList, betEntryFee);
 
 
@@ -75,20 +77,27 @@ public class CreateBetStep4Fragment extends Fragment {
 
                            String[] loggedInUserInfo = getUserInfo();
 
-                           //Check if the logged in user has the required Information provided, in order to create a Bet!
+                           //Check if the logged in user has the required Information provided, in order to create a Bet! (Public/PrivateKey)
                            if(!loggedInUserInfo[3].equals("")) {
                                if(!loggedInUserInfo[2].equals("")) {
 
+                                   //Calculate Estimated Cost
                                    final BigDecimal est = getEstimatedContractCost(participantList, betConditions.getText().toString(), Float.valueOf(betEntryFee));
 
+                                   //Setup Dialog to inform user about real cost implications by deploying a contract
                                    AlertDialog.Builder builder = new AlertDialog.Builder(activity);
 
                                    builder.setPositiveButton("Continue", new DialogInterface.OnClickListener() {
                                        public void onClick(DialogInterface dialog, int id) {
 
                                            try {
+                                               //Deploy Contract onto blockchain and get Transaction hash
                                                String transactionHash = BlockChainFunctions.createContract(betConditions.getText().toString(), new BigDecimal(String.valueOf(Float.valueOf(betEntryFees.getText().toString()))).floatValue(), participantList);
+
+                                               //Create Database entry for the created Contract on the webserver so we have a fallback and synchronisation
                                                int betID = BetFunctions.createBet(betTitle.getText().toString(), transactionHash, participantList);
+
+                                               //Create Intent Service which polls the Contract creation until the blokc is mined or 10minutes have passed
                                                Intent betCreationIntent = new Intent(activity, ContractCreationIntentService.class);
                                                betCreationIntent.putExtra("transactionHash", transactionHash);
                                                betCreationIntent.putExtra("betID", betID);
@@ -136,7 +145,7 @@ public class CreateBetStep4Fragment extends Fragment {
                        }
                    }catch(Exception e) {
                        e.printStackTrace();
-                       Toast.makeText(activity, "Entry needs to be a valid value" , Toast.LENGTH_SHORT).show();
+                       Toast.makeText(activity, "Something went wrong while processing the Request. Please try again later." , Toast.LENGTH_SHORT).show();
                    }
 
                }
@@ -157,7 +166,16 @@ public class CreateBetStep4Fragment extends Fragment {
         return returnString;
     }
 
-    //Calculate Estimated Ether Cost
+    /***
+     * This method Calculates the estimated cost in Ether of the Contract which the user is trying to create
+     * @param participantList   //The List with PArticipants he'd like to take part in the Contract
+     * @param betConditions     //The Conditions of the Bet
+     * @param betEntryFees      //The entry fee BetSupporters and BetOpposers have to pay upon entering
+     * @return                  //An estimated Cost in Ether of how much the deployment of this contract will cost
+     * @throws InterruptedException
+     * @throws ExecutionException
+     * @throws IOException
+     */
     private BigDecimal getEstimatedContractCost(List<Participant> participantList, String betConditions, float betEntryFees) throws InterruptedException, ExecutionException, IOException {
         List<String> participantAddresses = new ArrayList<String>();
         List<BigInteger> particpantRoles = new ArrayList<BigInteger>();

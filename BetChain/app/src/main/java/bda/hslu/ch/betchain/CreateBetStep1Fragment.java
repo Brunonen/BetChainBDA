@@ -38,6 +38,7 @@ public class CreateBetStep1Fragment extends Fragment {
 
                 MainActivity activity = (MainActivity) getActivity();
 
+                //Failsafe Check if user has his account linked (Public and Private Key accessible). Otherwise he can't create bets!
                 if(!loggedInUserInfo[3].equals("")) {
                     if (!loggedInUserInfo[2].equals("")) {
 

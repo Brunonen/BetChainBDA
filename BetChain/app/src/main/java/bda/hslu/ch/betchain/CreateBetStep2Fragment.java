@@ -67,12 +67,4 @@ public class CreateBetStep2Fragment extends Fragment {
 
         return rootView;
     }
-
-    public void goToStep3(View v) {
-
-    }
-
-    public void backToStep1(View v){
-
-    }
 }

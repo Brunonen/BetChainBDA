@@ -42,10 +42,11 @@ public class AccountInfoFragment extends Fragment {
         EditText ethValue = (EditText) root.findViewById(R.id.accountInfoETH);
 
 
-
+        //Get User unfo from Database
         String[] userInfoString = getUserInfo();
         usernameString = userInfoString[0];
         try {
+            //Get additional User Info from Server
             User serverInfo = UserFunctions.getUserInfo(usernameString);
             if(serverInfo.getProfilePicture() != 0){
                 profilePic.setImageResource(serverInfo.getProfilePicture());
@@ -75,7 +76,7 @@ public class AccountInfoFragment extends Fragment {
             }
         });
 
-
+        //QR Code generator
         try {
             BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
             Bitmap bitmap = barcodeEncoder.encodeBitmap(addressString, BarcodeFormat.QR_CODE, 600, 600);

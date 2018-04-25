@@ -45,18 +45,22 @@ public class CreateBetStep3Fragment extends Fragment {
 
         MainActivity activity = (MainActivity) getActivity();
 
+        //Create Participant Containers
         betSupporters = new ArrayList<Participant>();
         betOpposers = new ArrayList<Participant>();
         notars = new ArrayList<Participant>();
         userFriends = new ArrayList<Friend>();
 
         betParticipants = activity.getBetCreationParticipants();
+
+        //Get user Friends from which he can choose the PArticipants
         try {
             userFriends = FriendFunctions.getUserFriendList();
         } catch (WebRequestException e) {
             Toast.makeText(activity,e.getMessage() , Toast.LENGTH_SHORT).show();
         }
 
+        //Sort the already slected Participants to the Right Container
         if(betParticipants.size() > 0){
             for(Participant p : betParticipants){
                 switch(p.getBetRole()){
@@ -80,6 +84,7 @@ public class CreateBetStep3Fragment extends Fragment {
         Participant owner = new Participant(loggedInUserInfo[0], loggedInUserInfo[3], true, false, BetRole.OWNER);
 
 
+        //Get additional Server information of the User
         User serverInfo = null;
         try {
             serverInfo = UserFunctions.getUserInfo(loggedInUserInfo[0]);
@@ -90,7 +95,6 @@ public class CreateBetStep3Fragment extends Fragment {
 
             }
 
-
         } catch (WebRequestException e) {
             Toast.makeText(activity ,"Could not get User Info from Server",  Toast.LENGTH_SHORT).show();
             owner.setProfilePicture(R.drawable.ic_blank_avatar);
@@ -100,6 +104,7 @@ public class CreateBetStep3Fragment extends Fragment {
             betSupporters.add(owner);
         }
 
+        //Bind lists
         final ListView betSupporterList = (ListView) rootView.findViewById(R.id.betSupporterList);
         CustomAdapterParticipantInfo adapter = new CustomAdapterParticipantInfo (activity, betSupporters);
         betSupporterList.setAdapter(adapter);
@@ -157,7 +162,7 @@ public class CreateBetStep3Fragment extends Fragment {
             public void onClick(final View v) {
                 MainActivity activity = (MainActivity) getActivity();
 
-
+                //Remove already added Participants from the Options.
                 final List<Friend> userFriendsToChooseFrom = removeParticipatingFriendsFromList(userFriends);
                 CharSequence friends[] = new CharSequence[userFriendsToChooseFrom.size()];
 
@@ -191,6 +196,7 @@ public class CreateBetStep3Fragment extends Fragment {
             public void onClick(final View v) {
                 MainActivity activity = (MainActivity) getActivity();
 
+                //Remove already added Participants from the Options.
                 final List<Friend> userFriendsToChooseFrom = removeParticipatingFriendsFromList(userFriends);
                 CharSequence friends[] = new CharSequence[userFriendsToChooseFrom.size()];
                 if(userFriendsToChooseFrom.size() > 0) {
@@ -223,6 +229,7 @@ public class CreateBetStep3Fragment extends Fragment {
             public void onClick(final View v) {
                 MainActivity activity = (MainActivity) getActivity();
 
+                //Remove already added Participants from the Options.
                 final List<Friend> userFriendsToChooseFrom = removeParticipatingFriendsFromList(userFriends);
                 CharSequence friends[] = new CharSequence[userFriendsToChooseFrom.size()];
                 if(userFriendsToChooseFrom.size() > 0) {
@@ -268,6 +275,9 @@ public class CreateBetStep3Fragment extends Fragment {
         return participantList;
     }
 
+    /***
+     * Reload the Participant Lists with the current PArticipants selected
+     */
     private void updateParticipantLists(){
         MainActivity activity = (MainActivity) getActivity();
 
@@ -284,6 +294,12 @@ public class CreateBetStep3Fragment extends Fragment {
         betNotarList.setAdapter(adapter);
     }
 
+    /***
+     * Remove all Participants already selected from the Options which the User can choose from. Also remove Friends
+     * who do not have a Public address set yet.
+     * @param friendList    The List with the Users Friends
+     * @return              Returns List which only contains Firends which aren't already a Participant nad have a Public address set.
+     */
     private List<Friend> removeParticipatingFriendsFromList(List<Friend> friendList){
         List<Friend> friendsToChoose = friendList;
 
