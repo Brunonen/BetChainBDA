@@ -287,6 +287,15 @@ public class CreateBetStep3Fragment extends Fragment {
     private List<Friend> removeParticipatingFriendsFromList(List<Friend> friendList){
         List<Friend> friendsToChoose = friendList;
 
+        //Remove Friends that have to Address set. 
+        for(int n = 0; n < friendsToChoose.size(); n++){
+            if(friendsToChoose.get(n).getAddress() == "" || friendsToChoose.get(n).getAddress().length() != 42){
+                friendsToChoose.remove(n);
+                n = 0;
+            }
+        }
+
+        //Remove if already in list of Supporters
         for(int i = 0; i < betSupporters.size(); i++){
             for(int n = 0; n < friendsToChoose.size(); n++){
                 if(betSupporters.get(i).getUsername().equals( friendsToChoose.get(n).getUsername())){
@@ -297,6 +306,7 @@ public class CreateBetStep3Fragment extends Fragment {
 
         }
 
+        //Remove if already in list of Opposers
         for(int i = 0; i < betOpposers.size(); i++){
             for(int n = 0; n < friendsToChoose.size(); n++){
                 if(betOpposers.get(i).getUsername().equals( friendsToChoose.get(n).getUsername())){
@@ -307,6 +317,7 @@ public class CreateBetStep3Fragment extends Fragment {
 
         }
 
+        //Remove if already in List of Notars
         for(int i = 0; i < notars.size(); i++){
             for(int n = 0; n < friendsToChoose.size(); n++){
                 if(notars.get(i).getUsername().equals( friendsToChoose.get(n).getUsername())){

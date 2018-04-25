@@ -122,10 +122,6 @@ public class BetFunctions {
         try {
             Web3j web3 = Web3jFactory.build(new HttpService(BLOCKCHAIN_URL));  // defaults to http://localhost:8545/
 
-            //REPLACE WITH CREDENTIALS FROM DATABASE!
-            Credentials credentials = Credentials.create(BRUNO_P_KEY);
-
-
             for (int i = 0; i < betList.size(); i++) {
                 //Check if a Contract address has been added to the Database yet. If not try to synchronize!
 

@@ -2,9 +2,11 @@ package bda.hslu.ch.betchain.BlockChainFunctions;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.text.TextUtils;
 
 import org.web3j.abi.FunctionEncoder;
 import org.web3j.abi.datatypes.Type;
+import org.web3j.abi.datatypes.generated.Bytes32;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.ECKeyPair;
 import org.web3j.crypto.RawTransaction;
@@ -13,6 +15,7 @@ import org.web3j.crypto.WalletUtils;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.Web3jFactory;
 import org.web3j.protocol.core.DefaultBlockParameterName;
+import org.web3j.protocol.core.methods.request.Transaction;
 import org.web3j.protocol.core.methods.response.EthGetBalance;
 import org.web3j.protocol.core.methods.response.EthGetTransactionCount;
 import org.web3j.protocol.core.methods.response.EthSendTransaction;
@@ -23,10 +26,12 @@ import org.web3j.utils.Convert;
 import org.web3j.utils.Numeric;
 
 import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -48,7 +53,7 @@ import bda.hslu.ch.betchain.WebRequestException;
 public class BlockChainFunctions {
 
     private static final String BLOCKCHAIN_URL = "http://10.0.2.2:7545";
-    private static BigInteger GAS_PRICE = new BigInteger("100000");
+    private static BigInteger GAS_PRICE = new BigInteger("2000000000");
     private static BigInteger GAS_LIMIT = new BigInteger("4000000");
     private static Web3j web3 = Web3jFactory.build(new HttpService(BLOCKCHAIN_URL));
 
@@ -59,7 +64,7 @@ public class BlockChainFunctions {
 
             BetChainBetContract contract = BetChainBetContract.load(betInfoWeb.getBetAddress(), web3, credentials, GAS_PRICE, GAS_LIMIT);
 
-            betInfoWeb.setBetConditions(new String(contract.getBetConditions().send(), "UTF-8"));
+            betInfoWeb.setBetConditions(contract.getBetConditions().send());
             betInfoWeb.setBetEntryFee(Convert.fromWei(Float.valueOf(contract.getBetEntryFee().send().floatValue()).toString(), Convert.Unit.ETHER).floatValue());
             betInfoWeb.setBetSuccessful(contract.isBetSuccessfull().send());
             int numberOfParticipants = contract.getNumberOfParticipants().send().intValue();
@@ -128,7 +133,7 @@ public class BlockChainFunctions {
             }
         }
 
-        BigDecimal eth = Convert.toWei(Float.valueOf(betEntryFees).toString(), Convert.Unit.ETHER);
+        BigDecimal eth = Convert.toWei(String.valueOf(betEntryFees).toString(), Convert.Unit.ETHER);
         Web3j web3 = Web3jFactory.build(new HttpService(BLOCKCHAIN_URL));  // defaults to http://localhost:8545/
 
         //REPLACE WITH CREDENTIALS FROM DATABASE!
@@ -137,13 +142,14 @@ public class BlockChainFunctions {
         try {
             RawTransaction raw = getContractTransaction( web3, credentials,
                     GAS_PRICE, GAS_LIMIT, eth.toBigInteger(),
-                    stringToBytes32(betConditions), eth.toBigInteger(), participantAddresses, particpantRoles);
+                    betConditions, eth.toBigInteger(), participantAddresses, particpantRoles);
 
             byte[] signedMessage = TransactionEncoder.signMessage(raw, credentials);
             String hexValue = Numeric.toHexString(signedMessage);
 
             EthSendTransaction ethSendTransaction =
                     web3.ethSendRawTransaction(hexValue).sendAsync().get();
+
 
             if(ethSendTransaction.getTransactionHash() != null) {
                 return ethSendTransaction.getTransactionHash();
@@ -165,10 +171,11 @@ public class BlockChainFunctions {
         BigDecimal eth;
 
         if(participantRole != BetRole.NOTAR) {
-            //BET ENTRY FEE! (Some stupid things with rounding doesn't work properly
-            eth = Convert.toWei(Float.valueOf(0.02f).toString(), Convert.Unit.ETHER);
+            //We use String.valueOF because it Rounds the values, and we also round it when creating the contract.
+            //The conctract rejects the Transaction if the Amount is not exact. So to much detail is not viable.
+            eth = Convert.toWei(String.valueOf(entryFee).toString(), Convert.Unit.ETHER);
         }else{
-            eth = Convert.toWei(Float.valueOf(0.0f).toString(), Convert.Unit.ETHER);
+            eth = Convert.toWei(String.valueOf(0.0f).toString(), Convert.Unit.ETHER);
         }
 
         try {
@@ -291,11 +298,20 @@ public class BlockChainFunctions {
     }
 
 
-        private static byte[] stringToBytes32(String string) {
-        byte[] byteValue = string.getBytes();
+    private static byte[] stringToBytes32(String string) {
+        /*byte[] byteValue = string.getBytes();
         byte[] byteValueLen32 = new byte[32];
         System.arraycopy(byteValue, 0, byteValueLen32, 0, byteValue.length);
-        return byteValueLen32;
+        return byteValueLen32;*/
+
+        char[] chars = string.toCharArray();
+        StringBuffer hex = new StringBuffer();
+        for (int i = 0; i < chars.length; i++)
+        {
+            hex.append(Integer.toHexString((int) chars[i]));
+        }
+
+        return Numeric.hexStringToByteArray(hex.toString() + TextUtils.join("", Collections.nCopies(32 - (hex.length()/2), "00")));
     }
 
     private static String[] getUserInfo(){
@@ -305,8 +321,8 @@ public class BlockChainFunctions {
         return returnString;
     }
 
-    public static RawTransaction getContractTransaction(Web3j web3j, Credentials credentials, BigInteger gasPrice, BigInteger gasLimit, BigInteger initialWeiValue, byte[] _betConditions, BigInteger _betEntryFee, List<String> _participantAddresses, List<BigInteger> _participantRoles) throws ExecutionException, InterruptedException {
-        String encodedConstructor = FunctionEncoder.encodeConstructor(Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Bytes32(_betConditions),
+    public static RawTransaction getContractTransaction(Web3j web3j, Credentials credentials, BigInteger gasPrice, BigInteger gasLimit, BigInteger initialWeiValue, String _betConditions, BigInteger _betEntryFee, List<String> _participantAddresses, List<BigInteger> _participantRoles) throws ExecutionException, InterruptedException {
+        String encodedConstructor = FunctionEncoder.encodeConstructor(Arrays.<Type>asList(new org.web3j.abi.datatypes.Utf8String(_betConditions),
                 new org.web3j.abi.datatypes.generated.Uint256(_betEntryFee),
                 new org.web3j.abi.datatypes.DynamicArray<org.web3j.abi.datatypes.Address>(
                         org.web3j.abi.Utils.typeMap(_participantAddresses, org.web3j.abi.datatypes.Address.class)),
@@ -318,8 +334,45 @@ public class BlockChainFunctions {
 
         BigInteger nonce = ethGetTransactionCount.getTransactionCount();
 
+        try {
+            System.out.println("estimate:" + web3.ethEstimateGas(new Transaction(credentials.getAddress(), nonce, gasPrice, gasLimit, null, initialWeiValue, BetChainBetContract.getBinary() + encodedConstructor)).send().getAmountUsed());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         return RawTransaction.createContractTransaction(nonce, GAS_PRICE, GAS_LIMIT, initialWeiValue, BetChainBetContract.getBinary() + encodedConstructor );
 
+    }
+
+    public static BigInteger getContractEstimate(BigInteger initialWeiValue, String _betConditions, BigInteger _betEntryFee, List<String> _participantAddresses, List<BigInteger> _participantRoles) throws ExecutionException, InterruptedException, IOException {
+        Web3j web3 = Web3jFactory.build(new HttpService(BLOCKCHAIN_URL));  // defaults to http://localhost:8545/
+
+        //REPLACE WITH CREDENTIALS FROM DATABASE!
+        Credentials credentials = Credentials.create(getUserInfo()[2]);
+
+        String encodedConstructor = FunctionEncoder.encodeConstructor(Arrays.<Type>asList(new org.web3j.abi.datatypes.Utf8String(_betConditions),
+                new org.web3j.abi.datatypes.generated.Uint256(_betEntryFee),
+                new org.web3j.abi.datatypes.DynamicArray<org.web3j.abi.datatypes.Address>(
+                        org.web3j.abi.Utils.typeMap(_participantAddresses, org.web3j.abi.datatypes.Address.class)),
+                new org.web3j.abi.datatypes.DynamicArray<org.web3j.abi.datatypes.generated.Uint8>(
+                        org.web3j.abi.Utils.typeMap(_participantRoles, org.web3j.abi.datatypes.generated.Uint8.class))));
+
+        EthGetTransactionCount ethGetTransactionCount = web3.ethGetTransactionCount( credentials.getAddress()
+                , DefaultBlockParameterName.LATEST).sendAsync().get();
+
+        BigInteger nonce = ethGetTransactionCount.getTransactionCount();
+
+        return web3.ethEstimateGas(new Transaction(credentials.getAddress(), nonce, GAS_PRICE, GAS_LIMIT, null, initialWeiValue, BetChainBetContract.getBinary() + encodedConstructor)).send().getAmountUsed();
+
+
+    }
+
+    public static BigInteger getGasPrice(){
+        return GAS_PRICE;
+    }
+
+    public static BigInteger getGasLimit(){
+        return GAS_LIMIT;
     }
 
 

@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import bda.hslu.ch.betchain.BetInfoFragment;
@@ -61,7 +62,7 @@ public class CustomAdapterMyBetInfo extends ArrayAdapter<Bet>{
         }
 
         betStatus.setText(tmp.getBetState().toString());
-        betPrizePool.setText(String.valueOf(tmp.getBetPrizePool()) + " Eth");
+        betPrizePool.setText(String.valueOf(new BigDecimal(String.valueOf(tmp.getBetPrizePool()))) + " Eth");
 
         rowView.setOnClickListener(new View.OnClickListener() {
             @Override

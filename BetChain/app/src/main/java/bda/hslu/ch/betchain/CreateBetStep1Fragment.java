@@ -11,6 +11,9 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import bda.hslu.ch.betchain.Database.DBSessionSingleton;
+import bda.hslu.ch.betchain.Database.SQLWrapper;
+
 
 public class CreateBetStep1Fragment extends Fragment {
 
@@ -20,10 +23,12 @@ public class CreateBetStep1Fragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_create_bet_step1, container, false);
-        MainActivity activity = (MainActivity) getActivity();
+        final MainActivity activity = (MainActivity) getActivity();
 
         TextView betTitle = (TextView) rootView.findViewById(R.id.inputBetTitle);
         betTitle.setText(activity.getBetCreationBetTitle());
+
+        final String[] loggedInUserInfo = DBSessionSingleton.getInstance().getDbUtil().getLoggedInUserInfo();
 
         final Button startBetCreation = (Button) rootView.findViewById(R.id.createBetButtonStart);
         startBetCreation.setOnClickListener(new View.OnClickListener() {
@@ -32,19 +37,43 @@ public class CreateBetStep1Fragment extends Fragment {
                 TextView betTitle = (TextView) rootView.findViewById(R.id.inputBetTitle);
 
                 MainActivity activity = (MainActivity) getActivity();
-                if (betTitle.getText() != "" && betTitle.getText().length() >= 8) {
 
-                    activity.setBetCreationBetTitle(betTitle.getText().toString());
-                    Fragment step2 = new CreateBetStep2Fragment();
+                if(!loggedInUserInfo[3].equals("")) {
+                    if (!loggedInUserInfo[2].equals("")) {
 
-                    activity.changeFragment(step2);
-                } else {
-                    Toast.makeText(activity, "Please enter a Bet Title that is atleast 8 Characters long.", Toast.LENGTH_SHORT).show();
+                        if (betTitle.getText() != "" && betTitle.getText().length() >= 8) {
+
+                            activity.setBetCreationBetTitle(betTitle.getText().toString());
+                            Fragment step2 = new CreateBetStep2Fragment();
+
+                            activity.changeFragment(step2);
+                        } else {
+                            Toast.makeText(activity, "Please enter a Bet Title that is atleast 8 Characters long.", Toast.LENGTH_SHORT).show();
+                        }
+                    }else{
+                        Toast.makeText(activity, "Your Account does not have a private Key set! You need this information in order to create contracts!", Toast.LENGTH_SHORT).show();
+                    }
+                }else{
+                    Toast.makeText(activity, "Your Account is not linked to any Ethereum Account!", Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
+
+
+        //Check if the logged in user has the required Information provided, in order to create a Bet!
+        if(!loggedInUserInfo[3].equals("")) {
+            if (loggedInUserInfo[2].equals("")) {
+                Toast.makeText(activity, "Your Account does not have a private Key set! You need this information in order to create contracts!", Toast.LENGTH_SHORT).show();
+            }
+        }else{
+            NoUserAddressDialog noUserAddressDialog = new NoUserAddressDialog();
+            noUserAddressDialog.show(activity.getSupportFragmentManager(), "No Ethereum Wallet found");
+        }
+
         return rootView;
+
+
     }
 
 }

@@ -18,11 +18,15 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.web3j.utils.Convert;
+
+import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 import bda.hslu.ch.betchain.Adapters.CustomAdapterParticipantInfo;
 import bda.hslu.ch.betchain.BlockChainFunctions.BlockChainFunctions;
@@ -53,8 +57,7 @@ public class CreateBetStep4Fragment extends Fragment {
         betConditions.setText(activity.getBetCreationBetConditions());
 
         final EditText betEntryFees = (EditText) rootView.findViewById(R.id.inputEntryFeeConfirmation);
-        betEntryFees.setText(String.valueOf(activity.getBetCreationBetEntryFee()));
-
+        betEntryFees.setText(String.valueOf(new BigDecimal(String.valueOf(activity.getBetCreationBetEntryFee()))));
         final List<Participant> participantList = activity.getBetCreationParticipants();
 
         Button confirmCreation = (Button) rootView.findViewById(R.id.button_confirmBetCreation);
@@ -76,13 +79,15 @@ public class CreateBetStep4Fragment extends Fragment {
                            if(!loggedInUserInfo[3].equals("")) {
                                if(!loggedInUserInfo[2].equals("")) {
 
+                                   final BigDecimal est = getEstimatedContractCost(participantList, betConditions.getText().toString(), Float.valueOf(betEntryFee));
+
                                    AlertDialog.Builder builder = new AlertDialog.Builder(activity);
 
                                    builder.setPositiveButton("Continue", new DialogInterface.OnClickListener() {
                                        public void onClick(DialogInterface dialog, int id) {
 
                                            try {
-                                               String transactionHash = BlockChainFunctions.createContract(betConditions.getText().toString(), Float.valueOf(betEntryFees.getText().toString()), participantList);
+                                               String transactionHash = BlockChainFunctions.createContract(betConditions.getText().toString(), new BigDecimal(String.valueOf(Float.valueOf(betEntryFees.getText().toString()))).floatValue(), participantList);
                                                int betID = BetFunctions.createBet(betTitle.getText().toString(), transactionHash, participantList);
                                                Intent betCreationIntent = new Intent(activity, ContractCreationIntentService.class);
                                                betCreationIntent.putExtra("transactionHash", transactionHash);
@@ -106,7 +111,7 @@ public class CreateBetStep4Fragment extends Fragment {
                                        }
                                    });
 
-                                   builder.setMessage("Releasing a contract onto the Blockchain will result in costs on your behalf. Are you sure you want to continue? ")
+                                   builder.setMessage("Releasing a contract onto the Blockchain will result in costs on your behalf. \n\nEstimated: " + est.toString() + " Eth\n\nAre you sure you want to continue? ")
                                            .setTitle("Notice");
 
 
@@ -130,30 +135,9 @@ public class CreateBetStep4Fragment extends Fragment {
                            Toast.makeText(activity, inputError , Toast.LENGTH_SHORT).show();
                        }
                    }catch(Exception e) {
+                       e.printStackTrace();
                        Toast.makeText(activity, "Entry needs to be a valid value" , Toast.LENGTH_SHORT).show();
                    }
-
-
-                               /*
-                               BlockChainFunctions smartContract = new BlockChainFunctions() {
-                                   @Override
-                                   public void onSuccess(Object result) {
-                                       Toast.makeText(activity, "Your Bet has been successfully created!", Toast.LENGTH_SHORT).show();
-                                   }
-
-                                   @Override
-                                   public void onFailure(Object result) {
-                                       Exception exec = (Exception) result;
-                                       Toast.makeText(activity, exec.getMessage(), Toast.LENGTH_SHORT).show();
-                                       exec.printStackTrace();
-                                   }
-                               };
-
-                               smartContract.execute("createSmartContract", betConditions.getText().toString(), betEntryFees.getText().toString(), participantList);
-                                */
-                               //System.out.println(contract.getContractAddress());
-
-
 
                }
            });
@@ -171,6 +155,28 @@ public class CreateBetStep4Fragment extends Fragment {
         SQLWrapper db = DBSessionSingleton.getInstance().getDbUtil();
         returnString = db.getLoggedInUserInfo();
         return returnString;
+    }
+
+    //Calculate Estimated Ether Cost
+    private BigDecimal getEstimatedContractCost(List<Participant> participantList, String betConditions, float betEntryFees) throws InterruptedException, ExecutionException, IOException {
+        List<String> participantAddresses = new ArrayList<String>();
+        List<BigInteger> particpantRoles = new ArrayList<BigInteger>();
+
+        //The contract needs two arrays, one with the addresses and one with the roles of the Participants, since a contract
+        //can not possibly know our Class participant.
+        for(Participant p : participantList){
+            if(p.getBetRole() != BetRole.OWNER){
+                participantAddresses.add(p.getAddress());
+                System.out.println(p.getAddress());
+                particpantRoles.add(BigInteger.valueOf(p.getBetRole().ordinal()));
+            }
+        }
+
+        BigDecimal eth = Convert.toWei(String.valueOf(new BigDecimal(String.valueOf(betEntryFees)).floatValue()), Convert.Unit.ETHER);
+
+        BigInteger estimatedGas = BlockChainFunctions.getContractEstimate(eth.toBigInteger(), betConditions, eth.toBigInteger(), participantAddresses, particpantRoles).multiply(BlockChainFunctions.getGasPrice());
+
+        return Convert.fromWei(String.valueOf(estimatedGas), Convert.Unit.ETHER);
     }
 
 }

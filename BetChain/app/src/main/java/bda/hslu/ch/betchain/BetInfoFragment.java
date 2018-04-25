@@ -17,6 +17,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import bda.hslu.ch.betchain.Adapters.CustomAdapterParticipantInfo;
@@ -54,10 +55,10 @@ public class BetInfoFragment extends Fragment {
             betConditions.setText(selectedBetInfo.getBetConditions());
 
             EditText betEntryFee = (EditText) rootView.findViewById(R.id.betInfoBetEntryFee);
-            betEntryFee.setText(String.valueOf(selectedBetInfo.getBetEntryFee()) + " Eth");
+            betEntryFee.setText(String.valueOf(new BigDecimal(String.valueOf(selectedBetInfo.getBetEntryFee()))) + " Eth");
 
             EditText betPrizePool = (EditText) rootView.findViewById(R.id.betInfoBetPrizePool);
-            betPrizePool.setText(String.valueOf(selectedBetInfo.getBetPrizePool()) + " Eth");
+            betPrizePool.setText(String.valueOf(new BigDecimal(String.valueOf(selectedBetInfo.getBetPrizePool()))) + " Eth");
 
             EditText betStatus = (EditText) rootView.findViewById(R.id.betInfoBetStatus);
             betStatus.setText(selectedBetInfo.getBetState().toString());
@@ -76,6 +77,7 @@ public class BetInfoFragment extends Fragment {
 
             loggedInUser.setUsername(loggedInUserInfo[0]);
             loggedInUser.setAddress(loggedInUserInfo[3]);
+            final String loggedInPKey = loggedInUserInfo[2];
             opposerCount = 0;
             abortCount = 0;
 
@@ -205,11 +207,15 @@ public class BetInfoFragment extends Fragment {
             acceptBetButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View v) {
-                    if(!loggedInUser.hasBetAccepted()) {
-                        Toast.makeText(activity, "Request submitted! Please keep in mind that changes might take a few minutes to take effect on the Blockchain" , Toast.LENGTH_LONG).show();
-                        BlockChainFunctions.acceptBet(selectedBetInfo.getBetAddress(), loggedInUser.getBetRole(), selectedBetInfo.getBetEntryFee());
+                    if(!loggedInPKey.equals("")) {
+                        if (!loggedInUser.hasBetAccepted()) {
+                            Toast.makeText(activity, "Request submitted! Please keep in mind that changes might take a few minutes to take effect on the Blockchain", Toast.LENGTH_LONG).show();
+                            BlockChainFunctions.acceptBet(selectedBetInfo.getBetAddress(), loggedInUser.getBetRole(), selectedBetInfo.getBetEntryFee());
+                        } else {
+                            Toast.makeText(activity, "You have already accepted this bet!", Toast.LENGTH_SHORT).show();
+                        }
                     }else{
-                        Toast.makeText(activity, "You have already accepted this bet!" , Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, "Your Account does not have a private Key set! You need this information in order to interact and make changes on contracts!!", Toast.LENGTH_LONG).show();
                     }
                 }
             });
@@ -218,11 +224,15 @@ public class BetInfoFragment extends Fragment {
                 @Override
                 public void onClick(final View v) {
                     if(loggedInUser.getBetRole() != BetRole.NOTAR){
-                        if(loggedInUser.hasBetAccepted()) {
-                            Toast.makeText(activity, "Request submitted! Please keep in mind that changes might take a few minutes to take effect on the Blockchain!" , Toast.LENGTH_LONG).show();
-                            BlockChainFunctions.retreatFromBet(selectedBetInfo.getBetAddress());
+                        if(!loggedInPKey.equals("")) {
+                            if (loggedInUser.hasBetAccepted()) {
+                                Toast.makeText(activity, "Request submitted! Please keep in mind that changes might take a few minutes to take effect on the Blockchain!", Toast.LENGTH_LONG).show();
+                                BlockChainFunctions.retreatFromBet(selectedBetInfo.getBetAddress());
+                            } else {
+                                Toast.makeText(activity, "You can not retreat from a bet you haven't accepted!", Toast.LENGTH_SHORT).show();
+                            }
                         }else{
-                            Toast.makeText(activity, "You can not retreat from a bet you haven't accepted!" , Toast.LENGTH_SHORT).show();
+                            Toast.makeText(activity, "Your Account does not have a private Key set! You need this information in order to interact and make changes on contracts!!", Toast.LENGTH_LONG).show();
                         }
                     }else{
                         Toast.makeText(activity, "Notars can not retreat from a bet, seeing as they do not have to pay any fees." , Toast.LENGTH_SHORT).show();
@@ -271,14 +281,22 @@ public class BetInfoFragment extends Fragment {
             betSuccessButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View v) {
-                    BlockChainFunctions.vote(selectedBetInfo.getBetAddress(), true);
+                    if(!loggedInPKey.equals("")) {
+                        BlockChainFunctions.vote(selectedBetInfo.getBetAddress(), true);
+                    }else{
+                        Toast.makeText(activity, "Your Account does not have a private Key set! You need this information in order to interact and make changes on contracts!!", Toast.LENGTH_LONG).show();
+                    }
                 }
             });
 
             betFailureButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View v) {
-                    BlockChainFunctions.vote(selectedBetInfo.getBetAddress(), false);
+                    if(!loggedInPKey.equals("")) {
+                        BlockChainFunctions.vote(selectedBetInfo.getBetAddress(), false);
+                    }else{
+                        Toast.makeText(activity, "Your Account does not have a private Key set! You need this information in order to interact and make changes on contracts!!", Toast.LENGTH_LONG).show();
+                    }
                 }
             });
 
