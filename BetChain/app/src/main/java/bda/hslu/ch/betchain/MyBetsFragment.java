@@ -39,8 +39,12 @@ public class MyBetsFragment extends Fragment {
         }
 
         String[] loggedInUserInfo = DBSessionSingleton.getInstance().getDbUtil().getLoggedInUserInfo();
-        if(loggedInUserInfo[2].equals("")){
-            Toast.makeText(activity, "Your account does not have a private Key set! you need one in order to interact with your Contracts", Toast.LENGTH_LONG).show();
+        try {
+            if (loggedInUserInfo[2].equals("")) {
+                Toast.makeText(activity, "Your account does not have a private Key set! you need one in order to interact with your Contracts", Toast.LENGTH_LONG).show();
+            }
+        }catch(Exception ex){
+            ex.printStackTrace();
         }
 
         loadingScreen.dismiss();

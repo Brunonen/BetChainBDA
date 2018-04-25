@@ -134,8 +134,8 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.menu_logout) {
             SQLWrapper db = DBSessionSingleton.getInstance().getDbUtil();
             try {
-                db.logoutUser();
                 deleteFragmentBackstack();
+                db.logoutUser();
             }catch(LocalDBException e){
 
             }
@@ -143,6 +143,8 @@ public class MainActivity extends AppCompatActivity
 
         if(fragment != null) {
             changeFragment(fragment);
+        }else{
+            changeFragmentNoBackstack(new LoginFragment());
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -167,7 +169,7 @@ public class MainActivity extends AppCompatActivity
             manager.popBackStack(first.getId(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
         }
         setDrawerState(false);
-        changeFragmentNoBackstack(new LoginFragment());
+
     }
 
     public void setDrawerState(boolean isEnabled) {

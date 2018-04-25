@@ -318,6 +318,7 @@ public class BlockChainFunctions {
             contract.abortBet().sendAsync();
         }catch(Exception e){
             e.printStackTrace();
+            return false;
         }
 
         return true;
@@ -448,6 +449,7 @@ public class BlockChainFunctions {
 
 
     }
+
 
     /***
      * returns the Gas Price

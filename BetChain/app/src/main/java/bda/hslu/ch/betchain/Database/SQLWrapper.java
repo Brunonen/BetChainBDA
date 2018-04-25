@@ -236,6 +236,7 @@ public class SQLWrapper extends SQLiteOpenHelper {
         String sqlSelect = "SELECT * FROM " + TABLE_APP_USERS + " WHERE " + APP_USERS_STAY_LOGGED_IN + " = '1'";
         Cursor cursor = db.rawQuery(sqlSelect, null);
         if(cursor.getCount() > 0) {
+            cursor.close();
             return true;
         }
         cursor.close();

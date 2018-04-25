@@ -68,7 +68,7 @@ public class CreateBetStep4Fragment extends Fragment {
 
                    try{
                        float betEntryFee = Float.valueOf(betEntryFees.getText().toString());
-
+                       final BigDecimal entryFeeEther = Convert.fromWei(Convert.toWei(String.valueOf(new BigDecimal(String.valueOf(betEntryFee)).floatValue()), Convert.Unit.ETHER), Convert.Unit.ETHER);
                        //Check if all inputs are valid
                        String inputError = BetFunctions.checkIfBetInputsAreValid(betTitle.getText().toString(), betConditions.getText().toString(), participantList, betEntryFee);
 
@@ -82,7 +82,7 @@ public class CreateBetStep4Fragment extends Fragment {
                                if(!loggedInUserInfo[2].equals("")) {
 
                                    //Calculate Estimated Cost
-                                   final BigDecimal est = getEstimatedContractCost(participantList, betConditions.getText().toString(), Float.valueOf(betEntryFee));
+                                   final BigDecimal est = entryFeeEther.add(getEstimatedContractCost(participantList, betConditions.getText().toString(), Float.valueOf(betEntryFee)));
 
                                    //Setup Dialog to inform user about real cost implications by deploying a contract
                                    AlertDialog.Builder builder = new AlertDialog.Builder(activity);
@@ -91,26 +91,32 @@ public class CreateBetStep4Fragment extends Fragment {
                                        public void onClick(DialogInterface dialog, int id) {
 
                                            try {
-                                               //Deploy Contract onto blockchain and get Transaction hash
-                                               String transactionHash = BlockChainFunctions.createContract(betConditions.getText().toString(), new BigDecimal(String.valueOf(Float.valueOf(betEntryFees.getText().toString()))).floatValue(), participantList);
+                                               if(est.max(BlockChainFunctions.getAccountBalance()) != est) {
+                                                   //Deploy Contract onto blockchain and get Transaction hash
+                                                   String transactionHash = BlockChainFunctions.createContract(betConditions.getText().toString(), new BigDecimal(String.valueOf(Float.valueOf(betEntryFees.getText().toString()))).floatValue(), participantList);
 
-                                               //Create Database entry for the created Contract on the webserver so we have a fallback and synchronisation
-                                               int betID = BetFunctions.createBet(betTitle.getText().toString(), transactionHash, participantList);
+                                                   //Create Database entry for the created Contract on the webserver so we have a fallback and synchronisation
+                                                   int betID = BetFunctions.createBet(betTitle.getText().toString(), transactionHash, participantList);
 
-                                               //Create Intent Service which polls the Contract creation until the blokc is mined or 10minutes have passed
-                                               Intent betCreationIntent = new Intent(activity, ContractCreationIntentService.class);
-                                               betCreationIntent.putExtra("transactionHash", transactionHash);
-                                               betCreationIntent.putExtra("betID", betID);
+                                                   //Create Intent Service which polls the Contract creation until the blokc is mined or 10minutes have passed
+                                                   Intent betCreationIntent = new Intent(activity, ContractCreationIntentService.class);
+                                                   betCreationIntent.putExtra("transactionHash", transactionHash);
+                                                   betCreationIntent.putExtra("betID", betID);
 
-                                               activity.startService(betCreationIntent);
-                                               activity.resetBetCreationInfo();
+                                                   activity.startService(betCreationIntent);
+                                                   activity.resetBetCreationInfo();
 
-                                               Toast.makeText(activity, "Request submitted! Please keep in mind that changes might take a few minutes to take effect on the Blockchain!" , Toast.LENGTH_LONG).show();
-                                               activity.changeFragment(new MyBetsFragment());
+                                                   Toast.makeText(activity, "Request submitted! Please keep in mind that changes might take a few minutes to take effect on the Blockchain!", Toast.LENGTH_LONG).show();
+                                                   activity.changeFragment(new MyBetsFragment());
+                                               }else{
+                                                   Toast.makeText(activity, "Your Account does not have enough Ether in order to Create and join the Contract\n\nAccount Balance: " + BlockChainFunctions.getAccountBalance().toString(), Toast.LENGTH_LONG).show();
+                                               }
 
                                            } catch (WebRequestException e) {
                                                e.printStackTrace();
                                                Toast.makeText(activity, e.getMessage() , Toast.LENGTH_SHORT).show();
+                                           } catch (Exception e) {
+                                               e.printStackTrace();
                                            }
                                        }
                                    });
@@ -120,7 +126,7 @@ public class CreateBetStep4Fragment extends Fragment {
                                        }
                                    });
 
-                                   builder.setMessage("Releasing a contract onto the Blockchain will result in costs on your behalf. \n\nEstimated: " + est.toString() + " Eth\n\nAre you sure you want to continue? ")
+                                   builder.setMessage("Releasing a contract onto the Blockchain will result in costs on your behalf. \n\nEstimated: " + est.toString() + " Eth (Entry Fee of: " + entryFeeEther.toString() + " Eth included)\n\nAre you sure you want to continue? ")
                                            .setTitle("Notice");
 
 
