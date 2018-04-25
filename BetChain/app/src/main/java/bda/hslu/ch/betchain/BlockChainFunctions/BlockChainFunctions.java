@@ -54,7 +54,8 @@ public class BlockChainFunctions {
 
     private static final String BLOCKCHAIN_URL = "http://10.0.2.2:7545";
     private static BigInteger GAS_PRICE = new BigInteger("2000000000");
-    private static BigInteger GAS_LIMIT = new BigInteger("4000000");
+    private static BigInteger GAS_LIMIT_CREATION = new BigInteger("4000000");
+    private static BigInteger GAS_LIMIT_CHANGE = new BigInteger("750000");
     private static Web3j web3 = Web3jFactory.build(new HttpService(BLOCKCHAIN_URL));
 
     /***
@@ -68,7 +69,7 @@ public class BlockChainFunctions {
 
             Credentials credentials = Credentials.create(getUserInfo()[2]);
 
-            BetChainBetContract contract = BetChainBetContract.load(betInfoWeb.getBetAddress(), web3, credentials, GAS_PRICE, GAS_LIMIT);
+            BetChainBetContract contract = BetChainBetContract.load(betInfoWeb.getBetAddress(), web3, credentials, GAS_PRICE, GAS_LIMIT_CHANGE);
 
             betInfoWeb.setBetConditions(contract.getBetConditions().send());
             betInfoWeb.setBetEntryFee(Convert.fromWei(Float.valueOf(contract.getBetEntryFee().send().floatValue()).toString(), Convert.Unit.ETHER).floatValue());
@@ -115,7 +116,7 @@ public class BlockChainFunctions {
             //REPLACE WITH CREDENTIALS FROM DATABASE!
             Credentials credentials = Credentials.create(getUserInfo()[2]);
 
-            BetChainBetContract contract = BetChainBetContract.load(betInfo.getBetAddress(), web3, credentials, GAS_PRICE, GAS_LIMIT);
+            BetChainBetContract contract = BetChainBetContract.load(betInfo.getBetAddress(), web3, credentials, GAS_PRICE, GAS_LIMIT_CHANGE);
 
             BigInteger prizePool = contract.getBetPrizePool().send();
             BigInteger betState = contract.getBetState().send();
@@ -160,7 +161,7 @@ public class BlockChainFunctions {
 
         try {
             RawTransaction raw = getContractTransaction( web3, credentials,
-                    GAS_PRICE, GAS_LIMIT, eth.toBigInteger(),
+                    GAS_PRICE, GAS_LIMIT_CREATION, eth.toBigInteger(),
                     betConditions, eth.toBigInteger(), participantAddresses, particpantRoles);
 
             byte[] signedMessage = TransactionEncoder.signMessage(raw, credentials);
@@ -193,7 +194,7 @@ public class BlockChainFunctions {
         //REPLACE WITH CREDENTIALS FROM DATABASE!
         Credentials credentials = Credentials.create(getUserInfo()[2]);
 
-        BetChainBetContract contract = BetChainBetContract.load(betAddress, web3, credentials, GAS_PRICE, GAS_LIMIT);
+        BetChainBetContract contract = BetChainBetContract.load(betAddress, web3, credentials, GAS_PRICE, GAS_LIMIT_CHANGE);
         BigDecimal eth;
 
         if(participantRole != BetRole.NOTAR) {
@@ -225,7 +226,7 @@ public class BlockChainFunctions {
         //REPLACE WITH CREDENTIALS FROM DATABASE!
         Credentials credentials = Credentials.create(getUserInfo()[2]);
 
-        BetChainBetContract contract = BetChainBetContract.load(betAddress, web3, credentials, GAS_PRICE, GAS_LIMIT);
+        BetChainBetContract contract = BetChainBetContract.load(betAddress, web3, credentials, GAS_PRICE, GAS_LIMIT_CHANGE);
 
         try {
             contract.retreatFromBet().sendAsync();
@@ -247,7 +248,7 @@ public class BlockChainFunctions {
 
         Credentials credentials = Credentials.create(getUserInfo()[2]);
 
-        BetChainBetContract contract = BetChainBetContract.load(betAddress, web3, credentials, GAS_PRICE, GAS_LIMIT);
+        BetChainBetContract contract = BetChainBetContract.load(betAddress, web3, credentials, GAS_PRICE, GAS_LIMIT_CHANGE);
 
         try {
             contract.startBet().sendAsync();
@@ -270,7 +271,7 @@ public class BlockChainFunctions {
 
         Credentials credentials = Credentials.create(getUserInfo()[2]);
 
-        BetChainBetContract contract = BetChainBetContract.load(betAddress, web3, credentials, GAS_PRICE, GAS_LIMIT);
+        BetChainBetContract contract = BetChainBetContract.load(betAddress, web3, credentials, GAS_PRICE, GAS_LIMIT_CHANGE);
 
         try {
             contract.startVote(wasBetSuccessfull).sendAsync();
@@ -292,7 +293,7 @@ public class BlockChainFunctions {
 
         Credentials credentials = Credentials.create(getUserInfo()[2]);
 
-        BetChainBetContract contract = BetChainBetContract.load(betAddress, web3, credentials, GAS_PRICE, GAS_LIMIT);
+        BetChainBetContract contract = BetChainBetContract.load(betAddress, web3, credentials, GAS_PRICE, GAS_LIMIT_CHANGE);
 
         try {
             contract.vote(wasBetSuccessfull).sendAsync();
@@ -312,7 +313,7 @@ public class BlockChainFunctions {
 
         Credentials credentials = Credentials.create(getUserInfo()[2]);
 
-        BetChainBetContract contract = BetChainBetContract.load(betAddress, web3, credentials, GAS_PRICE, GAS_LIMIT);
+        BetChainBetContract contract = BetChainBetContract.load(betAddress, web3, credentials, GAS_PRICE, GAS_LIMIT_CHANGE);
 
         try {
             contract.abortBet().sendAsync();
@@ -411,7 +412,7 @@ public class BlockChainFunctions {
             e.printStackTrace();
         }
 
-        return RawTransaction.createContractTransaction(nonce, GAS_PRICE, GAS_LIMIT, initialWeiValue, BetChainBetContract.getBinary() + encodedConstructor );
+        return RawTransaction.createContractTransaction(nonce, GAS_PRICE, GAS_LIMIT_CREATION, initialWeiValue, BetChainBetContract.getBinary() + encodedConstructor );
 
     }
 
@@ -445,7 +446,7 @@ public class BlockChainFunctions {
 
         BigInteger nonce = ethGetTransactionCount.getTransactionCount();
 
-        return web3.ethEstimateGas(new Transaction(credentials.getAddress(), nonce, GAS_PRICE, GAS_LIMIT, null, initialWeiValue, BetChainBetContract.getBinary() + encodedConstructor)).send().getAmountUsed();
+        return web3.ethEstimateGas(new Transaction(credentials.getAddress(), nonce, GAS_PRICE, GAS_LIMIT_CREATION, null, initialWeiValue, BetChainBetContract.getBinary() + encodedConstructor)).send().getAmountUsed();
 
 
     }
@@ -463,8 +464,16 @@ public class BlockChainFunctions {
      * Returns the MAX gas Limit
      * @return Gas LIMIT
      */
-    public static BigInteger getGasLimit(){
-        return GAS_LIMIT;
+    public static BigInteger getGasLimitCreation(){
+        return GAS_LIMIT_CREATION;
+    }
+
+    /***
+     * Returns the MAX gas Limit
+     * @return Gas LIMIT
+     */
+    public static BigInteger getGasLimitChange(){
+        return GAS_LIMIT_CHANGE;
     }
 
 

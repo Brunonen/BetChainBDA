@@ -17,7 +17,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.web3j.protocol.core.methods.response.EthBlock;
+import org.web3j.utils.Convert;
+
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
 
 import bda.hslu.ch.betchain.Adapters.CustomAdapterParticipantInfo;
@@ -38,6 +42,7 @@ public class BetInfoFragment extends Fragment {
     private Participant betOwner;
     private int opposerCount;
     private int abortCount;
+    private String warningMessage ="";
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -215,14 +220,25 @@ public class BetInfoFragment extends Fragment {
                 }
             }
 
+            //Check if user has enough blanace to commit change. If not set warning message.
+            BigDecimal accBalance = BlockChainFunctions.getAccountBalance();
+            BigDecimal changeMaxCost = new BigDecimal(BlockChainFunctions.getGasLimitChange()).multiply(new BigDecimal(BlockChainFunctions.getGasPrice()));
+            if(accBalance.max(Convert.fromWei(changeMaxCost.toString(),Convert.Unit.ETHER)) != accBalance){
+                warningMessage = "\n\nYour account has a low Ether Balance. Changes might not be able to be commited to the Blockchain!";
+            }
+
             //Klick Listeners for The Bet Actions
             acceptBetButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View v) {
                     if(!loggedInPKey.equals("")) {
                         if (!loggedInUser.hasBetAccepted()) {
-                            Toast.makeText(activity, "Request submitted! Please keep in mind that changes might take a few minutes to take effect on the Blockchain", Toast.LENGTH_LONG).show();
-                            BlockChainFunctions.acceptBet(selectedBetInfo.getBetAddress(), loggedInUser.getBetRole(), selectedBetInfo.getBetEntryFee());
+
+                            if(BlockChainFunctions.acceptBet(selectedBetInfo.getBetAddress(), loggedInUser.getBetRole(), selectedBetInfo.getBetEntryFee())){
+                                Toast.makeText(activity, "Request submitted! Please keep in mind that changes might take a few minutes to take effect on the Blockchain"+warningMessage, Toast.LENGTH_LONG).show();
+                            }else{
+                                Toast.makeText(activity, "The Request was rejected! Please check if your Account has enough Balance to make changes on the Blockchain", Toast.LENGTH_LONG).show();
+                            }
                         } else {
                             Toast.makeText(activity, "You have already accepted this bet!", Toast.LENGTH_SHORT).show();
                         }
@@ -238,7 +254,7 @@ public class BetInfoFragment extends Fragment {
                     if(loggedInUser.getBetRole() != BetRole.NOTAR){
                         if(!loggedInPKey.equals("")) {
                             if (loggedInUser.hasBetAccepted()) {
-                                Toast.makeText(activity, "Request submitted! Please keep in mind that changes might take a few minutes to take effect on the Blockchain!", Toast.LENGTH_LONG).show();
+                                Toast.makeText(activity, "Request submitted! Please keep in mind that changes might take a few minutes to take effect on the Blockchain!"+warningMessage, Toast.LENGTH_LONG).show();
                                 BlockChainFunctions.retreatFromBet(selectedBetInfo.getBetAddress());
                             } else {
                                 Toast.makeText(activity, "You can not retreat from a bet you haven't accepted!", Toast.LENGTH_SHORT).show();
@@ -256,7 +272,7 @@ public class BetInfoFragment extends Fragment {
                 @Override
                 public void onClick(final View v) {
                     if(opposerCount > 0){
-                        Toast.makeText(activity, "Request submitted! Please keep in mind that changes might take a few minutes to take effect on the Blockchain!" , Toast.LENGTH_LONG).show();
+                        Toast.makeText(activity, "Request submitted! Please keep in mind that changes might take a few minutes to take effect on the Blockchain!"+warningMessage , Toast.LENGTH_LONG).show();
                         BlockChainFunctions.startBet(selectedBetInfo.getBetAddress());
                     }else{
                         Toast.makeText(activity, "Atleast one Opposer must accept the Bet, in Order for it to be startet!" , Toast.LENGTH_SHORT).show();
@@ -316,8 +332,11 @@ public class BetInfoFragment extends Fragment {
                 @Override
                 public void onClick(final View v) {
                     if(!loggedInUser.isAbortVoted()) {
-                        BlockChainFunctions.abort(selectedBetInfo.getBetAddress());
-                        Toast.makeText(activity, "Abort submitted! Bet will be aborted if all accepted Participants agreed to abort this bet" , Toast.LENGTH_LONG).show();
+                        if(BlockChainFunctions.abort(selectedBetInfo.getBetAddress())) {
+                            Toast.makeText(activity, "Abort submitted! Bet will be aborted if all accepted Participants agreed to abort this bet"+warningMessage, Toast.LENGTH_LONG).show();
+                        }else{
+                            Toast.makeText(activity, "The Request was rejected! Please check if your Account has enough Balance to make changes on the Blockchain", Toast.LENGTH_LONG).show();
+                        }
                     }else{
                         Toast.makeText(activity, "You have already submitted an abort request!" , Toast.LENGTH_SHORT).show();
                     }
