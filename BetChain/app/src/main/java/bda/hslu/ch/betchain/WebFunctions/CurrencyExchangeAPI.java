@@ -79,6 +79,24 @@ public class CurrencyExchangeAPI {
 
     }
 
+    public static String exchangeCurrency(String value, String fromCurrency, String toCurrency){
+        String returnCurrency = "";
+        if(fromCurrency.equals("ETH")){
+            returnCurrency = String.valueOf((Float.parseFloat(value) * Float.parseFloat(getCurrenyValue(toCurrency))));
+
+        }
+        else if(toCurrency.equals("ETH")){
+            returnCurrency = String.valueOf((Float.parseFloat(value) / Float.parseFloat(getCurrenyValue(fromCurrency))));
+
+        }else {
+            String toEth = String.valueOf((Float.parseFloat(value) / Float.parseFloat(getCurrenyValue(fromCurrency))));
+            returnCurrency = String.valueOf((Float.parseFloat(toEth) * Float.parseFloat(getCurrenyValue(toCurrency))));
+
+
+        }
+        return returnCurrency;
+    }
+
 
 }
 

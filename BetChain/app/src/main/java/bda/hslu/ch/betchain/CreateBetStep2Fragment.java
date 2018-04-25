@@ -7,17 +7,22 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 
 import bda.hslu.ch.betchain.DTO.Participant;
+import bda.hslu.ch.betchain.WebFunctions.CurrencyExchangeAPI;
 
 
 public class CreateBetStep2Fragment extends Fragment {
+    private String fromCurrency = "chf";
 
     private View rootView;
     @Override
@@ -62,6 +67,38 @@ public class CreateBetStep2Fragment extends Fragment {
                 }else{
                     Toast.makeText(activity ,"Please enter Conditions for your bet!",  Toast.LENGTH_SHORT).show();
                 }
+            }
+        });
+
+
+
+        Spinner spinner = (Spinner) rootView.findViewById(R.id.currencySpinner);
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(activity,
+                R.array.currenciesSpinner, android.R.layout.simple_spinner_item);
+        // Specify the layout to use when the list of choices appears
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Apply the adapter to the spinner
+        spinner.setAdapter(adapter);
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                EditText betEntryFees = (EditText) rootView.findViewById(R.id.betEntryFee);
+                String betEntryFeeText = betEntryFees.getText().toString();
+
+
+                if(!fromCurrency.equals("") && !parent.getItemAtPosition(position).toString().equals("")) {
+                    String newValue = CurrencyExchangeAPI.exchangeCurrency(betEntryFeeText, fromCurrency.toLowerCase(), parent.getItemAtPosition(position).toString().toLowerCase());
+                    fromCurrency = parent.getItemAtPosition(position).toString();
+
+                    betEntryFees.setText(newValue);
+                }
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
             }
         });
 
