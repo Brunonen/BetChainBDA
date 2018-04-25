@@ -25,12 +25,22 @@ public class InsertPrivateKeyFragment extends Fragment {
     private String qrData;
     private View rootView;
     private static final int PERMISSION_REQUEST_CAMERA = 0;
+    private boolean showPKey = false;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_insert_private_key, container, false);
+        final EditText privateKeyText = (EditText) rootView.findViewById(R.id.privateKeyTextBox);
+
+        String[] userInfo = DBSessionSingleton.getInstance().getDbUtil().getLoggedInUserInfo();
+        final String userPKey = userInfo[2];
+
+        if(!userPKey.equals("")){
+            privateKeyText.setText("*******************");
+        }
 
 
         Button scanPrivateKey = (Button) rootView.findViewById(R.id.privateKeyScanQRButton);
@@ -56,11 +66,37 @@ public class InsertPrivateKeyFragment extends Fragment {
         savePrivateKeyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EditText privateKeyText = (EditText) rootView.findViewById(R.id.privateKeyTextBox);
-                savePrivateKey(privateKeyText.getText().toString());
                 MainActivity activity = (MainActivity) getActivity();
+
+                if(privateKeyText.getText().length() == 64) {
+                    savePrivateKey(privateKeyText.getText().toString());
+                }
+
                 Fragment accountInfo = new AccountInfoFragment();
                 activity.changeFragment(accountInfo);
+
+
+            }
+        });
+
+        final Button showPKeyButton = (Button) rootView.findViewById(R.id.showPrivateKeyButton);
+
+        showPKeyButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!showPKey) {
+                    if (!userPKey.equals("")) {
+                        privateKeyText.setText(userPKey);
+                        showPKeyButton.setText("HIDE");
+                        showPKey = true;
+                    }
+                }else{
+                    if (!userPKey.equals("")) {
+                        privateKeyText.setText("*******************");
+                        showPKeyButton.setText("SHOW");
+                        showPKey = false;
+                    }
+                }
 
             }
         });
