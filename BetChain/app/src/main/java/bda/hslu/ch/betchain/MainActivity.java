@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity
     private DrawerLayout drawer;
     private ActionBarDrawerToggle toggle;
     private Bet selectedBet = null;
+    private String selectedCurrency = "";
 
     private Receiver myReceiver;
 
@@ -252,6 +253,15 @@ public class MainActivity extends AppCompatActivity
 
     public void setUserAddressToGetInfoFrom(String userAddressToGetInfoFrom) {
         this.userAddressToGetInfoFrom = userAddressToGetInfoFrom;
+    }
+
+
+    public String getSelectedCurrency() {
+        return selectedCurrency;
+    }
+
+    public void setSelectedCurrency(String selectedCurrency) {
+        this.selectedCurrency = selectedCurrency;
     }
 
     private class Receiver extends BroadcastReceiver {

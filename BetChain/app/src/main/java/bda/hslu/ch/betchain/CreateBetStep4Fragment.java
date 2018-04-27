@@ -36,6 +36,7 @@ import bda.hslu.ch.betchain.DTO.Participant;
 import bda.hslu.ch.betchain.Database.DBSessionSingleton;
 import bda.hslu.ch.betchain.Database.SQLWrapper;
 import bda.hslu.ch.betchain.WebFunctions.BetFunctions;
+import bda.hslu.ch.betchain.WebFunctions.CurrencyExchangeAPI;
 
 
 public class CreateBetStep4Fragment extends Fragment {
@@ -58,6 +59,9 @@ public class CreateBetStep4Fragment extends Fragment {
 
         final EditText betEntryFees = (EditText) rootView.findViewById(R.id.inputEntryFeeConfirmation);
         betEntryFees.setText(String.valueOf(new BigDecimal(String.valueOf(activity.getBetCreationBetEntryFee()))));
+
+        final TextView step4Currency = (TextView) rootView.findViewById(R.id.step4CurrencyText);
+        step4Currency.setText(activity.getSelectedCurrency());
         final List<Participant> participantList = activity.getBetCreationParticipants();
 
         Button confirmCreation = (Button) rootView.findViewById(R.id.button_confirmBetCreation);
@@ -67,7 +71,9 @@ public class CreateBetStep4Fragment extends Fragment {
                public void onClick(final View v) {
 
                    try{
-                       float betEntryFee = Float.valueOf(betEntryFees.getText().toString());
+                       String selectedCurrency = activity.getSelectedCurrency();
+                       String valueInEth = CurrencyExchangeAPI.exchangeCurrency(betEntryFees.getText().toString(),selectedCurrency.toLowerCase(), "eth" );
+                       final float betEntryFee = Float.valueOf(valueInEth);
                        final BigDecimal entryFeeEther = Convert.fromWei(Convert.toWei(String.valueOf(new BigDecimal(String.valueOf(betEntryFee)).floatValue()), Convert.Unit.ETHER), Convert.Unit.ETHER);
                        //Check if all inputs are valid
                        String inputError = BetFunctions.checkIfBetInputsAreValid(betTitle.getText().toString(), betConditions.getText().toString(), participantList, betEntryFee);
@@ -93,7 +99,7 @@ public class CreateBetStep4Fragment extends Fragment {
                                            try {
                                                if(est.max(BlockChainFunctions.getAccountBalance()) != est) {
                                                    //Deploy Contract onto blockchain and get Transaction hash
-                                                   String transactionHash = BlockChainFunctions.createContract(betConditions.getText().toString(), new BigDecimal(String.valueOf(Float.valueOf(betEntryFees.getText().toString()))).floatValue(), participantList);
+                                                   String transactionHash = BlockChainFunctions.createContract(betConditions.getText().toString(), new BigDecimal(String.valueOf(betEntryFee)).floatValue(), participantList);
 
                                                    //Create Database entry for the created Contract on the webserver so we have a fallback and synchronisation
                                                    int betID = BetFunctions.createBet(betTitle.getText().toString(), transactionHash, participantList);

@@ -81,11 +81,11 @@ public class CurrencyExchangeAPI {
 
     public static String exchangeCurrency(String value, String fromCurrency, String toCurrency){
         String returnCurrency = "";
-        if(fromCurrency.equals("ETH")){
+        if(fromCurrency.equals("ETH") || fromCurrency.equals("eth")){
             returnCurrency = String.valueOf((Float.parseFloat(value) * Float.parseFloat(getCurrenyValue(toCurrency))));
 
         }
-        else if(toCurrency.equals("ETH")){
+        else if(toCurrency.equals("ETH") || toCurrency.equals("eth")){
             returnCurrency = String.valueOf((Float.parseFloat(value) / Float.parseFloat(getCurrenyValue(fromCurrency))));
 
         }else {

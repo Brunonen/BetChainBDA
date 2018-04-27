@@ -43,7 +43,6 @@ public class SettingsFragment extends Fragment {
             User userInfos = UserFunctions.getUserInfo(loggedInUser.getUsername());
             showOnline.setChecked(userInfos.isShowOnline());
             currencySpinner.setAdapter(new ArrayAdapter<CurrencySelector>(activity, android.R.layout.simple_spinner_item, CurrencySelector.values()));
-            System.out.println("Currency int: " + loggedInUser.getPrefferedCurrency().getCurrency());
             currencySpinner.setSelection(loggedInUser.getPrefferedCurrency().getCurrency());
         } catch (WebRequestException e) {
             e.printStackTrace();

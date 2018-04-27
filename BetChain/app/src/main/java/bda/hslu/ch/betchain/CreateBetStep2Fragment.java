@@ -17,6 +17,8 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import bda.hslu.ch.betchain.DTO.AppUser;
+import bda.hslu.ch.betchain.DTO.CurrencySelector;
 import bda.hslu.ch.betchain.DTO.Participant;
 import bda.hslu.ch.betchain.WebFunctions.CurrencyExchangeAPI;
 
@@ -31,7 +33,7 @@ public class CreateBetStep2Fragment extends Fragment {
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_create_bet_step2, container, false);
 
-        MainActivity activity = (MainActivity) getActivity();
+        final MainActivity activity = (MainActivity) getActivity();
 
         activity.setBetCreationParticipants(new ArrayList<Participant>());
 
@@ -79,8 +81,9 @@ public class CreateBetStep2Fragment extends Fragment {
         // Specify the layout to use when the list of choices appears
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
-        spinner.setAdapter(adapter);
-
+        spinner.setAdapter(new ArrayAdapter<CurrencySelector>(activity, android.R.layout.simple_spinner_item, CurrencySelector.values()));
+        spinner.setSelection(AppUser.getLoggedInUserObject().getPrefferedCurrency().getCurrency());
+        fromCurrency = AppUser.getLoggedInUserObject().getPrefferedCurrency().toString().toLowerCase();
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 EditText betEntryFees = (EditText) rootView.findViewById(R.id.betEntryFee);
@@ -90,6 +93,7 @@ public class CreateBetStep2Fragment extends Fragment {
                 if(!fromCurrency.equals("") && !parent.getItemAtPosition(position).toString().equals("")) {
                     String newValue = CurrencyExchangeAPI.exchangeCurrency(betEntryFeeText, fromCurrency.toLowerCase(), parent.getItemAtPosition(position).toString().toLowerCase());
                     fromCurrency = parent.getItemAtPosition(position).toString();
+                    activity.setSelectedCurrency(parent.getItemAtPosition(position).toString());
 
                     betEntryFees.setText(newValue);
                 }
