@@ -11,8 +11,7 @@ public class AppUser {
     private String privateKey;      //Encrypted Private KEy
     private String username;        //Username
     private String pwd;             //Hasehd PW
-    private boolean automaticLogin;
-    private CurrencySelector prefferedCurrency;
+    private CurrencySelector prefferedCurrency; //What Currency the user preffers
 
     public AppUser(){
 
@@ -26,7 +25,6 @@ public class AppUser {
         user.setPrivateKey(loggedInUserInfo[2]);
         user.setPublicAddress(loggedInUserInfo[3]);
         user.setPrefferedCurrency(CurrencySelector.vallueOfStirng(loggedInUserInfo[4]));
-        user.setAutomaticLogin(DBSessionSingleton.getInstance().getDbUtil().checkIfUserNeedsToBeLoggedIn());
 
         return user;
     }
