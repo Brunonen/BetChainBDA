@@ -60,14 +60,7 @@ public class AppUser {
     public void setPwd(String pwd) {
         this.pwd = pwd;
     }
-
-    public boolean isAutomaticLogin() {
-        return automaticLogin;
-    }
-
-    public void setAutomaticLogin(boolean automaticLogin) {
-        this.automaticLogin = automaticLogin;
-    }
+    
 
     public CurrencySelector getPrefferedCurrency() {
         return prefferedCurrency;
