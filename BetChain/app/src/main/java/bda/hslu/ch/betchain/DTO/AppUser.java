@@ -24,7 +24,7 @@ public class AppUser {
         user.setPwd(loggedInUserInfo[1]);
         user.setPrivateKey(loggedInUserInfo[2]);
         user.setPublicAddress(loggedInUserInfo[3]);
-        user.setPrefferedCurrency(CurrencySelector.vallueOfStirng(loggedInUserInfo[4]));
+        user.setPrefferedCurrency(CurrencySelector.valueOfStirng(loggedInUserInfo[4].toLowerCase()));
 
         return user;
     }

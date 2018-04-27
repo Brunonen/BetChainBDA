@@ -29,7 +29,7 @@ public enum CurrencySelector {
         return map.get(currency);
     }
 
-    public static CurrencySelector vallueOfStirng(String currency){
+    public static CurrencySelector valueOfStirng(String currency){
         switch(currency){
             case "eth": return CurrencySelector.ETH;
             case "chf": return CurrencySelector.CHF;
@@ -39,6 +39,7 @@ public enum CurrencySelector {
         }
     }
 
+
     public int getCurrency() {
         return this.currency;
     }
@@ -46,10 +47,10 @@ public enum CurrencySelector {
     @Override
     public String toString(){
         switch(this.getCurrency()){
-            case 0: return "eth";
-            case 1: return "chf";
-            case 2: return "eur";
-            case 3: return "usd";
+            case 0: return "ETH";
+            case 1: return "CHF";
+            case 2: return "EUR";
+            case 3: return "USD";
             default: return "unknown";
         }
     }
