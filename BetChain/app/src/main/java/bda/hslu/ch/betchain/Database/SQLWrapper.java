@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import java.security.acl.LastOwnerException;
 
+import bda.hslu.ch.betchain.DTO.CurrencySelector;
 import bda.hslu.ch.betchain.LocalDBException;
 
 /**
@@ -33,6 +34,7 @@ public class SQLWrapper extends SQLiteOpenHelper {
     private static final String APP_USERS_STAY_LOGGED_IN = "stayLoggedIn";
     private static final String APP_USERS_ADDRESS = "address";
     private static final String APP_USERS_P_KEY = "p_key";
+    private static final String APP_USERS_PREFFERED_CURRENCY = "prefferedCurrency";
 
     public SQLWrapper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -46,7 +48,8 @@ public class SQLWrapper extends SQLiteOpenHelper {
                 +"'"+ APP_USERS_PWD +"' varchar(250) NOT NULL,"
                 +"'"+ APP_USERS_STAY_LOGGED_IN +"' tinyint(4) NOT NULL DEFAULT '1',"
                 +"'"+ APP_USERS_ADDRESS +"' varchar(250),"
-                +"'"+ APP_USERS_P_KEY +"' varchar(250)"
+                +"'"+ APP_USERS_P_KEY +"' varchar(250),"
+                +"'"+ APP_USERS_PREFFERED_CURRENCY +"' varchar(5) DEFAULT 'eth'"
                 +")";
 
         sqLiteDatabase.execSQL(CREATE_TABLE_APP_USERS);
@@ -76,6 +79,7 @@ public class SQLWrapper extends SQLiteOpenHelper {
                 values.put(APP_USERS_ADDRESS, address);
                 values.put(APP_USERS_STAY_LOGGED_IN, 1);
                 values.put(APP_USERS_P_KEY, "");
+                values.put(APP_USERS_PREFFERED_CURRENCY, "eth");
                 int id = (int) db.insert(TABLE_APP_USERS, null, values);
                 db.setTransactionSuccessful();
             }else{
@@ -171,6 +175,7 @@ public class SQLWrapper extends SQLiteOpenHelper {
             returnString[1] = cursor.getString(cursor.getColumnIndex(APP_USERS_PWD));
             returnString[2] = cursor.getString(cursor.getColumnIndex(APP_USERS_P_KEY));
             returnString[3] = cursor.getString(cursor.getColumnIndex(APP_USERS_ADDRESS));
+            returnString[4] = cursor.getString(cursor.getColumnIndex(APP_USERS_PREFFERED_CURRENCY));
          }
         cursor.close();
 
@@ -225,6 +230,24 @@ public class SQLWrapper extends SQLiteOpenHelper {
             db.endTransaction();
         }
 
+    }
+
+    public void changeUserPrefferedCurrency(String username, CurrencySelector prefferedCurrency) throws LocalDBException{
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.beginTransaction();
+        try {
+            ContentValues values = new ContentValues();
+            values.put(APP_USERS_PREFFERED_CURRENCY, prefferedCurrency.toString());
+            int i = db.update(TABLE_APP_USERS, values, APP_USERS_USERNAME + "='" + username + "'", null);
+
+            if (i == 1) {
+                db.setTransactionSuccessful();
+            }
+        }catch (SQLException e){
+            throw new LocalDBException("Could not write to Database");
+        }finally{
+            db.endTransaction();
+        }
     }
 
     /***
