@@ -163,9 +163,10 @@ public class SQLWrapper extends SQLiteOpenHelper {
      *              : [1] The Users hashed password
      *              : [2] The Users saved private Key
      *              : [3] The users saved Ethereum address
+     *              : [4] The preffered currency
      */
     public String[] getLoggedInUserInfo(){
-        String[] returnString = new String[4];
+        String[] returnString = new String[5];
         SQLiteDatabase db = this.getReadableDatabase();
         String sqlSelect = "SELECT * FROM " + TABLE_APP_USERS + " WHERE " + APP_USERS_STAY_LOGGED_IN + " = '1'";
         Cursor cursor = db.rawQuery(sqlSelect, null);

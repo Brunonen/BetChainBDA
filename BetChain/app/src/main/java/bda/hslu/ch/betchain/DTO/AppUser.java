@@ -60,7 +60,7 @@ public class AppUser {
     public void setPwd(String pwd) {
         this.pwd = pwd;
     }
-    
+
 
     public CurrencySelector getPrefferedCurrency() {
         return prefferedCurrency;

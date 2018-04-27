@@ -26,6 +26,7 @@ import java.util.List;
 
 import bda.hslu.ch.betchain.Adapters.CustomAdapterParticipantInfo;
 import bda.hslu.ch.betchain.BlockChainFunctions.BlockChainFunctions;
+import bda.hslu.ch.betchain.DTO.AppUser;
 import bda.hslu.ch.betchain.DTO.Bet;
 import bda.hslu.ch.betchain.DTO.BetRole;
 import bda.hslu.ch.betchain.DTO.BetState;
@@ -79,12 +80,12 @@ public class BetInfoFragment extends Fragment {
 
             //Genreate contrainers and get LoggedIn UserInfo
             betOwner = new Participant();
-            final String[] loggedInUserInfo = getUserInfo();
+            final AppUser loggedInUserInfo = AppUser.getLoggedInUserObject();
             loggedInUser = new Participant();
 
-            loggedInUser.setUsername(loggedInUserInfo[0]);
-            loggedInUser.setAddress(loggedInUserInfo[3]);
-            final String loggedInPKey = loggedInUserInfo[2];
+            loggedInUser.setUsername(loggedInUserInfo.getUsername());
+            loggedInUser.setAddress(loggedInUserInfo.getPublicAddress());
+            final String loggedInPKey = loggedInUserInfo.getPrivateKey();
             opposerCount = 0;
             abortCount = 0;
 
@@ -379,13 +380,6 @@ public class BetInfoFragment extends Fragment {
         abortBet.setEnabled(false);
     }
 
-    private String[] getUserInfo(){
-        String[] returnString;
-        MainActivity activity = (MainActivity) getActivity();
-        SQLWrapper db = DBSessionSingleton.getInstance().getDbUtil();
-        returnString = db.getLoggedInUserInfo();
-        return returnString;
-    }
 
 
 }
