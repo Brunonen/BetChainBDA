@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import bda.hslu.ch.betchain.DTO.AppUser;
 import bda.hslu.ch.betchain.Database.DBSessionSingleton;
 import bda.hslu.ch.betchain.Database.SQLWrapper;
 
@@ -28,7 +29,7 @@ public class CreateBetStep1Fragment extends Fragment {
         TextView betTitle = (TextView) rootView.findViewById(R.id.inputBetTitle);
         betTitle.setText(activity.getBetCreationBetTitle());
 
-        final String[] loggedInUserInfo = DBSessionSingleton.getInstance().getDbUtil().getLoggedInUserInfo();
+        final AppUser loggedInUserInfo = AppUser.getLoggedInUserObject();
 
         final Button startBetCreation = (Button) rootView.findViewById(R.id.createBetButtonStart);
         startBetCreation.setOnClickListener(new View.OnClickListener() {
@@ -39,8 +40,8 @@ public class CreateBetStep1Fragment extends Fragment {
                 MainActivity activity = (MainActivity) getActivity();
 
                 //Failsafe Check if user has his account linked (Public and Private Key accessible). Otherwise he can't create bets!
-                if(!loggedInUserInfo[3].equals("")) {
-                    if (!loggedInUserInfo[2].equals("")) {
+                if(!loggedInUserInfo.getPublicAddress().equals("")) {
+                    if (!loggedInUserInfo.getPrivateKey().equals("")) {
 
                         if (betTitle.getText() != "" && betTitle.getText().length() >= 8) {
 
@@ -63,8 +64,8 @@ public class CreateBetStep1Fragment extends Fragment {
 
 
         //Check if the logged in user has the required Information provided, in order to create a Bet!
-        if(!loggedInUserInfo[3].equals("")) {
-            if (loggedInUserInfo[2].equals("")) {
+        if(!loggedInUserInfo.getPublicAddress().equals("")) {
+            if (loggedInUserInfo.getPrivateKey().equals("")) {
                 Toast.makeText(activity, "Your Account does not have a private Key set! You need this information in order to create contracts!", Toast.LENGTH_SHORT).show();
             }
         }else{

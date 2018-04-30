@@ -16,6 +16,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import bda.hslu.ch.betchain.BlockChainFunctions.BlockChainFunctions;
+import bda.hslu.ch.betchain.DTO.AppUser;
 import bda.hslu.ch.betchain.DTO.User;
 import bda.hslu.ch.betchain.Database.DBSessionSingleton;
 import bda.hslu.ch.betchain.Database.SQLWrapper;
@@ -41,10 +42,10 @@ public class LoginFragment extends Fragment {
         SQLWrapper db = DBSessionSingleton.getInstance().getDbUtil();
 
         if(db.checkIfUserNeedsToBeLoggedIn()){
-            String[] userInfo = db.getLoggedInUserInfo();
+            AppUser userInfo = AppUser.getLoggedInUserObject();
             MainActivity activity = (MainActivity) getActivity();
             try {
-                if(AuthenticationFunctions.loginUser(userInfo[0], userInfo[1])){
+                if(AuthenticationFunctions.loginUser(userInfo.getUsername(), userInfo.getPwd())){
                     activity.setDrawerState(true);
                     activity.changeFragmentNoBackstack(new MyBetsFragment());
                 }
@@ -67,8 +68,8 @@ public class LoginFragment extends Fragment {
                             User userInfos = UserFunctions.getUserInfo(username.getText().toString());
                             SQLWrapper db = DBSessionSingleton.getInstance().getDbUtil();
                             db.addOrUpdateAppUser(userInfos.getUsername(), hash, userInfos.getAddress());
-                            String[] loggedInUser = db.getLoggedInUserInfo();
-                            if(loggedInUser[2].length() != 64 && loggedInUser[3].length() != 42){
+                            AppUser loggedInUser = AppUser.getLoggedInUserObject();
+                            if(loggedInUser.getPrivateKey().length() != 64 && loggedInUser.getPublicAddress().length() != 42){
                                 NoUserAddressDialog noUserAddressDialog = new NoUserAddressDialog();
                                 noUserAddressDialog.show(activity.getSupportFragmentManager(), "No Ethereum Wallet found");
                             }

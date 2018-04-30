@@ -15,11 +15,14 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import bda.hslu.ch.betchain.BetInfoFragment;
+import bda.hslu.ch.betchain.DTO.AppUser;
 import bda.hslu.ch.betchain.DTO.Bet;
 import bda.hslu.ch.betchain.DTO.BetState;
+import bda.hslu.ch.betchain.DTO.CurrencySelector;
 import bda.hslu.ch.betchain.DTO.Participant;
 import bda.hslu.ch.betchain.MainActivity;
 import bda.hslu.ch.betchain.R;
+import bda.hslu.ch.betchain.WebFunctions.CurrencyExchangeAPI;
 
 /**
  * Created by Bruno Fischlin on 15/03/2018.
@@ -62,7 +65,12 @@ public class CustomAdapterMyBetInfo extends ArrayAdapter<Bet>{
         }
 
         betStatus.setText(tmp.getBetState().toString());
-        betPrizePool.setText(String.valueOf(new BigDecimal(String.valueOf(tmp.getBetPrizePool()))) + " Eth");
+        CurrencySelector prefferedCurrency = AppUser.getLoggedInUserObject().getPrefferedCurrency();
+
+        String prizePool = String.valueOf(new BigDecimal(String.valueOf(tmp.getBetPrizePool())));
+
+        prizePool = CurrencyExchangeAPI.exchangeCurrency(prizePool, "eth", prefferedCurrency.toString().toLowerCase());
+        betPrizePool.setText(prizePool + " " +  prefferedCurrency.toString());
 
         rowView.setOnClickListener(new View.OnClickListener() {
             @Override

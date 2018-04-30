@@ -85,11 +85,4 @@ public class SettingsFragment extends Fragment {
         return rootView;
     }
 
-    private String[] getLoggedInUserInfo(){
-        String[] returnString;
-        MainActivity activity = (MainActivity) getActivity();
-        SQLWrapper db = DBSessionSingleton.getInstance().getDbUtil();
-        returnString = db.getLoggedInUserInfo();
-        return returnString;
-    }
 }

@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 import bda.hslu.ch.betchain.Adapters.CustomAdapterParticipantInfo;
+import bda.hslu.ch.betchain.DTO.AppUser;
 import bda.hslu.ch.betchain.DTO.BetRole;
 import bda.hslu.ch.betchain.DTO.Participant;
 import bda.hslu.ch.betchain.DTO.Friend;
@@ -78,16 +79,16 @@ public class CreateBetStep3Fragment extends Fragment {
         }
 
 
-        String[] loggedInUserInfo = getUserInfo();
+        AppUser loggedInUserInfo = AppUser.getLoggedInUserObject();
 
 
-        Participant owner = new Participant(loggedInUserInfo[0], loggedInUserInfo[3], true, false, BetRole.OWNER);
+        Participant owner = new Participant(loggedInUserInfo.getUsername(), loggedInUserInfo.getPublicAddress(), true, false, BetRole.OWNER);
 
 
         //Get additional Server information of the User
         User serverInfo = null;
         try {
-            serverInfo = UserFunctions.getUserInfo(loggedInUserInfo[0]);
+            serverInfo = UserFunctions.getUserInfo(loggedInUserInfo.getUsername());
 
             if(serverInfo.getProfilePicture() != 0){
                 owner.setProfilePicture(serverInfo.getProfilePicture());
@@ -345,14 +346,6 @@ public class CreateBetStep3Fragment extends Fragment {
         }
 
         return friendsToChoose;
-    }
-
-    private String[] getUserInfo(){
-        String[] returnString;
-        MainActivity activity = (MainActivity) getActivity();
-        SQLWrapper db = DBSessionSingleton.getInstance().getDbUtil();
-        returnString = db.getLoggedInUserInfo();
-        return returnString;
     }
 
 }

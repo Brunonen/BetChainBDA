@@ -61,14 +61,11 @@ public class AddFriendFragment extends Fragment {
         return rootView;
     }
 
-
     private void getQrCode(){
 
         IntentIntegrator.forSupportFragment(this).initiateScan();
 
     }
-
-
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

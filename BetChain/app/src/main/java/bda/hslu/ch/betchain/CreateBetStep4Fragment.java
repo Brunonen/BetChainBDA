@@ -31,6 +31,7 @@ import java.util.concurrent.ExecutionException;
 import bda.hslu.ch.betchain.Adapters.CustomAdapterParticipantInfo;
 import bda.hslu.ch.betchain.BlockChainFunctions.BlockChainFunctions;
 import bda.hslu.ch.betchain.BlockChainFunctions.ContractCreationIntentService;
+import bda.hslu.ch.betchain.DTO.AppUser;
 import bda.hslu.ch.betchain.DTO.BetRole;
 import bda.hslu.ch.betchain.DTO.Participant;
 import bda.hslu.ch.betchain.Database.DBSessionSingleton;
@@ -81,11 +82,11 @@ public class CreateBetStep4Fragment extends Fragment {
 
                        if(inputError == "") {
 
-                           String[] loggedInUserInfo = getUserInfo();
+                           AppUser loggedInUserInfo = AppUser.getLoggedInUserObject();
 
                            //Check if the logged in user has the required Information provided, in order to create a Bet! (Public/PrivateKey)
-                           if(!loggedInUserInfo[3].equals("")) {
-                               if(!loggedInUserInfo[2].equals("")) {
+                           if(!loggedInUserInfo.getPublicAddress().equals("")) {
+                               if(!loggedInUserInfo.getPrivateKey().equals("")) {
 
                                    //Calculate Estimated Cost
                                    final BigDecimal est = entryFeeEther.add(getEstimatedContractCost(participantList, betConditions.getText().toString(), Float.valueOf(betEntryFee)));
@@ -168,14 +169,6 @@ public class CreateBetStep4Fragment extends Fragment {
         betParticipantListView.setAdapter(adapter);
 
         return rootView;
-    }
-
-    private String[] getUserInfo(){
-        String[] returnString;
-        MainActivity activity = (MainActivity) getActivity();
-        SQLWrapper db = DBSessionSingleton.getInstance().getDbUtil();
-        returnString = db.getLoggedInUserInfo();
-        return returnString;
     }
 
     /***

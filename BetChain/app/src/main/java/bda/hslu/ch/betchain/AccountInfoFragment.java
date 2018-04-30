@@ -17,6 +17,7 @@ import com.journeyapps.barcodescanner.BarcodeEncoder;
 import java.util.concurrent.ExecutionException;
 
 import bda.hslu.ch.betchain.BlockChainFunctions.BlockChainFunctions;
+import bda.hslu.ch.betchain.DTO.AppUser;
 import bda.hslu.ch.betchain.DTO.User;
 import bda.hslu.ch.betchain.Database.DBSessionSingleton;
 import bda.hslu.ch.betchain.Database.SQLWrapper;
@@ -46,8 +47,8 @@ public class AccountInfoFragment extends Fragment {
 
 
         //Get User unfo from Database
-        String[] userInfoString = getUserInfo();
-        usernameString = userInfoString[0];
+        AppUser userInfoString = AppUser.getLoggedInUserObject();
+        usernameString = userInfoString.getUsername();
         try {
             //Get additional User Info from Server
             User serverInfo = UserFunctions.getUserInfo(usernameString);
@@ -60,8 +61,8 @@ public class AccountInfoFragment extends Fragment {
             profilePic.setImageResource(R.drawable.ic_blank_avatar);
         }
 
-        privateKeyString = userInfoString[2];
-        addressString = userInfoString[3];
+        privateKeyString = userInfoString.getPrivateKey();
+        addressString = userInfoString.getPublicAddress();
         publicAdress.setText(addressString);
 
         username.setText(usernameString);
@@ -108,16 +109,7 @@ public class AccountInfoFragment extends Fragment {
             Toast.makeText(activity,"No Public-Address found" , Toast.LENGTH_SHORT).show();
         }
 
-
         return root;
-    }
-
-    private String[] getUserInfo(){
-        String[] returnString;
-        MainActivity activity = (MainActivity) getActivity();
-        SQLWrapper db = DBSessionSingleton.getInstance().getDbUtil();
-        returnString = db.getLoggedInUserInfo();
-        return returnString;
     }
 
 }

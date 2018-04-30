@@ -13,6 +13,7 @@ import java.util.List;
 
 import bda.hslu.ch.betchain.Adapters.CustomAdapterMyBetInfo;
 import bda.hslu.ch.betchain.BlockChainFunctions.BlockChainFunctions;
+import bda.hslu.ch.betchain.DTO.AppUser;
 import bda.hslu.ch.betchain.DTO.Bet;
 import bda.hslu.ch.betchain.Database.DBSessionSingleton;
 import bda.hslu.ch.betchain.WebFunctions.BetFunctions;
@@ -38,9 +39,10 @@ public class MyBetsFragment extends Fragment {
             Toast.makeText(activity, "Could not load bets from Server", Toast.LENGTH_SHORT).show();
         }
 
-        String[] loggedInUserInfo = DBSessionSingleton.getInstance().getDbUtil().getLoggedInUserInfo();
+
         try {
-            if (loggedInUserInfo[2].equals("")) {
+            AppUser loggedInUserInfo = AppUser.getLoggedInUserObject();
+            if (loggedInUserInfo.getPrivateKey().equals("")) {
                 Toast.makeText(activity, "Your account does not have a private Key set! you need one in order to interact with your Contracts", Toast.LENGTH_LONG).show();
             }
         }catch(Exception ex){

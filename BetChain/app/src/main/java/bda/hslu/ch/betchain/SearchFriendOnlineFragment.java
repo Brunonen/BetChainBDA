@@ -17,6 +17,7 @@ import java.util.List;
 
 import bda.hslu.ch.betchain.Adapters.CustomAdapterAddFriend;
 import bda.hslu.ch.betchain.Adapters.CustomAdapterFriendInfo;
+import bda.hslu.ch.betchain.DTO.AppUser;
 import bda.hslu.ch.betchain.DTO.Friend;
 import bda.hslu.ch.betchain.DTO.User;
 import bda.hslu.ch.betchain.Database.DBSessionSingleton;
@@ -45,7 +46,7 @@ public class SearchFriendOnlineFragment extends Fragment {
                                         event.getAction() == KeyEvent.ACTION_DOWN &&
                                         event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
                             if (event == null || !event.isShiftPressed()) {
-                                if(!getUserInfo()[0].equals(usernameToSearchFor.getText().toString())) {
+                                if(!AppUser.getLoggedInUserObject().getUsername().equals(usernameToSearchFor.getText().toString())) {
                                     try {
                                         List<User> foundUsers = UserFunctions.getUserByUsername(usernameToSearchFor.getText().toString());
                                         List<Friend> userFriends = new ArrayList<>();
@@ -95,11 +96,4 @@ public class SearchFriendOnlineFragment extends Fragment {
         return rootView;
     }
 
-    private String[] getUserInfo(){
-        String[] returnString;
-        MainActivity activity = (MainActivity) getActivity();
-        SQLWrapper db = DBSessionSingleton.getInstance().getDbUtil();
-        returnString = db.getLoggedInUserInfo();
-        return returnString;
-    }
 }

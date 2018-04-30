@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+import bda.hslu.ch.betchain.DTO.AppUser;
 import bda.hslu.ch.betchain.Database.DBSessionSingleton;
 import bda.hslu.ch.betchain.Database.SQLWrapper;
 
@@ -35,8 +36,8 @@ public class InsertPrivateKeyFragment extends Fragment {
         rootView = inflater.inflate(R.layout.fragment_insert_private_key, container, false);
         final EditText privateKeyText = (EditText) rootView.findViewById(R.id.privateKeyTextBox);
 
-        String[] userInfo = DBSessionSingleton.getInstance().getDbUtil().getLoggedInUserInfo();
-        final String userPKey = userInfo[2];
+        AppUser userInfo = AppUser.getLoggedInUserObject();
+        final String userPKey = userInfo.getPrivateKey();
 
         if(!userPKey.equals("")){
             privateKeyText.setText("*******************");

@@ -34,6 +34,7 @@ import bda.hslu.ch.betchain.DTO.Participant;
 import bda.hslu.ch.betchain.Database.DBSessionSingleton;
 import bda.hslu.ch.betchain.Database.SQLWrapper;
 import bda.hslu.ch.betchain.WebFunctions.BetFunctions;
+import bda.hslu.ch.betchain.WebFunctions.CurrencyExchangeAPI;
 
 
 public class BetInfoFragment extends Fragment {
@@ -53,6 +54,7 @@ public class BetInfoFragment extends Fragment {
         final Bet selectedBetInfo;
         try {
             selectedBetInfo = BlockChainFunctions.getBetInfoFromBlockchain(activity.getSelectedBet());
+            final AppUser loggedInUserInfo = AppUser.getLoggedInUserObject();
 
             TextView betTitle = (TextView) rootView.findViewById(R.id.betInfoBetTitle);
             betTitle.setText(selectedBetInfo.getBetTitle());
@@ -61,10 +63,10 @@ public class BetInfoFragment extends Fragment {
             betConditions.setText(selectedBetInfo.getBetConditions());
 
             EditText betEntryFee = (EditText) rootView.findViewById(R.id.betInfoBetEntryFee);
-            betEntryFee.setText(String.valueOf(new BigDecimal(String.valueOf(selectedBetInfo.getBetEntryFee()))) + " Eth");
+            betEntryFee.setText(CurrencyExchangeAPI.exchangeCurrency(String.valueOf(new BigDecimal(String.valueOf(selectedBetInfo.getBetEntryFee()))), "eth", loggedInUserInfo.getPrefferedCurrency().toString().toLowerCase()) + " " + loggedInUserInfo.getPrefferedCurrency().toString());
 
             EditText betPrizePool = (EditText) rootView.findViewById(R.id.betInfoBetPrizePool);
-            betPrizePool.setText(String.valueOf(new BigDecimal(String.valueOf(selectedBetInfo.getBetPrizePool()))) + " Eth");
+            betPrizePool.setText(CurrencyExchangeAPI.exchangeCurrency(String.valueOf(new BigDecimal(String.valueOf(selectedBetInfo.getBetPrizePool()))), "eth", loggedInUserInfo.getPrefferedCurrency().toString().toLowerCase()) + " " +loggedInUserInfo.getPrefferedCurrency().toString());
 
             EditText betStatus = (EditText) rootView.findViewById(R.id.betInfoBetStatus);
             betStatus.setText(selectedBetInfo.getBetState().toString());
@@ -80,7 +82,7 @@ public class BetInfoFragment extends Fragment {
 
             //Genreate contrainers and get LoggedIn UserInfo
             betOwner = new Participant();
-            final AppUser loggedInUserInfo = AppUser.getLoggedInUserObject();
+
             loggedInUser = new Participant();
 
             loggedInUser.setUsername(loggedInUserInfo.getUsername());
