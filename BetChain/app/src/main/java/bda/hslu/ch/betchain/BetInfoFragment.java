@@ -293,11 +293,13 @@ public class BetInfoFragment extends Fragment {
 
                     builder.setPositiveButton("Bet Success", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
+                            Toast.makeText(activity, "Request submitted! Please keep in mind that changes might take a few minutes to take effect on the Blockchain!"+warningMessage , Toast.LENGTH_LONG).show();
                             BlockChainFunctions.startVoting(selectedBetInfo.getBetAddress(), true);
                         }
                     });
                     builder.setNegativeButton("Bet Failure", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
+                            Toast.makeText(activity, "Request submitted! Please keep in mind that changes might take a few minutes to take effect on the Blockchain!"+warningMessage , Toast.LENGTH_LONG).show();
                             BlockChainFunctions.startVoting(selectedBetInfo.getBetAddress(), false);
                         }
                     });
@@ -315,6 +317,7 @@ public class BetInfoFragment extends Fragment {
                 @Override
                 public void onClick(final View v) {
                     if(!loggedInPKey.equals("")) {
+                        Toast.makeText(activity, "Request submitted! Please keep in mind that changes might take a few minutes to take effect on the Blockchain!"+warningMessage , Toast.LENGTH_LONG).show();
                         BlockChainFunctions.vote(selectedBetInfo.getBetAddress(), true);
                     }else{
                         Toast.makeText(activity, "Your Account does not have a private Key set! You need this information in order to interact and make changes on contracts!!", Toast.LENGTH_LONG).show();
@@ -326,6 +329,7 @@ public class BetInfoFragment extends Fragment {
                 @Override
                 public void onClick(final View v) {
                     if(!loggedInPKey.equals("")) {
+                        Toast.makeText(activity, "Request submitted! Please keep in mind that changes might take a few minutes to take effect on the Blockchain!"+warningMessage , Toast.LENGTH_LONG).show();
                         BlockChainFunctions.vote(selectedBetInfo.getBetAddress(), false);
                     }else{
                         Toast.makeText(activity, "Your Account does not have a private Key set! You need this information in order to interact and make changes on contracts!!", Toast.LENGTH_LONG).show();

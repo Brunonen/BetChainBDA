@@ -49,10 +49,8 @@ import bda.hslu.ch.betchain.WebFunctions.BetFunctions;
 
 public class ContractCreationIntentService extends IntentService {
 
-    private static final String BLOCKCHAIN_URL = "http://10.0.2.2:7545";
-    //private static final String BLOCKCHAIN_URL = "https://ropsten.infura.io/";
-    private static final String BRUNO_P_KEY = "c87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3";
-    //private static final String BRUNO_P_KEY = "cdfccc4c39b60a7b591eac331dc9860a5ba643ef5d7e09cdfb86a91e7c14464c";
+    //private static final String BLOCKCHAIN_URL = "http://10.0.2.2:7545";
+    private static final String BLOCKCHAIN_URL = "https://ropsten.infura.io/";
     private static BigInteger GAS_PRICE = new BigInteger("200000");
     private static BigInteger GAS_LIMIT = new BigInteger("50000000");
     private static int POLL_TIME = 5000; //5 seconds

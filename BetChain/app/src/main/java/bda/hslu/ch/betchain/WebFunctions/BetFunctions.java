@@ -39,9 +39,8 @@ public class BetFunctions {
     private static final String SERVER_URL = "http://blockchaincontracts.enterpriselab.ch/index.php";
     private static final String API_KEY = "sdkajdkaj2";
 
-    private static final String BLOCKCHAIN_URL = "http://10.0.2.2:7545";
-    //private static final String BLOCKCHAIN_URL = "https://ropsten.infura.io/";
-    private static final String BRUNO_P_KEY = "c87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3";
+    //private static final String BLOCKCHAIN_URL = "http://10.0.2.2:7545";
+    private static final String BLOCKCHAIN_URL = "https://ropsten.infura.io/";
 
     private static BigInteger GAS_PRICE = new BigInteger("320000");
     private static BigInteger GAS_LIMIT = new BigInteger("4100000");

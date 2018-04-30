@@ -83,7 +83,7 @@ public class CustomAdapterMyBetInfo extends ArrayAdapter<Bet>{
                     activity.setSelectedBet(tmp);
                     activity.changeFragment(new BetInfoFragment());
                 }else{
-                    Toast.makeText(activity, "This bet has not yet been deplyoed on the Blockchain!" , Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, "This bet has not yet been deployed on the Blockchain!" , Toast.LENGTH_SHORT).show();
                 }
             }
         });

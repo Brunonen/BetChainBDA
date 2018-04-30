@@ -52,7 +52,8 @@ import bda.hslu.ch.betchain.WebRequestException;
 
 public class BlockChainFunctions {
 
-    private static final String BLOCKCHAIN_URL = "http://10.0.2.2:7545";
+    //private static final String BLOCKCHAIN_URL = "http://10.0.2.2:7545";
+    private static final String BLOCKCHAIN_URL = "https://ropsten.infura.io/";
     private static BigInteger GAS_PRICE = new BigInteger("2000000000");
     private static BigInteger GAS_LIMIT_CREATION = new BigInteger("4000000");
     private static BigInteger GAS_LIMIT_CHANGE = new BigInteger("750000");

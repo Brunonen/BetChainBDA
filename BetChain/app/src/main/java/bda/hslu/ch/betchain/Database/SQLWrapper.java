@@ -20,7 +20,7 @@ public class SQLWrapper extends SQLiteOpenHelper {
 
 
     // Database Version
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
     // Database Name
     private static final String DATABASE_NAME = "betChainApp";
 
@@ -58,6 +58,13 @@ public class SQLWrapper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
 
+        try {
+            sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_APP_USERS);
+            onCreate(sqLiteDatabase);
+
+        } catch (SQLException e) {
+
+        }
     }
 
     /***
