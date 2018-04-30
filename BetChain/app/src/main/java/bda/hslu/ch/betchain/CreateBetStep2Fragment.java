@@ -21,10 +21,11 @@ import bda.hslu.ch.betchain.DTO.AppUser;
 import bda.hslu.ch.betchain.DTO.CurrencySelector;
 import bda.hslu.ch.betchain.DTO.Participant;
 import bda.hslu.ch.betchain.WebFunctions.CurrencyExchangeAPI;
+import bda.hslu.ch.betchain.WebFunctions.CurrencyExchangerSingleton;
 
 
 public class CreateBetStep2Fragment extends Fragment {
-    private String fromCurrency = "chf";
+    private CurrencySelector fromCurrency = CurrencySelector.CHF;
 
     private View rootView;
     @Override
@@ -83,17 +84,17 @@ public class CreateBetStep2Fragment extends Fragment {
         // Apply the adapter to the spinner
         spinner.setAdapter(new ArrayAdapter<CurrencySelector>(activity, android.R.layout.simple_spinner_item, CurrencySelector.values()));
         spinner.setSelection(AppUser.getLoggedInUserObject().getPrefferedCurrency().getCurrency());
-        fromCurrency = AppUser.getLoggedInUserObject().getPrefferedCurrency().toString().toLowerCase();
+        fromCurrency = AppUser.getLoggedInUserObject().getPrefferedCurrency();
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 EditText betEntryFees = (EditText) rootView.findViewById(R.id.betEntryFee);
                 String betEntryFeeText = betEntryFees.getText().toString();
 
 
-                if(!fromCurrency.equals("") && !parent.getItemAtPosition(position).toString().equals("")) {
-                    String newValue = CurrencyExchangeAPI.exchangeCurrency(betEntryFeeText, fromCurrency.toLowerCase(), parent.getItemAtPosition(position).toString().toLowerCase());
-                    fromCurrency = parent.getItemAtPosition(position).toString();
-                    activity.setSelectedCurrency(parent.getItemAtPosition(position).toString());
+                if(!fromCurrency.toString().equals("") && !parent.getItemAtPosition(position).toString().equals("")) {
+                    String newValue = CurrencyExchangerSingleton.getInstance().exchangeCurrency(betEntryFeeText, fromCurrency, CurrencySelector.valueOfStirng(parent.getItemAtPosition(position).toString()));
+                    fromCurrency = CurrencySelector.valueOfStirng(parent.getItemAtPosition(position).toString());
+                    activity.setSelectedCurrency(CurrencySelector.valueOfStirng(parent.getItemAtPosition(position).toString()));
 
                     betEntryFees.setText(newValue);
                 }

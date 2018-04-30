@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import bda.hslu.ch.betchain.DTO.Bet;
+import bda.hslu.ch.betchain.DTO.CurrencySelector;
 import bda.hslu.ch.betchain.DTO.Participant;
 import bda.hslu.ch.betchain.Database.DBSessionSingleton;
 import bda.hslu.ch.betchain.Database.SQLWrapper;
@@ -43,7 +44,7 @@ public class MainActivity extends AppCompatActivity
     private DrawerLayout drawer;
     private ActionBarDrawerToggle toggle;
     private Bet selectedBet = null;
-    private String selectedCurrency = "";
+    private CurrencySelector selectedCurrency;
 
     private Receiver myReceiver;
 
@@ -256,11 +257,11 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    public String getSelectedCurrency() {
+    public CurrencySelector getSelectedCurrency() {
         return selectedCurrency;
     }
 
-    public void setSelectedCurrency(String selectedCurrency) {
+    public void setSelectedCurrency(CurrencySelector selectedCurrency) {
         this.selectedCurrency = selectedCurrency;
     }
 

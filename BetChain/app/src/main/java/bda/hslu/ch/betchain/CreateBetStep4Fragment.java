@@ -33,11 +33,13 @@ import bda.hslu.ch.betchain.BlockChainFunctions.BlockChainFunctions;
 import bda.hslu.ch.betchain.BlockChainFunctions.ContractCreationIntentService;
 import bda.hslu.ch.betchain.DTO.AppUser;
 import bda.hslu.ch.betchain.DTO.BetRole;
+import bda.hslu.ch.betchain.DTO.CurrencySelector;
 import bda.hslu.ch.betchain.DTO.Participant;
 import bda.hslu.ch.betchain.Database.DBSessionSingleton;
 import bda.hslu.ch.betchain.Database.SQLWrapper;
 import bda.hslu.ch.betchain.WebFunctions.BetFunctions;
 import bda.hslu.ch.betchain.WebFunctions.CurrencyExchangeAPI;
+import bda.hslu.ch.betchain.WebFunctions.CurrencyExchangerSingleton;
 
 
 public class CreateBetStep4Fragment extends Fragment {
@@ -62,7 +64,7 @@ public class CreateBetStep4Fragment extends Fragment {
         betEntryFees.setText(String.valueOf(new BigDecimal(String.valueOf(activity.getBetCreationBetEntryFee()))));
 
         final TextView step4Currency = (TextView) rootView.findViewById(R.id.step4CurrencyText);
-        step4Currency.setText(activity.getSelectedCurrency());
+        step4Currency.setText(activity.getSelectedCurrency().toString());
         final List<Participant> participantList = activity.getBetCreationParticipants();
 
         Button confirmCreation = (Button) rootView.findViewById(R.id.button_confirmBetCreation);
@@ -72,8 +74,8 @@ public class CreateBetStep4Fragment extends Fragment {
                public void onClick(final View v) {
 
                    try{
-                       String selectedCurrency = activity.getSelectedCurrency();
-                       String valueInEth = CurrencyExchangeAPI.exchangeCurrency(betEntryFees.getText().toString(),selectedCurrency.toLowerCase(), "eth" );
+                       CurrencySelector selectedCurrency = activity.getSelectedCurrency();
+                       String valueInEth = CurrencyExchangerSingleton.getInstance().exchangeCurrency(betEntryFees.getText().toString(),selectedCurrency, CurrencySelector.ETH );
                        final float betEntryFee = Float.valueOf(valueInEth);
                        final BigDecimal entryFeeEther = Convert.fromWei(Convert.toWei(String.valueOf(new BigDecimal(String.valueOf(betEntryFee)).floatValue()), Convert.Unit.ETHER), Convert.Unit.ETHER);
                        //Check if all inputs are valid

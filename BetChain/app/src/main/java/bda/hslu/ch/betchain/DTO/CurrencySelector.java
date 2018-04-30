@@ -30,7 +30,7 @@ public enum CurrencySelector {
     }
 
     public static CurrencySelector valueOfStirng(String currency){
-        switch(currency){
+        switch(currency.toLowerCase()){
             case "eth": return CurrencySelector.ETH;
             case "chf": return CurrencySelector.CHF;
             case "eur": return CurrencySelector.EUR;

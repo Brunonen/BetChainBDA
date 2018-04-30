@@ -30,11 +30,13 @@ import bda.hslu.ch.betchain.DTO.AppUser;
 import bda.hslu.ch.betchain.DTO.Bet;
 import bda.hslu.ch.betchain.DTO.BetRole;
 import bda.hslu.ch.betchain.DTO.BetState;
+import bda.hslu.ch.betchain.DTO.CurrencySelector;
 import bda.hslu.ch.betchain.DTO.Participant;
 import bda.hslu.ch.betchain.Database.DBSessionSingleton;
 import bda.hslu.ch.betchain.Database.SQLWrapper;
 import bda.hslu.ch.betchain.WebFunctions.BetFunctions;
 import bda.hslu.ch.betchain.WebFunctions.CurrencyExchangeAPI;
+import bda.hslu.ch.betchain.WebFunctions.CurrencyExchangerSingleton;
 
 
 public class BetInfoFragment extends Fragment {
@@ -63,10 +65,10 @@ public class BetInfoFragment extends Fragment {
             betConditions.setText(selectedBetInfo.getBetConditions());
 
             EditText betEntryFee = (EditText) rootView.findViewById(R.id.betInfoBetEntryFee);
-            betEntryFee.setText(CurrencyExchangeAPI.exchangeCurrency(String.valueOf(new BigDecimal(String.valueOf(selectedBetInfo.getBetEntryFee()))), "eth", loggedInUserInfo.getPrefferedCurrency().toString().toLowerCase()) + " " + loggedInUserInfo.getPrefferedCurrency().toString());
+            betEntryFee.setText(CurrencyExchangerSingleton.getInstance().exchangeCurrency(String.valueOf(new BigDecimal(String.valueOf(selectedBetInfo.getBetEntryFee()))), CurrencySelector.ETH, loggedInUserInfo.getPrefferedCurrency()) + " " + loggedInUserInfo.getPrefferedCurrency().toString());
 
             EditText betPrizePool = (EditText) rootView.findViewById(R.id.betInfoBetPrizePool);
-            betPrizePool.setText(CurrencyExchangeAPI.exchangeCurrency(String.valueOf(new BigDecimal(String.valueOf(selectedBetInfo.getBetPrizePool()))), "eth", loggedInUserInfo.getPrefferedCurrency().toString().toLowerCase()) + " " +loggedInUserInfo.getPrefferedCurrency().toString());
+            betPrizePool.setText(CurrencyExchangerSingleton.getInstance().exchangeCurrency(String.valueOf(new BigDecimal(String.valueOf(selectedBetInfo.getBetPrizePool()))), CurrencySelector.ETH, loggedInUserInfo.getPrefferedCurrency()) + " " +loggedInUserInfo.getPrefferedCurrency().toString());
 
             EditText betStatus = (EditText) rootView.findViewById(R.id.betInfoBetStatus);
             betStatus.setText(selectedBetInfo.getBetState().toString());

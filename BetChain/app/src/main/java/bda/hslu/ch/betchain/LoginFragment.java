@@ -21,6 +21,7 @@ import bda.hslu.ch.betchain.DTO.User;
 import bda.hslu.ch.betchain.Database.DBSessionSingleton;
 import bda.hslu.ch.betchain.Database.SQLWrapper;
 import bda.hslu.ch.betchain.WebFunctions.AuthenticationFunctions;
+import bda.hslu.ch.betchain.WebFunctions.CurrencyExchangerSingleton;
 import bda.hslu.ch.betchain.WebFunctions.UserFunctions;
 
 
@@ -69,6 +70,9 @@ public class LoginFragment extends Fragment {
                             SQLWrapper db = DBSessionSingleton.getInstance().getDbUtil();
                             db.addOrUpdateAppUser(userInfos.getUsername(), hash, userInfos.getAddress());
                             AppUser loggedInUser = AppUser.getLoggedInUserObject();
+
+                            //Initialize Exchange Singleton
+                            CurrencyExchangerSingleton.getInstance();
                             if(loggedInUser.getPrivateKey().length() != 64 && loggedInUser.getPublicAddress().length() != 42){
                                 NoUserAddressDialog noUserAddressDialog = new NoUserAddressDialog();
                                 noUserAddressDialog.show(activity.getSupportFragmentManager(), "No Ethereum Wallet found");
