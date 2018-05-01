@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteDatabaseLockedException;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import java.security.acl.LastOwnerException;
@@ -23,7 +24,7 @@ public class SQLWrapper extends SQLiteOpenHelper {
 
 
     // Database Version
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 6;
     // Database Name
     private static final String DATABASE_NAME = "betChainApp";
 
@@ -67,19 +68,13 @@ public class SQLWrapper extends SQLiteOpenHelper {
             sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_APP_USERS);
             onCreate(sqLiteDatabase);
 
-            //Re-Add the users to the database, so their information is not lost, when a new version comes out.
-            for(AppUser aU : savedUsers){
-                addOrUpdateAppUser(aU.getUsername(), aU.getPwd(), aU.getPublicAddress());
-                changeUserPrivateKey(aU.getUsername(), aU.getPrivateKey());
-                changeUserPrefferedCurrency(aU.getUsername(), aU.getPrefferedCurrency());
+            if(savedUsers.size() > 0) { //Re-Add the users to the database, so their information is not lost, when a new version comes out.
+                reAddUsersToDB(sqLiteDatabase, savedUsers);
             }
 
-            //Also logout all users because adding a user to the db automatically sets autoLogin to TRUE
-            logoutUser();
-
         } catch (SQLException e) {
-
-        } catch (LocalDBException e) {
+            e.printStackTrace();
+        } catch(Exception e){
             e.printStackTrace();
         }
     }
@@ -122,6 +117,28 @@ public class SQLWrapper extends SQLiteOpenHelper {
             db.endTransaction();
         }
 
+    }
+
+    private void reAddUsersToDB(SQLiteDatabase db, List<AppUser> savedUsers){
+        try {
+            db.beginTransaction();
+            for (AppUser user : savedUsers) {
+                ContentValues values = new ContentValues();
+                values.put(APP_USERS_USERNAME, user.getUsername());
+                values.put(APP_USERS_PWD, user.getPwd());
+                values.put(APP_USERS_ADDRESS, user.getPublicAddress());
+                values.put(APP_USERS_STAY_LOGGED_IN, 0);
+                values.put(APP_USERS_P_KEY, user.getPrivateKey());
+                values.put(APP_USERS_PREFFERED_CURRENCY, user.getPrefferedCurrency().toString());
+                int id = (int) db.insert(TABLE_APP_USERS, null, values);
+            }
+
+            db.setTransactionSuccessful();
+        }catch(SQLException e){
+            e.printStackTrace();
+        }finally{
+            db.endTransaction();
+        }
     }
 
     /***
