@@ -52,7 +52,7 @@
                 android:inputType="textPersonName" />
 
             <ImageView
-                android:id="@+id/imageView4"
+                android:id="@+id/searchButtonMagnifying"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignBottom="@+id/searchUserUsername"
