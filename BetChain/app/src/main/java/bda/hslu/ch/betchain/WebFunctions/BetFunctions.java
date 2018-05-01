@@ -1,5 +1,6 @@
 package bda.hslu.ch.betchain.WebFunctions;
 
+import android.os.AsyncTask;
 import android.provider.Telephony;
 
 import org.json.JSONArray;
@@ -34,7 +35,7 @@ import bda.hslu.ch.betchain.WebRequestException;
  * Created by Bruno Fischlin on 15/03/2018.
  */
 
-public class BetFunctions {
+public abstract class BetFunctions extends AsyncTask<String, Void, Object> {
 
     private static final String SERVER_URL = "http://blockchaincontracts.enterpriselab.ch/index.php";
     private static final String API_KEY = "sdkajdkaj2";
@@ -45,6 +46,13 @@ public class BetFunctions {
     private static BigInteger GAS_PRICE = new BigInteger("320000");
     private static BigInteger GAS_LIMIT = new BigInteger("4100000");
 
+    public static Exception mException;
+    public abstract void onSuccess(Object result);
+    public abstract void onFailure(Object result);
+
+    public BetFunctions(){
+
+    }
 
     /***
      * Method to create a Bet on the Database of the Web-Server.
@@ -231,5 +239,31 @@ public class BetFunctions {
         if(entryFee < 0) return "Bet Entry fee must be bigger or equal to 0";
 
         return "";
+    }
+
+    @Override
+    protected Object doInBackground(String... params) {
+        mException = null;
+        try {
+            switch (params[0]) {
+                case "getUserBets":
+                    return getUserBets();
+                default:
+                    return null;
+            }
+        }catch(WebRequestException e){
+            mException = e;
+        }
+        return null;
+    }
+
+
+    protected void onPostExecute(Object result) {
+        if (mException == null) {
+            onSuccess(result);
+        } else {
+            onFailure(mException);
+        }
+
     }
 }

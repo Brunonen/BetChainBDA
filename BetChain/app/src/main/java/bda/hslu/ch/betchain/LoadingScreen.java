@@ -12,9 +12,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 
 public class LoadingScreen extends DialogFragment {
+    private String loadingScreenTitle;
+    private View dialogeView;
+
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // Use the Builder class for convenient dialog construction
@@ -24,10 +28,18 @@ public class LoadingScreen extends DialogFragment {
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
         builder.setCancelable(false);
-        builder.setView(inflater.inflate(R.layout.fragment_loading_screen, null));
+        this.dialogeView = inflater.inflate(R.layout.fragment_loading_screen, null);
+        builder.setView(dialogeView);
+        TextView loadingScreenTitle = (TextView) dialogeView.findViewById(R.id.loadingScreenTitle);
+        loadingScreenTitle.setText(this.loadingScreenTitle);
         //Glide.with(context).load(recorder.getPictureFile()).asGif().into(gifImageView);
 
         // Create the AlertDialog object and return it
         return builder.create();
     }
+
+    public void setTitle(String title){
+        loadingScreenTitle = title.toUpperCase();
+    }
+
 }
