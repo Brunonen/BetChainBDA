@@ -8,7 +8,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import java.security.acl.LastOwnerException;
+import java.util.ArrayList;
+import java.util.List;
 
+import bda.hslu.ch.betchain.DTO.AppUser;
 import bda.hslu.ch.betchain.DTO.CurrencySelector;
 import bda.hslu.ch.betchain.LocalDBException;
 
@@ -59,11 +62,25 @@ public class SQLWrapper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
 
         try {
+            //Save all user Information we have so far.
+            List<AppUser> savedUsers = getAllAppUsersFromDB(sqLiteDatabase);
             sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_APP_USERS);
             onCreate(sqLiteDatabase);
 
+            //Re-Add the users to the database, so their information is not lost, when a new version comes out.
+            for(AppUser aU : savedUsers){
+                addOrUpdateAppUser(aU.getUsername(), aU.getPwd(), aU.getPublicAddress());
+                changeUserPrivateKey(aU.getUsername(), aU.getPrivateKey());
+                changeUserPrefferedCurrency(aU.getUsername(), aU.getPrefferedCurrency());
+            }
+
+            //Also logout all users because adding a user to the db automatically sets autoLogin to TRUE
+            logoutUser();
+
         } catch (SQLException e) {
 
+        } catch (LocalDBException e) {
+            e.printStackTrace();
         }
     }
 
@@ -188,6 +205,26 @@ public class SQLWrapper extends SQLiteOpenHelper {
         cursor.close();
 
         return returnString;
+    }
+
+    private List<AppUser> getAllAppUsersFromDB(SQLiteDatabase db){
+        List<AppUser> appUsers = new ArrayList<AppUser>();
+
+        String sqlSelect = "SELECT * FROM " + TABLE_APP_USERS;
+        Cursor cursor = db.rawQuery(sqlSelect, null);
+        if(cursor.getCount() > 0){
+            while(cursor.moveToNext()){
+                AppUser tmp = new AppUser();
+                tmp.setUsername(cursor.getString(cursor.getColumnIndex(APP_USERS_USERNAME)));
+                tmp.setPwd(cursor.getString(cursor.getColumnIndex(APP_USERS_PWD)));
+                tmp.setPrivateKey(cursor.getString(cursor.getColumnIndex(APP_USERS_P_KEY)));
+                tmp.setPublicAddress(cursor.getString(cursor.getColumnIndex(APP_USERS_ADDRESS)));
+                tmp.setPrefferedCurrency(CurrencySelector.valueOfStirng(cursor.getString(cursor.getColumnIndex(APP_USERS_PREFFERED_CURRENCY))));
+                appUsers.add(tmp);
+            }
+        }
+        cursor.close();
+        return appUsers;
     }
 
     /***

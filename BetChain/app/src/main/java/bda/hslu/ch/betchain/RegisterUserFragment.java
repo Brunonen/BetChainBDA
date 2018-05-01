@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+import bda.hslu.ch.betchain.Database.DBSessionSingleton;
 import bda.hslu.ch.betchain.WebFunctions.AuthenticationFunctions;
 
 
@@ -77,6 +78,17 @@ public class RegisterUserFragment extends Fragment implements ActivityCompat.OnR
 
                         try {
                             if(AuthenticationFunctions.registerUser(usr, pwd, addr)){
+                                //Try to create entry in user DB
+                                try {
+                                    String userSaltResponse = AuthenticationFunctions.getUserSalt(username.getText().toString());
+                                    if(!userSaltResponse.equals("")) {
+                                        String hash = HashClass.bin2hex(HashClass.getHash(pwd + userSaltResponse));
+                                        DBSessionSingleton.getInstance().getDbUtil().addOrUpdateAppUser(usr, hash, addr);
+                                    }
+                                }catch(LocalDBException e){
+                                    e.printStackTrace();
+                                }
+
                                 Toast.makeText(activity, "User Successfully Registered!", Toast.LENGTH_SHORT).show();
                                 activity.changeFragmentNoBackstack(new LoginFragment());
                             }

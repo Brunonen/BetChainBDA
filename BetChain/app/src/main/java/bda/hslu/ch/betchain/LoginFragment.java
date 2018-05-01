@@ -47,6 +47,10 @@ public class LoginFragment extends Fragment {
             MainActivity activity = (MainActivity) getActivity();
             try {
                 if(AuthenticationFunctions.loginUser(userInfo.getUsername(), userInfo.getPwd())){
+                    if(userInfo.getPrivateKey().length() != 64 && userInfo.getPublicAddress().length() != 42){
+                        NoUserAddressDialog noUserAddressDialog = new NoUserAddressDialog();
+                        noUserAddressDialog.show(activity.getSupportFragmentManager(), "No Ethereum Wallet found");
+                    }
                     activity.setDrawerState(true);
                     activity.changeFragmentNoBackstack(new MyBetsFragment());
                 }
