@@ -111,6 +111,7 @@
             android:textAlignment="center"
             android:textColor="@android:color/background_dark"
             android:textSize="13sp"
+            android:textIsSelectable="true"
             android:textStyle="bold" />
 
         <TextView
