@@ -1,5 +1,7 @@
 package bda.hslu.ch.betchain.WebFunctions;
 
+import android.os.StrictMode;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -36,6 +38,12 @@ public class CurrencyExchangeAPI {
      * @return          The Currency Value as String. If nothing was found it will return an empty String
      */
     public static String getCurrenyValue(String currency) {
+        if (android.os.Build.VERSION.SDK_INT > 9)
+        {
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
+        }
+
         final String URL = "https://api.coinmarketcap.com/v1/ticker/ethereum/?convert=";
         HttpURLConnection urlConnection = null;
         URL url = null;

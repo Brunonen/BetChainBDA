@@ -83,7 +83,7 @@ public class AddFriendFragment extends Fragment {
 
             final MainActivity activity = (MainActivity) getActivity();
             activity.setUserAddressToGetInfoFrom(qrData);
-            activity.changeFragmentNoBackstack(new AddFriendInfoFragment());
+            activity.changeFragment(new AddFriendInfoFragment());
         }
 
     }
