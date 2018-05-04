@@ -121,12 +121,16 @@ public abstract class AuthenticationFunctions extends AsyncTask<String, Void, Ob
         mException = null;
         try {
             switch (params[0]) {
+                //If event was triggered by user, we have to get the Salt first and hash the PW before sending it to the server.
                 case "loginUser":
                     String userSaltResponse = AuthenticationFunctions.getUserSalt(params[1]);
 
                     if(!userSaltResponse.equals("")) {
                         String hash = HashClass.bin2hex(HashClass.getHash(params[2] + userSaltResponse));
+
+                        //Check if Login is successfull
                         if(loginUser(params[1],hash)){
+                            //Login was a success, now update the Users information on the local DB.
                             User userInfos = UserFunctions.getUserInfo(params[1]);
                             SQLWrapper db = DBSessionSingleton.getInstance().getDbUtil();
                             db.addOrUpdateAppUser(userInfos.getUsername(), hash, userInfos.getAddress());

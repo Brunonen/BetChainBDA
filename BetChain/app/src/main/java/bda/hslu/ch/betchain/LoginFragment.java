@@ -91,7 +91,7 @@ public class LoginFragment extends Fragment {
         loadingScreen.show(activity.getSupportFragmentManager(), "Loading Screen");
 
 
-        //Get Bets of user in an Async Task
+        //Login User in an Async Task
         @SuppressLint("StaticFieldLeak") AuthenticationFunctions loginUser = new AuthenticationFunctions(){
 
 
@@ -128,6 +128,7 @@ public class LoginFragment extends Fragment {
             }
         };
 
+        //Check if it's an automated login caused by the App or a user triggered login.
         if(isAutomatedLogin) {
             loginUser.execute("loginUserAutomatically", username, pwd);
         }else{
