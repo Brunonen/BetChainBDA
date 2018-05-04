@@ -1,5 +1,6 @@
 package bda.hslu.ch.betchain.WebFunctions;
 
+import android.os.AsyncTask;
 import android.support.annotation.CallSuper;
 import android.telecom.Call;
 import android.widget.Toast;
@@ -9,7 +10,11 @@ import org.json.JSONObject;
 import org.json.JSONStringer;
 
 import bda.hslu.ch.betchain.CallAPI;
+import bda.hslu.ch.betchain.DTO.User;
+import bda.hslu.ch.betchain.Database.DBSessionSingleton;
+import bda.hslu.ch.betchain.Database.SQLWrapper;
 import bda.hslu.ch.betchain.HashClass;
+import bda.hslu.ch.betchain.LocalDBException;
 import bda.hslu.ch.betchain.MainActivity;
 import bda.hslu.ch.betchain.WebRequestException;
 
@@ -17,10 +22,18 @@ import bda.hslu.ch.betchain.WebRequestException;
  * Created by Bruno Fischlin on 20/03/2018.
  */
 
-public class AuthenticationFunctions {
+public abstract class AuthenticationFunctions extends AsyncTask<String, Void, Object>{
 
     private static final String SERVER_URL = "http://blockchaincontracts.enterpriselab.ch/index.php";
     private static final String API_KEY = "sdkajdkaj2";
+
+    public static Exception mException;
+    public abstract void onSuccess(Object result);
+    public abstract void onFailure(Object result);
+
+    public AuthenticationFunctions(){
+
+    }
 
     public static boolean loginUser(String username, String pwd) throws WebRequestException{
 
@@ -99,6 +112,50 @@ public class AuthenticationFunctions {
 
         }catch(JSONException exec){
             throw new WebRequestException(exec.getMessage());
+        }
+
+    }
+
+    @Override
+    protected Object doInBackground(String... params) {
+        mException = null;
+        try {
+            switch (params[0]) {
+                case "loginUser":
+                    String userSaltResponse = AuthenticationFunctions.getUserSalt(params[1]);
+
+                    if(!userSaltResponse.equals("")) {
+                        String hash = HashClass.bin2hex(HashClass.getHash(params[2] + userSaltResponse));
+                        if(loginUser(params[1],hash)){
+                            User userInfos = UserFunctions.getUserInfo(params[1]);
+                            SQLWrapper db = DBSessionSingleton.getInstance().getDbUtil();
+                            db.addOrUpdateAppUser(userInfos.getUsername(), hash, userInfos.getAddress());
+                            return true;
+                        }
+                        return false;
+                    }else{
+                        throw new WebRequestException("Could not get User Information from Server.");
+                    }
+
+                case "loginUserAutomatically":
+                    return loginUser(params[1], params[2]);
+                default:
+                    return null;
+            }
+        }catch(WebRequestException e){
+            mException = e;
+        } catch (LocalDBException e) {
+            mException = e;
+        }
+        return null;
+    }
+
+    @Override
+    protected void onPostExecute(Object result) {
+        if (mException == null) {
+            onSuccess(result);
+        } else {
+            onFailure(mException);
         }
 
     }

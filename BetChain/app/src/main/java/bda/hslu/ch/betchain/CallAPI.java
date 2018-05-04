@@ -32,7 +32,7 @@ public class CallAPI  {
     }
 
 
-    public static String makePOSTRequestToServer(String... params) {
+    public static String makePOSTRequestToServer(String... params) throws WebRequestException{
 
         if (android.os.Build.VERSION.SDK_INT > 9)
         {
@@ -125,7 +125,12 @@ public class CallAPI  {
             System.out.println("IO EXCEPTION: " + error.getMessage());
         }
 
-        return response;
+        if(!response.equals("")) {
+
+            return response;
+        }else{
+            throw new WebRequestException("Server not reachable, Request timed out.");
+        }
     }
 
 }

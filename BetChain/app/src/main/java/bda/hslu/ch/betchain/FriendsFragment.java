@@ -32,6 +32,7 @@ public class FriendsFragment extends Fragment {
 
         final LoadingScreen loadingScreen = new LoadingScreen();
         loadingScreen.setCancelable(false);
+        loadingScreen.setTitle("Loading Friends");
         loadingScreen.show(activity.getSupportFragmentManager(), "Loading Screen");
 
         @SuppressLint("StaticFieldLeak") FriendFunctions getUserFriends = new FriendFunctions(){

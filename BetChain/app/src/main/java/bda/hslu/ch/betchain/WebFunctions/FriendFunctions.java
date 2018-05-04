@@ -154,7 +154,10 @@ public abstract class FriendFunctions extends AsyncTask<String, Void, Object>{
             }
         }catch(WebRequestException e){
             mException = e;
+        }catch(Exception e){
+            mException = e;
         }
+
         return null;
     }
 
