@@ -83,16 +83,17 @@ public class AccountInfoFragment extends Fragment {
 
         //QR Code generator
         try {
-            if(!addressString.equals("")) {
-                BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
-                Bitmap bitmap = barcodeEncoder.encodeBitmap(addressString, BarcodeFormat.QR_CODE, 600, 600);
-                ImageView imageViewQrCode = (ImageView) root.findViewById(R.id.qrFriendCode);
-                imageViewQrCode.setImageBitmap(bitmap);
-            }else{
+            if(addressString.equals("")) {
                 Toast.makeText(activity,"No Public-Address found" , Toast.LENGTH_SHORT).show();
+                addressString = "No Address";
             }
+            BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
+            Bitmap bitmap = barcodeEncoder.encodeBitmap(addressString, BarcodeFormat.QR_CODE, 600, 600);
+            ImageView imageViewQrCode = (ImageView) root.findViewById(R.id.qrFriendCode);
+            imageViewQrCode.setImageBitmap(bitmap);
+
         } catch(Exception e) {
-            Toast.makeText(activity,"No Public-Address found" , Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity,"QR Code could not be generated" , Toast.LENGTH_SHORT).show();
         }
 
         qrFriendCode.setOnClickListener(new View.OnClickListener() {
