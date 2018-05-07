@@ -24,7 +24,7 @@ import bda.hslu.ch.betchain.WebRequestException;
 
 public abstract class AuthenticationFunctions extends AsyncTask<String, Void, Object>{
 
-    private static final String SERVER_URL = "http://blockchaincontracts.enterpriselab.ch/index.php";
+    private static final String SERVER_URL = "https://blockchaincontracts.enterpriselab.ch/index.php";
     private static final String API_KEY = "sdkajdkaj2";
 
     public static Exception mException;

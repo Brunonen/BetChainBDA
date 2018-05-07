@@ -12,7 +12,7 @@ import bda.hslu.ch.betchain.WebRequestException;
  */
 
 public class SettingsFunctions {
-    private static final String SERVER_URL = "http://blockchaincontracts.enterpriselab.ch/index.php";
+    private static final String SERVER_URL = "https://blockchaincontracts.enterpriselab.ch/index.php";
 
     public static boolean changeUserSetting(String settingName, String value) throws WebRequestException{
         try {

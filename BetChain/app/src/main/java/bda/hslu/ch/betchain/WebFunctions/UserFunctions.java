@@ -18,7 +18,7 @@ import bda.hslu.ch.betchain.WebRequestException;
  */
 
 public class UserFunctions {
-    private static final String SERVER_URL = "http://blockchaincontracts.enterpriselab.ch/index.php";
+    private static final String SERVER_URL = "https://blockchaincontracts.enterpriselab.ch/index.php";
 
     public static User getUserInfo(String username) throws WebRequestException{
         User userInfo = new User();
