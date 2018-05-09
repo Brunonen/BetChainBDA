@@ -58,10 +58,14 @@ public class InsertPublicKeyFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 EditText publicKeyText = (EditText) rootView.findViewById(R.id.publicKeyTextBox);
-                savePublicKey(publicKeyText.getText().toString());
                 MainActivity activity = (MainActivity) getActivity();
-                Fragment accountInfo = new AccountInfoFragment();
-                activity.changeFragment(accountInfo);
+                if(publicKeyText.getText().toString().length() == 42) {
+                    savePublicKey(publicKeyText.getText().toString());
+                    Fragment accountInfo = new AccountInfoFragment();
+                    activity.changeFragment(accountInfo);
+                }else{
+                    Toast.makeText(activity, "Invalid Address.\n\nMust be 42 characters long!", Toast.LENGTH_SHORT).show();
+                }
 
             }
         });

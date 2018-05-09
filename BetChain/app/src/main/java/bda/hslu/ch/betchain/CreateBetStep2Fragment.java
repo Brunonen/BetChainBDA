@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import bda.hslu.ch.betchain.DTO.AppUser;
 import bda.hslu.ch.betchain.DTO.CurrencySelector;
 import bda.hslu.ch.betchain.DTO.Participant;
+import bda.hslu.ch.betchain.WebFunctions.BetFunctions;
 import bda.hslu.ch.betchain.WebFunctions.CurrencyExchangeAPI;
 import bda.hslu.ch.betchain.WebFunctions.CurrencyExchangerSingleton;
 
@@ -53,23 +54,16 @@ public class CreateBetStep2Fragment extends Fragment {
                 EditText betEntryFees = (EditText) rootView.findViewById(R.id.betEntryFee);
                 MainActivity activity = (MainActivity) getActivity();
                 //Fragment step2 = new CreateBetStep2Fragment();
-
-                if(!betConditions.getText().equals("")){
-                    Fragment step3 = new CreateBetStep3Fragment();
-
+                String inputError = BetFunctions.checkIfBetInputsAreValid(null, betConditions.getText().toString(), null, betEntryFees.getText().toString());
+                if (inputError.equals("")) {
                     activity.setBetCreationBetConditions(betConditions.getText().toString());
-
-                    try {
-                        activity.setBetCreationBetEntryFee(Float.valueOf(betEntryFees.getText().toString()));
-                        activity.changeFragment(step3);
-                    }catch(Exception e){
-                        Toast.makeText(activity ,"The bet Entry fee must be a number!",  Toast.LENGTH_SHORT).show();
-                    }
-
-
+                    activity.setBetCreationBetEntryFee(Float.valueOf(betEntryFees.getText().toString()));
+                    Fragment step3 = new CreateBetStep3Fragment();
+                    activity.changeFragment(step3);
                 }else{
-                    Toast.makeText(activity ,"Please enter Conditions for your bet!",  Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, inputError, Toast.LENGTH_SHORT).show();
                 }
+
             }
         });
 

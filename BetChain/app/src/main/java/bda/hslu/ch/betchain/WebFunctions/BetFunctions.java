@@ -221,22 +221,40 @@ public abstract class BetFunctions extends AsyncTask<String, Void, Object> {
         }
     }
 
-    public static String checkIfBetInputsAreValid(String betTitle, String betConditions, List<Participant> participants, float entryFee){
-        if(betTitle.length() < 8) return "Bet Title can not be less than 8 characters long";
-        if(betTitle.length() > 45) return "Bet Title can not be longer than 45 characters!";
-        if(betConditions.length() < 8) return "Bet Conditions must be at least 8 characters long";
-        if(betConditions.length() > 200) return "Bet conditions can not be longer than 200 characters";
-
-        for(Participant p : participants){
-            if(p.getAddress() == null) return "Participant error";
-            if(p.getAddress() == "") return "Participant error";
-            if(p.getAddress().length() != 42) return "Participant error";
-            if(p.getBetRole() == null) return "Participant error";
-            if(p.getUsername() == null) return "Participant error";
-            if(p.getUsername() == "") return "Participant error";
+    public static String checkIfBetInputsAreValid(String betTitle, String betConditions, List<Participant> participants, String entryFee){
+        if(betTitle != null) {
+            if (betTitle.length() < 8) return "Bet Title can not be less than 8 characters long";
+            if (betTitle.length() > 45) return "Bet Title can not be longer than 45 characters!";
         }
 
-        if(entryFee < 0) return "Bet Entry fee must be bigger or equal to 0";
+        if(betConditions != null) {
+            if (betConditions.length() < 8)
+                return "Bet Conditions must be at least 8 characters long";
+            if (betConditions.length() > 500)
+                return "Bet conditions can not be longer than 200 characters";
+        }
+
+        if(participants != null) {
+
+            for (Participant p : participants) {
+                if (p.getAddress() == null) return "Participant error";
+                if (p.getAddress() == "") return "Participant error";
+                if (p.getAddress().length() != 42) return "Participant error";
+                if (p.getBetRole() == null) return "Participant error";
+                if (p.getUsername() == null) return "Participant error";
+                if (p.getUsername() == "") return "Participant error";
+            }
+        }
+
+        if(entryFee != null) {
+            try{
+                float entryFeeFloat = Float.valueOf(entryFee);
+                if (entryFeeFloat < 0) return "Bet Entry fee must be bigger or equal to 0";
+            }catch(Exception e){
+                return "Bet Entry fee must be a number!";
+            }
+
+        }
 
         return "";
     }

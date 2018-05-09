@@ -71,10 +71,13 @@ public class InsertPrivateKeyFragment extends Fragment {
 
                 if(privateKeyText.getText().length() == 64) {
                     savePrivateKey(privateKeyText.getText().toString());
-                }
 
-                Fragment accountInfo = new AccountInfoFragment();
-                activity.changeFragment(accountInfo);
+
+                    Fragment accountInfo = new AccountInfoFragment();
+                    activity.changeFragment(accountInfo);
+                }else{
+                    Toast.makeText(activity, "Invalid Private Key!\n\n Must be 64 Characters long!", Toast.LENGTH_SHORT).show();
+                }
 
 
             }

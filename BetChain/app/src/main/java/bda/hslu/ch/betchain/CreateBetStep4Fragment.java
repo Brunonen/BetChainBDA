@@ -79,10 +79,10 @@ public class CreateBetStep4Fragment extends Fragment {
                        final float betEntryFee = Float.valueOf(valueInEth);
                        final BigDecimal entryFeeEther = Convert.fromWei(Convert.toWei(String.valueOf(new BigDecimal(String.valueOf(betEntryFee)).floatValue()), Convert.Unit.ETHER), Convert.Unit.ETHER);
                        //Check if all inputs are valid
-                       String inputError = BetFunctions.checkIfBetInputsAreValid(betTitle.getText().toString(), betConditions.getText().toString(), participantList, betEntryFee);
+                       String inputError = BetFunctions.checkIfBetInputsAreValid(betTitle.getText().toString(), betConditions.getText().toString(), participantList, betEntryFees.getText().toString());
 
 
-                       if(inputError == "") {
+                       if(inputError.equals("")) {
 
                            AppUser loggedInUserInfo = AppUser.getLoggedInUserObject();
 

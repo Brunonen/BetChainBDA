@@ -14,6 +14,7 @@ import android.widget.Toast;
 import bda.hslu.ch.betchain.DTO.AppUser;
 import bda.hslu.ch.betchain.Database.DBSessionSingleton;
 import bda.hslu.ch.betchain.Database.SQLWrapper;
+import bda.hslu.ch.betchain.WebFunctions.BetFunctions;
 
 
 public class CreateBetStep1Fragment extends Fragment {
@@ -42,15 +43,15 @@ public class CreateBetStep1Fragment extends Fragment {
                 //Failsafe Check if user has his account linked (Public and Private Key accessible). Otherwise he can't create bets!
                 if(!loggedInUserInfo.getPublicAddress().equals("")) {
                     if (!loggedInUserInfo.getPrivateKey().equals("")) {
-
-                        if (betTitle.getText() != "" && betTitle.getText().length() >= 8) {
+                        String inputError = BetFunctions.checkIfBetInputsAreValid(betTitle.getText().toString(), null, null, null);
+                        if (inputError.equals("")) {
 
                             activity.setBetCreationBetTitle(betTitle.getText().toString());
                             Fragment step2 = new CreateBetStep2Fragment();
 
                             activity.changeFragment(step2);
                         } else {
-                            Toast.makeText(activity, "Please enter a Bet Title that is atleast 8 Characters long.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(activity, inputError, Toast.LENGTH_SHORT).show();
                         }
                     }else{
                         Toast.makeText(activity, "Your Account does not have a private Key set! You need this information in order to create contracts!", Toast.LENGTH_SHORT).show();
