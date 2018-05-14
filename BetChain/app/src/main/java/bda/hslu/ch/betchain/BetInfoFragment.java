@@ -57,6 +57,7 @@ public class BetInfoFragment extends Fragment {
         try {
             selectedBetInfo = BlockChainFunctions.getBetInfoFromBlockchain(activity.getSelectedBet());
             final AppUser loggedInUserInfo = AppUser.getLoggedInUserObject();
+            System.out.println(selectedBetInfo.getBetEntryFee());
 
             TextView betTitle = (TextView) rootView.findViewById(R.id.betInfoBetTitle);
             betTitle.setText(selectedBetInfo.getBetTitle());

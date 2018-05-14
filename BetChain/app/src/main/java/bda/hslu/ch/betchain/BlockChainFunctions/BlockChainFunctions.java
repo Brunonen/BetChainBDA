@@ -73,7 +73,8 @@ public class BlockChainFunctions {
             BetChainBetContract contract = BetChainBetContract.load(betInfoWeb.getBetAddress(), web3, credentials, GAS_PRICE, GAS_LIMIT_CHANGE);
 
             betInfoWeb.setBetConditions(contract.getBetConditions().send());
-            betInfoWeb.setBetEntryFee(Convert.fromWei(Float.valueOf(contract.getBetEntryFee().send().floatValue()).toString(), Convert.Unit.ETHER).floatValue());
+            System.out.println(String.valueOf(String.format("%.6f", contract.getBetEntryFee().send().floatValue())));
+            betInfoWeb.setBetEntryFee(Float.valueOf(String.format("%.6f", Convert.fromWei(Float.valueOf(contract.getBetEntryFee().send().floatValue()).toString(), Convert.Unit.ETHER).floatValue())));
             betInfoWeb.setBetSuccessful(contract.isBetSuccessfull().send());
             int numberOfParticipants = contract.getNumberOfParticipants().send().intValue();
             List<Participant> betParticipants = new ArrayList<Participant>();
@@ -123,7 +124,7 @@ public class BlockChainFunctions {
             BigInteger betState = contract.getBetState().send();
 
             BigDecimal eth = Convert.fromWei(Float.valueOf(prizePool.floatValue()).toString(), Convert.Unit.ETHER);
-            betInfo.setBetPrizePool(eth.floatValue());
+            betInfo.setBetPrizePool(Float.valueOf(String.format("%.6f", eth.floatValue())));
             betInfo.setBetState(BetState.valueOfInt(betState.intValue()));
 
             return betInfo;
