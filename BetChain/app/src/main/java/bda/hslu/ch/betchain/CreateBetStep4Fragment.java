@@ -76,7 +76,8 @@ public class CreateBetStep4Fragment extends Fragment {
                    try{
                        CurrencySelector selectedCurrency = activity.getSelectedCurrency();
                        String valueInEth = CurrencyExchangerSingleton.getInstance().exchangeCurrency(betEntryFees.getText().toString(),selectedCurrency, CurrencySelector.ETH );
-                       final float betEntryFee = Float.valueOf(valueInEth);
+                       final float betEntryFee = Float.valueOf(String.format("%.6f", Float.valueOf(valueInEth).floatValue()));
+
                        final BigDecimal entryFeeEther = Convert.fromWei(Convert.toWei(String.valueOf(new BigDecimal(String.valueOf(betEntryFee)).floatValue()), Convert.Unit.ETHER), Convert.Unit.ETHER);
                        //Check if all inputs are valid
                        String inputError = BetFunctions.checkIfBetInputsAreValid(betTitle.getText().toString(), betConditions.getText().toString(), participantList, betEntryFees.getText().toString());
