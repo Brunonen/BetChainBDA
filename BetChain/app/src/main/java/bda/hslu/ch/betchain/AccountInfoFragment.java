@@ -105,9 +105,14 @@ public class AccountInfoFragment extends Fragment {
         });
 
         try {
-            ethValue.setText(String.valueOf(BlockChainFunctions.getAccountBalance()).substring(0, 12));
+            String eth = String.valueOf(BlockChainFunctions.getAccountBalance());
+            if(eth.length() > 12){
+                ethValue.setText(eth.substring(0, 12));
+            }else {
+                ethValue.setText(eth);
+            }
         } catch (Exception e) {
-            Toast.makeText(activity,"No Public-Address found" , Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, "Eth Value could not be loaded", Toast.LENGTH_SHORT).show();
         }
 
         return root;

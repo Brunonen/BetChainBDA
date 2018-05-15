@@ -338,7 +338,6 @@ public class BlockChainFunctions {
         EthGetBalance ethGetBalance = web3.ethGetBalance(getUserInfo()[3], DefaultBlockParameterName.LATEST).sendAsync().get();
         BigInteger wei = ethGetBalance.getBalance();
         BigDecimal eth = Convert.fromWei(wei.toString(), Convert.Unit.ETHER);
-
         return eth;
 
     }
